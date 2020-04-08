@@ -1,0 +1,205 @@
+<!--
+// NOTE:
+// THIS FILE IS THE SAME FOR ALL APPS - so modified versions should be coppied just into all the apps too.
+// It knnows about the specific code for a given app though _file.js. so don't change that when copying.
+-->
+
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/> <!-- prevent zooming -->
+    <script src="_files.js"></script> 
+    <script src="../../processing.js"></script>
+    <script src="../../Libraries/smw4.js"></script>   
+    <link rel="stylesheet" type="text/css" href="../../Libraries/smw4.css"></link>
+    
+    <script>
+    function loadFile(files)
+    {
+      pjs.loadFile(files);
+      
+      // cancel
+      document.body.style.zoom = '100%';
+      window.scroll(0,0);
+      setTimeout(focusOnDisplay, 500);
+      showDisplay();
+    }
+    </script>
+    
+    <script>
+    function isFullScreen()
+    {
+        return (document.fullScreenElement && document.fullScreenElement !== null)
+             || document.mozFullScreen
+             || document.webkitIsFullScreen;
+    }
+
+
+    function requestFullScreen(element)
+    {
+        if (element.requestFullscreen)
+            element.requestFullscreen();
+        else if (element.msRequestFullscreen)
+            element.msRequestFullscreen();
+        else if (element.mozRequestFullScreen)
+            element.mozRequestFullScreen();
+        else if (element.webkitRequestFullscreen)
+            element.webkitRequestFullscreen();
+    }
+
+    function exitFullScreen()
+    {
+        if (document.exitFullscreen)
+            document.exitFullscreen();
+        else if (document.msExitFullscreen)
+            document.msExitFullscreen();
+        else if (document.mozCancelFullScreen)
+            document.mozCancelFullScreen();
+        else if (document.webkitExitFullscreen)
+            document.webkitExitFullscreen();
+    }
+
+    function toggleFullScreen(element)
+    {
+        if (isFullScreen())
+            exitFullScreen();
+        else
+            requestFullScreen(element || document.documentElement);
+    }
+    </script>
+  </head>
+  <body  style="overflow: hidden; margin:0; border:0; padding:0;">
+    
+    
+    <div id ="loadingImage1" style="position:absolute; left:0; top:0; width:100%; height:100%; background:white;">
+      <table width=100% height=100%>
+        <tr>
+          <td style="text-align: center; vertical-align: middle;">
+            <img src="../../Libraries/loader64.gif" alt="some_text">
+            <br><br>
+            <h2>App by</h2>
+            <h2>Sanath Wanigaratne</h2>
+            <b>Loading...</b>
+          </td>
+        </tr>
+      </table>
+    </div>
+    
+    
+    <div id ="display" style="position:absolute; left:0; top:0;">
+      <div style="position:absolute; left:0; top:0; -moz-user-select: none; -webkit-user-select: none; -ms-user-select:none; user-select:none;-o-user-select:none;" unselectable="on" onselectstart="return false;">  
+        <canvas id="ControlManager" data-processing-sources="../../Libraries/ControlManager.pde"></canvas> 
+      </div>
+      <div id="abc" style="position:absolute; left:0; top:0; pointer-events: none; visibility: hidden;"> 
+        <script>
+          
+          // CODE LOADED HERE
+          var baseCodeFiles = "../../Libraries/smw4.pde";
+          //var myCodeFiles = "_main.pde _ui.pde"; LOADED IN _file.js
+          
+          document.write("<canvas id='mySketch' data-processing-sources='" + baseCodeFiles + " " + myCodeFiles + "'></canvas>");
+          var baseCode = readCombinedFiles(baseCodeFiles);
+          var myCodeArray = readFiles(myCodeFiles);
+        </script>      
+      </div>
+    </div>
+    
+    <div id="info" style="display:none; position:absolute; left:0; top:0; width:100%; height:100%;">
+      <table style="width:100%; height:100%;">
+      <td>
+      <tr>
+      <!-- position:fixed; left:0; top:0;  -->
+      <div style="width:100%; background:rgba(150,150,150,0.75);">
+        <!-- <table style="width:100%; padding:0; margin:0; border-collapse: collapse;">
+        <tr style="width:100%; padding:0; margin:0;">
+        <td align="left" style="padding:0; margin:0;"> -->
+        
+        <br>
+        <button onclick="document.body.style.zoom = '100%';window.scroll(0,0);runCode();showDisplay();">Run</button>
+        &nbsp;
+        <!-- </td>
+        <td align="center" style="padding:0; margin:0;"> -->
+        <button style="margin:0;" onclick="zoomIn();">+</button>
+        <button style="margin:0;" onclick="zoomReset();">0</button>
+        <button style="margin:0;" onclick="zoomOut();">-</button>
+        <button id="infoButton" class='' style="margin:0;" onclick="document.body.style.zoom = '100%';window.scroll(0,0);displayInfo(this);">?</button>
+        &nbsp;
+        <!-- </td>
+        <td align="right" style="padding:0; margin:0;"> -->
+        <button onclick="document.body.style.zoom = '100%';window.scroll(0,0);setTimeout(focusOnDisplay, 500);showDisplay();">Cancel</button>
+        &nbsp;
+        &nbsp;
+        <button onclick="toggleFullScreen(null);">FullScreen</button>
+        <br>
+        <br>
+        <button id="dataButton" class='' style="margin:0;" onclick="document.body.style.zoom = '100%';window.scroll(0,0);displayData(this);">data</button>
+        &nbsp;
+        <input type="file" id="chooseFile" onChange="loadFile(this.files)"/>
+        <!-- </td>
+        </tr>
+        </table> -->
+        <br>
+        <br>
+        <div id="tabs" style="display:inline-block;">
+          <script>
+            var currentCodeId = -1;
+            for (var i = 0; i < myCodeArray.length; i++)
+            {
+              var cls = "notSelected";
+              if (i == 0) cls = "Selected";
+              document.write("<button class='" + cls + "' onclick='displayCode(" + i + ", this);'>" + myCodeArray[i].name + "</button>");
+            }
+          </script>
+          
+        </div>
+      </div>
+      </tr>
+      <tr>
+      <div id='code1' class="code1" onpaste='setTimeout(updateCode, 0);' onkeydown="checkEnter(event);"  contenteditable="true" spellcheck='false' autocomplete="off" autocorrect="off" autocapitalize="off" style="display:inline-block; white-space:nowrap; background:white; padding:5px 20px;">
+      </div>
+      <div id="infoDescription" style="display:none;">
+      </div>
+      <div id='data' contenteditable="true" spellcheck='false' autocomplete="off" autocorrect="off" autocapitalize="off" style="display:inline-block; white-space:nowrap; background:rgb(220, 220, 220); padding:5px 20px;">
+      </div>
+      </tr>
+      </td>
+      </table>
+    </div>
+    
+    <div id="extraHtml" style="position:absolute; left:0; top:0;"> 
+    </div>
+    
+    <div id ="loadingImage2" style="position:absolute; left:0; top:0; width:100%; height:100%; background:white;">
+      <table width=100% height=100%>
+        <tr>
+          <td style="text-align: center; vertical-align: middle;">
+            <img src="../../Libraries/loader64.gif" alt="some_text">
+            <br><br>
+            <h2>App by</h2>
+            <h2>Sanath Wanigaratne</h2>
+            <b>Loading...</b>
+          </td>
+        </tr>
+      </table>
+    </div>
+    
+    <script>
+      if (postScript != "")
+      {
+        var s = readFile(postScript);
+        eval(s);
+      }
+      
+      if (extraHtml != "")
+      {
+        var s = readFile(extraHtml);
+        document.getElementById("extraHtml").innerHTML = s;
+      }
+     
+      //setData();
+      //displayCode(0, null);
+      displayInfo(document.getElementById("infoButton"));
+      // Need this in a timeout so that it gets called after everything is rendered
+      setTimeout(focusOnDisplay, 500);
+    </script>
+ </body>
+ </html>
