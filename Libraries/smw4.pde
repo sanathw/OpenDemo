@@ -32,6 +32,7 @@ boolean isFitInside;
 final boolean FIT_INSIDE = true;
 final boolean FIT_OUTSIDE = false;
 
+var keyCode;
 
 void setSize(float i_sw, float i_sh, int i_mode, boolean i_isFitInside, var i_pjs)
 {
@@ -46,6 +47,11 @@ void setSize(float i_sw, float i_sh, int i_mode, boolean i_isFitInside, var i_pj
   pjsCM.sizeChanged();
 }
 
+void setKeyCode(var _keyCode)
+{
+  keyCode = _keyCode;
+}
+  
 void setKeyPressed(int i_key)
 {
   key = i_key;
@@ -94,10 +100,10 @@ float lastMouseY = 0;
 boolean isMainSketchActive = false;
 void setMouse(float i_mouseX, float i_mouseY, float i_containerWidth, float i_containerHeight)
 {
-  mouseX = map(i_mouseX, 0, i_containerWidth, -h_dw, +h_dw);
-  mouseY = map(i_mouseY, 0, i_containerHeight, -h_dh, +h_dh);
   lastMouseX = mouseX;
   lastMouseY = mouseY;
+  mouseX = map(i_mouseX, 0, i_containerWidth, -h_dw, +h_dw);
+  mouseY = map(i_mouseY, 0, i_containerHeight, -h_dh, +h_dh);
   isMainSketchActive = true;
 }
 

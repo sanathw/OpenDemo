@@ -1,0 +1,70 @@
+  div.code1
+  {
+    display: inline-block;
+    white-space: nowrap;
+    min-width: 100%;
+    min-height: 100px;
+    
+    border: 1px solid;
+    border-color:#000000 #000000;
+    
+    /* text-transform:lowercase; */
+  }
+  
+  button.notSelected
+  {
+  background: lightgrey;
+  }
+  
+  button.Selected
+  {
+  background: yellow;
+  }
+  
+  button.Info
+  {
+  background: lightblue;
+  }
+  
+  button.Data
+  {
+  background: white;
+  }
+
+  span.smw
+  {
+    color:blue;
+  }
+
+  span.comment
+  {
+    color:green;
+  }
+
+  span.keyword1
+  {
+    color:blue;
+  }
+  
+  span.number
+  {
+    color:orange;
+  }
+  
+  span.string
+  {
+    color:magenta;
+  }
+
+  abc.smw
+  {
+    color:red;
+    
+  }
+  
+  pre
+  {
+    //color:red;
+    font:15px "Courier New"; //"arial";
+    //font-family: Consolas,monospace;
+  }
