@@ -1,44 +1,32 @@
-// http://localhost:5050/0_Sandbox/TestTemplate/main.html
-//.......................................................................
+boolean loop = true;
+var selectedP;
+double Rotation = 0.001;
 
-// mousePressed, mouseX, mouseY
-// debug by println();
+World W = new World();
 
-//PGraphics2D g;
 void setup()
 {
-  //doZoom = false; doTranslate = false; doRotate = false;
-  setSize(300, 300, P2D, FIT_INSIDE, this); // this has to be the last line in this function
+  Setup_Simulation2();
+  setSize(300, 300, P2D, FIT_INSIDE, this);
 }
 
 void drawBackground(var g)
 {
-  //g.gradientBackground2(VERTICAL, color(0,133,123), color(198,224,0));//, 0.5, color(255, 0, 0));
   g.background(255);
 }
 
-//void createG()
-//{
-//  int s = max(sw, sh);
-//  g = createGraphics(s, s, P2D);
-//  g.strokeWeight(1);
-//  g.noFill();
-//  int ss = (s / 2) + (s/6);
-//  g.translate(s/2, ss);
-//}
-
-void loadFile(files)
-{ 
-  var file = files[0]; if (!file) return; var fileReader = new FileReader;
-  fileReader.onload = function()
-  {// do stuff with file here var fileDataBuffer = this.result;
-  }
-  fileReader.readAsArrayBuffer(file);
-}
 
 void draw()
-{
+{ 
+  if (loop == false) return;
   initDraw();
   
-  ellipse(0,0,100,100);
+  if (mousePressed) {selectedP.l.set(mouseX, mouseY, 0); selectedP.v.set(0, 0, 0); selectedP.stuck = false;}
+  
+  W.rotateZ(Rotation);
+  
+  W.update();
+  W.draw();
+  
+  
 }
