@@ -1,6 +1,7 @@
 double Gravity = 1;
 double ConnectLength = 40;
 double BreakLength = 60;
+int collisionPathMemory = 2000;
 
 class World
 {
@@ -28,7 +29,8 @@ class World
     for (int i = 0; i < P.size(); i++)
     {
       var p = P.get(i);
-      p.F = new PVector(0, Gravity, 0);
+      PVector g = new PVector(0, Gravity, 0); 
+      p.F.add(g);
     }
     
     
@@ -44,7 +46,10 @@ class World
     {
       var p = P.get(i);
       p.update();
+      
+      //println(p.l);
     }
+    
     
     
     // create or break springs
@@ -82,27 +87,49 @@ class World
     for (int i = 0; i < P.size(); i++)
     {
       var p = P.get(i);
+      var stickIntersect = null;
+      var stickBoundry = null;
       
       for (int j = 0; j < B.size(); j++)
       {
         var b = B.get(j);
         var minDist = 0;
         
-        // see if the p line and the b line intersect
-        PVector intersect = Utils.line_itersection(p.last_l, p.l, b.a, b.b);
+        //var d = p.l.get();
+        //d.sub(p.last_l[collisionPathMemory-2]);
+        //var m = mag(d.x, d.y, d.z);// < 0.2) 
+        //println(p.l);
+        
+        //for (int k = 1; k < collisionPathMemory; k++)
+        //{
+          //var last_l = p.last_l[k-1];
+          //var l = p.last_l[k];
+          var l = p.l.get();
+          var last_l = p.v.get();
+          last_l.normalize();
+          last_l.mult(-1 * 10);
+          // see if the p line and the b line intersect
+          PVector intersect = Utils.line_itersection(last_l, l, b.a, b.b);
 
-        if (intersect != null) 
-        {
-          //loop = false;
-          var distToBoundy = dist(p.last_l.x, p.last_l.y, p.last_l.z, intersect.x, intersect.y, intersect.z);
-          
-          // keep the closest boundary hit
-          if ((p.stuck == false) || (distToBoundy < minDist))
+          if (intersect != null) 
           {
-            p.stickToPoint(intersect);
-            minDist = distToBoundy;
+            //loop = false;
+            var distToBoundy = dist(l.x, l.y, l.z, intersect.x, intersect.y, intersect.z);
+            
+            // keep the closest boundary hit
+            if ((p.stuck == false) || (distToBoundy < minDist))
+            {
+              stickIntersect = intersect;
+              stickBoundry = b;
+            }
           }
-        }
+        //}
+        
+      }
+      
+      if (stickIntersect != null)
+      {
+        p.stickToPoint(stickIntersect, stickBoundry);
       }
     }
   }

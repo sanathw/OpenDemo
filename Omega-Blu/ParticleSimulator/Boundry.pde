@@ -25,8 +25,8 @@ class Boundry
     
     n = new PVector((a.y - b.y), (b.x - a.x), 0);
     n.normalize();
-    n.mult(10);
-    line(cx, cy, cx+n.x, cy+n.y);
+    //n.mult(10);
+    line(cx, cy, cx+(n.x * 10), cy+(n.y *10));
   }
   
   void rotateZ(double angle)

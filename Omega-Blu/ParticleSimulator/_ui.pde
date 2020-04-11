@@ -1,8 +1,9 @@
-//Container c1;
+Container c1;
 //Button b1;
-//ScrollBar s1;
+LabelBox lRotation;
+ScrollBar sRotation;
 //TextBox t1;
-//LabelBox l1;
+//
 //KeyboardContainer kbContainer;
 //KeyboardCtrl kbctrl1;
 
@@ -22,14 +23,15 @@ void setupUI()
     //setCMGradient(color(255, 0, 0,90), color(0, 0, 255, 0));
     
     //setContainer(null);
-    //c1 = addContainer(0, 0.2, 1, 0.8);
+    c1 = addContainer(0.3, 0, .5, 1); c1.hasBorder = false;
     // add buttons to tab
     
-    //setContainer(c1);
+    setContainer(c1);
     //b1 = addButton(.012, .1, .12, .31, "Triangle");
-    //s1 = addScrollBar(0.012, 0.4, .7, .31, 0, 100, 50);
+    sRotation = addScrollBar(0, 0, 1, .4, -0.2, 0.2, 0);
+    lRotation = addLabelBox(0, 0, 1, .4, "Rot:");
     //t1 = addTextBox(.012, .48, .76, .2, "");
-    //l1 = addLabelBox(.8, .8, .1, .15, "24");
+    //
     //kbContainer = addKeyboardContainer(.14, .78, .632, .2);
     //kbctrl1 = addKeyboardCtrl(0, 0, 1, 1, null);
     //kbctrl1.addLine("1234567890");
@@ -70,9 +72,20 @@ void setupUI()
 //  }
 //}
 
+void updateDisplayInfo()
+{
+  sRotation.curV = Rotation;
+  lRotation.txt = "Rot: " + Rotation.toFixed(2);
+}
+
 void processUI()
 {
   //if (b1 != null && b1.doProcess == true) {}
+  
+  if (sRotation != null && sRotation.doProcess == true) 
+  {
+    Rotation = sRotation.curV;
+  }
 }
 
 
