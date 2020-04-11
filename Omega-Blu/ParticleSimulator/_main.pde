@@ -1,19 +1,22 @@
 boolean loop = true;
-var selectedP;
+var selectedP = null;
 double Rotation = 0.001;
+boolean doRotation = false;
+double Temperature = 0;
+int simulation = 1;
 
 
 World W = new World();
 
 void setup()
 {
-  Setup_Simulation3();
+  setupSimulation();
   setSize(300, 300, P2D, FIT_INSIDE, this);
 }
 
 void drawBackground(var g)
 {
-  g.background(255);
+  g.background(255, 255 *(1-(Temperature/2)), 255 *(1-(Temperature/2)));
 }
 
 
@@ -23,9 +26,9 @@ void draw()
   updateDisplayInfo();
   initDraw();
   
-  //if (mousePressed) {selectedP.l.set(mouseX, mouseY, 0); selectedP.v.set(0, 0, 0); selectedP.stuck = false;}
+  if (mousePressed && selectedP) {selectedP.l.set(mouseX, mouseY, 0); selectedP.v.set(0, 0, 0); selectedP.stuck = false;}
   
-  W.rotateZ(Rotation);
+  if (doRotation) W.rotateZ(Rotation);
   
   W.update();
   W.draw();

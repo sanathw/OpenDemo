@@ -49,6 +49,7 @@ class Particle
   {
     ellipseMode(RADIUS);
     stroke(80, 80, 255, 120); strokeWeight(0.5); fill(100, 100, 255, 90);
+    if (stuck) fill(0,0,190);
     ellipse(l.x, l.y, r, r);
   }
   
@@ -69,8 +70,20 @@ class Particle
   }
   
   void stickToPoint(PVector intersection, Boundry b)
-  { //println("A");
-    var d = FTemp.dot(b.n); // how much of the force is into the wall
+  {
+     if (random() < (Temperature * Temperature))
+     {
+        l.set(intersection.x, intersection.y, intersection.z);
+        v.set(0, 0, 0);
+        a.set(0, 0, 0);
+        F.set(0, 0, 0);
+        stuck = true;
+        return;
+     }
+  
+  
+  
+    var d = FTemp.dot(b.n); // how much of the force is in to the wall
     
     F = b.n.get();
     F.mult(-1 * d); // reaction force;

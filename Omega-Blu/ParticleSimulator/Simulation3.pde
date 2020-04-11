@@ -1,32 +1,31 @@
 void Setup_Simulation3()
 {
-  ////////////////////////////////////////////
-  // SETUP CONSTANTS
-  ParticleRadius = 1;
+  //
+  ParticleRadius = 10;
   ParticleMass = 5;
-  ParticleStickeynessProbability = 0;
-  
-  SpringNaturalLength = 10;
-  SpringConstant = 0.05;
+  //
+  SpringNaturalLength = 40;
+  SpringConstant = 0.25;
   SpringDamping = 0.05;
   
+  //
   Gravity = 0.2;
-  ConnectLength = 20;
-  BreakLength = 40;
+  ConnectLength = 40;
+  BreakLength = 60;
   
   Rotation = 0;
-  ////////////////////////////////////////////
+  Temperature = 0;
   
   
   // Boundries
-  Boundry bLeft = new Boundry(new PVector(-100, -100, 0), new PVector(-100, 100, 0), new PVector(0, 0, 0)); W.addBoundry(bLeft);
-  Boundry bRight = new Boundry(new PVector(100, 100, 0), new PVector(100, -100, 0), new PVector(0, 0, 0)); W.addBoundry(bRight);
-  Boundry bTop = new Boundry(new PVector(100, -100, 0), new PVector(-100, -100, 0), new PVector(0, 0, 0)); W.addBoundry(bTop);
-  Boundry bBottom = new Boundry(new PVector(-100, 100, 0), new PVector(100, 100, 0), new PVector(0, 0, 0)); W.addBoundry(bBottom);
+  Boundry b1 = new Boundry(new PVector(-50, 80, 0), new PVector(70, 90, 0), new PVector(0, 0, 0)); W.addBoundry(b1);
 
   // Particles
-  for (int i = 0; i < 100; i++)
-  {
-    Particle p = new Particle(new PVector(random(40)-20, 80+random(40)-20, 0)); W.addParticle(p);
-  }
+  //Particle p1 = new Particle(new PVector(-30, -80, 0)); p1.F = new PVector(0, 10, 0); W.addParticle(p1);
+  //Particle p2 = new Particle(new PVector(0, 0, 0)); p2.F = new PVector(0, 0.5, 0); W.addParticle(p2);
+  
+  Particle p1 = new Particle(new PVector(-30, -80, 0)); W.addParticle(p1);
+  Particle p2 = new Particle(new PVector(0, 0, 0)); W.addParticle(p2);
+  
+  selectedP = p1;
 }

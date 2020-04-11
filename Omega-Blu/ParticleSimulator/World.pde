@@ -25,6 +25,11 @@ class World
   
   void update()
   {
+  
+    var SpringConstantTemp = SpringConstant / (1+Temperature * 10000);
+    var ConnectLengthTemp = ConnectLength / (1+Temperature * 10);
+    var BreakLengthTemp = BreakLength / (1+Temperature * 10);
+  
     // apply gravity
     for (int i = 0; i < P.size(); i++)
     {
@@ -38,6 +43,7 @@ class World
     for (int i = 0; i < S.size(); i++)
     {
       var s = S.get(i);
+      s.k = SpringConstantTemp;
       s.update();
     }
     
@@ -68,13 +74,16 @@ class World
         
         // create a spring if two particels are close together
         // and the two particel are not already joined
-        if(joiningSpring == null && l <= ConnectLength)
+        if(joiningSpring == null && l <= ConnectLengthTemp)
         {
-          Spring s = new Spring(A, B);
-          S.add(s);
+          //if (A.S.size() < 10 && B.S.size() < 10) // limit the number of spring...because it ake it slow
+          {
+            Spring s = new Spring(A, B);
+            S.add(s);
+          }
         }
         // break the spring if it's too far apart
-        else if(joiningSpring != null && l > BreakLength)
+        else if(joiningSpring != null && l > BreakLengthTemp)
         {
           A.removeSpring(joiningSpring);
           B.removeSpring(joiningSpring);
