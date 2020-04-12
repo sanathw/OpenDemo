@@ -9,23 +9,12 @@ class World
   ArrayList S = new ArrayList(); // list of springs
   ArrayList B = new ArrayList(); // list of boundries
   
-  World()
-  {
-  }
-  
-  void addParticle(Particle p)
-  {
-    P.add(p);
-  }
-  
-  void addBoundry(Boundry b)
-  {
-    B.add(b);
-  }
+  World() { }
+  void addParticle(Particle p) { P.add(p); }
+  void addBoundry(Boundry b) { B.add(b); }
   
   void update()
   {
-  
     var SpringConstantTemp = SpringConstant / (1+Temperature * 10000);
     var ConnectLengthTemp = ConnectLength / (1+Temperature * 10);
     var BreakLengthTemp = BreakLength / (1+Temperature * 10);
@@ -37,7 +26,6 @@ class World
       PVector g = new PVector(0, Gravity, 0); 
       p.F.add(g);
     }
-    
     
     // update the springs
     for (int i = 0; i < S.size(); i++)
@@ -52,11 +40,7 @@ class World
     {
       var p = P.get(i);
       p.update();
-      
-      //println(p.l);
     }
-    
-    
     
     // create or break springs
     for (int i = 0; i < P.size()-1; i++)
@@ -184,7 +168,6 @@ class World
     }
   }
 }
-
 
 
 

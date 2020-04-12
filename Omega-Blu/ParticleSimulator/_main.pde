@@ -4,9 +4,8 @@ double Rotation = 0.001;
 boolean doRotation = false;
 double Temperature = 0;
 int simulation = 1;
-
-
 World W = new World();
+
 
 void setup()
 {
@@ -19,10 +18,10 @@ void drawBackground(var g)
   g.background(255, 255 *(1-(Temperature/2)), 255 *(1-(Temperature/2)));
 }
 
-
 void draw()
-{ 
+{
   if (loop == false) return;
+  
   updateDisplayInfo();
   initDraw();
   
@@ -32,6 +31,4 @@ void draw()
   
   W.update();
   W.draw();
-  
-  
 }
