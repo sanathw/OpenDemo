@@ -13,7 +13,7 @@ void Setup_Simulation2()
   ConnectLength = 30;
   BreakLength = 40;
   
-  Rotation = 0.04;
+  Rotation = 0.02;
   Temperature = 0.02;
   ////////////////////////////////////////////
   
@@ -38,6 +38,53 @@ void Setup_Simulation2()
   Boundry bTop = new Boundry(new PVector(60, -100, 0), new PVector(-60, -100, 0), new PVector(0, 0, 0)); W.addBoundry(bTop);
   Boundry bBottom = new Boundry(new PVector(-60, 100, 0), new PVector(60, 100, 0), new PVector(0, 0, 0)); W.addBoundry(bBottom);
 
+  
+  // Excluded Zones
+  // outside
+  var z = [];
+  z[0] = new PVector(-150, -150);
+  z[1] = new PVector(-60, -150);
+  z[2] = new PVector(-60, 150);
+  z[3] = new PVector(-150, 150);
+  W.addExcludedZone(z);
+  
+  z = [];
+  z[0] = new PVector(150, -150);
+  z[1] = new PVector(60, -150);
+  z[2] = new PVector(60, 150);
+  z[3] = new PVector(150, 150);
+  W.addExcludedZone(z);
+  
+  z = [];
+  z[0] = new PVector(-60, 100);
+  z[1] = new PVector(60, 100);
+  z[2] = new PVector(60, 150);
+  z[3] = new PVector(-60, 150);
+  W.addExcludedZone(z);
+  
+  z = [];
+  z[0] = new PVector(-60, -100);
+  z[1] = new PVector(60, -100);
+  z[2] = new PVector(60, -150);
+  z[3] = new PVector(-60, -150);
+  W.addExcludedZone(z);
+  
+  //left notch
+  z = [];
+  z[0] = new PVector(-60, 10);
+  z[1] = new PVector(-30, 10);
+  z[2] = new PVector(-30, -10);
+  z[3] = new PVector(-60, -10);
+  W.addExcludedZone(z);
+  
+  z = [];
+  z[0] = new PVector(60, 10);
+  z[1] = new PVector(30, 10);
+  z[2] = new PVector(30, -10);
+  z[3] = new PVector(60, -10);
+  W.addExcludedZone(z);
+  
+  
   // Particles
   for (int i = 0; i < 100; i++)
   {
