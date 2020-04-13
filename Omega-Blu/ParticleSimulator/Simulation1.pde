@@ -5,13 +5,13 @@ void Setup_Simulation1()
   ParticleRadius = 3;
   ParticleMass = 5;
   
-  SpringNaturalLength = 20;
+  SpringNaturalLength = 50;//20;
   SpringConstant = 0.05; // 0.05
   SpringDamping = 0.05; // 0.05
   
   Gravity = 0.2;
   ConnectLength = 30;
-  BreakLength = 40;
+  BreakLength = 60;//40;
   
   Rotation = 0.04; // 0.04
   Temperature = 0.02; // 0.02

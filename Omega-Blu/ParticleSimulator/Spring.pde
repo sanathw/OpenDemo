@@ -1,6 +1,7 @@
 double SpringNaturalLength = 40;
 double SpringConstant = 0.25;
 double SpringDamping = 0.05;
+double showSprings = false;
 
 class Spring
 {
@@ -51,7 +52,10 @@ class Spring
   
   void draw()
   {
-    stroke(0, 0, 255, 90); strokeWeight(0.5);
-    line(A.l.x, A.l.y, B.l.x, B.l.y);
+    if (showSprings)
+    {
+      stroke(0, 0, 255, 90); strokeWeight(0.5);
+      line(A.l.x, A.l.y, B.l.x, B.l.y);
+    }
   }
 }

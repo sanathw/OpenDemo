@@ -10,6 +10,8 @@ class World
   ArrayList B = new ArrayList(); // list of boundries
   ArrayList Z = new ArrayList(); // excluded zones
   
+  //ArrayList T = new ArrayList(); // touches
+  
   var stickIntersect = null;
   var stickBoundry = null;
   var minDist = 0;
@@ -20,6 +22,16 @@ class World
   void addParticle(Particle p) { P.add(p); }
   void addBoundry(Boundry b) { B.add(b); }
   void addExcludedZone(var z) { Z.add(z); }
+  //void addTouch(var t) 
+  //{ 
+  //  if (T.size() > 10000)
+  //  {
+  //    int i = (int) random(0, T.size());
+   //   T.remove(i);
+  //  }
+  //  
+  //  T.add(t); 
+  //}
   
   void showCollision() {showRedCOLLISIONLine = true;}
   
@@ -458,6 +470,14 @@ class World
       var p = P.get(i);
       p.draw();
     }
+    
+    // touch
+    //for (int i = 0; i < T.size(); i++)
+    //{
+    //  var t = T.get(i);
+    //  fill(255,0,0); stroke(0), strokeWeight(0.001);
+    //  ellipse(t.x, t.y, 2, 2);
+    //}
   }
   
   void rotateZ(double angle)
@@ -485,6 +505,13 @@ class World
       var p = P.get(i);
       p.rotateZ(angle);
     }
+    
+    // touch
+    //for (int i = 0; i < T.size(); i++)
+    //{
+     // var t = T.get(i);
+     // Utils.rotateZ(t, angle);
+    //}
   }
 }
 

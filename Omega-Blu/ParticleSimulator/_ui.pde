@@ -1,5 +1,7 @@
 Button bSimulation;
 Button bReset;
+Button bShowSprings;
+Button bShowTouch;
 
 Container c1;
 ScrollBar sTemperature; LabelBox lTemperature;
@@ -15,7 +17,10 @@ void setupUI()
     setupCM(SHOW_AS_HORIZONTAL, SHOW_AT_BOTTOM, 3, START_OPENED);
     
     bSimulation =  addButton(0, 0, .1, 1, "Sim:");
-    bReset =  addButton(0.15, 0, .1, 1, "Reset");
+    bReset = addButton(0.11, 0, .1, 1, "Reset");
+    
+    bShowSprings = addButton(0.22, 0, .06, 0.45, "Springs");
+    bShowTouch = addButton(0.22, 0.55, .06, 0.45, "Touch");
     
     c1 = addContainer(0.3, 0, .45, 1); c1.hasBorder = false;
     setContainer(c1);
@@ -39,6 +44,9 @@ void updateDisplayInfo()
   if (!isUiSetup) return;
   
   bSimulation.txt = "Sim: " + simulation;
+  
+  bShowSprings.isOn = showSprings;
+  bShowTouch.isOn = showTouch;
 
   sTemperature.curV = Temperature;
   lTemperature.txt = "Temp: " + Temperature.toFixed(2);
@@ -52,20 +60,7 @@ void updateDisplayInfo()
   else bStopStartRotation.txt = "Start Rot";
 }
 
-void setupSimulation()
-{
-  W = new World();
-  doRotation = false;
-   
-  switch (simulation)
-  {
-    case 1: Setup_Simulation1(); break;
-    case 2: Setup_Simulation2(); break;
-    case 3: Setup_Simulation3(); break;
-    case 4: Setup_Simulation4(); break;
-    case 5: Setup_Simulation5(); break;
-  }
-}
+
 
 void processUI()
 {
@@ -79,6 +74,18 @@ void processUI()
   if (bReset != null && bReset.doProcess == true) 
   {
     setupSimulation();
+  }
+  
+  if (bShowSprings != null && bShowSprings.doProcess == true) 
+  {
+    showSprings = !showSprings;
+  }
+  
+  if (bShowTouch != null && bShowTouch.doProcess == true) 
+  {
+    showTouch = !showTouch;
+    //W.T.clear();
+    g.background(0, 0);
   }
   
   if (sTemperature != null && sTemperature.doProcess == true) 

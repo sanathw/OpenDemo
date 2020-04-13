@@ -85,14 +85,25 @@ class Particle
   void stickToPoint(PVector intersection, Boundry b)
   {
     onEdge = true;
-     if (random() < (Temperature * Temperature))
+    
+    if (!showTouch)
+    {
+       if (random() < (Temperature * Temperature))
+       {
+          l.set(intersection.x, intersection.y, intersection.z);
+          v.set(0, 0, 0);
+          a.set(0, 0, 0);
+          F.set(0, 0, 0);
+          stuck = true;
+          return;
+       }
+     }
+     else
      {
-        l.set(intersection.x, intersection.y, intersection.z);
-        v.set(0, 0, 0);
-        a.set(0, 0, 0);
-        F.set(0, 0, 0);
-        stuck = true;
-        return;
+        var t = intersection.get();
+        Utils.rotateZ(t, -aa);
+        //W.addTouch(t);
+        g.ellipse(t.x, t.y, 1, 1)
      }
   
     //l = intersection.get();
