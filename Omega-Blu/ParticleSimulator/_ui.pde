@@ -2,11 +2,9 @@ Button bSimulation;
 Button bReset;
 Button bShowSprings;
 Button bShowTouch;
-
 Container c1;
 ScrollBar sTemperature; LabelBox lTemperature;
 ScrollBar sRotation; LabelBox lRotation;
-
 Button bStopStartRotation;
 
 boolean isUiSetup = false;
@@ -49,18 +47,16 @@ void updateDisplayInfo()
   bShowTouch.isOn = showTouch;
 
   sTemperature.curV = Temperature;
-  lTemperature.txt = "Temp: " + Temperature.toFixed(2);
+  lTemperature.txt = "Temp: " + Temperature.toFixed(3);
   
   sRotation.curV = Rotation;
-  lRotation.txt = "-    Rot: " + Rotation.toFixed(2) + "    +";
-  sRotation.isDisabled = !doRotation;
+  lRotation.txt = "-    Rot: " + Rotation.toFixed(3) + "    +";
+  //sRotation.isDisabled = !doRotation; // allow the scrollbar to change while not rotating
   lRotation.isDisabled = !doRotation;
   
   if (doRotation) bStopStartRotation.txt = "Stop Rot";
   else bStopStartRotation.txt = "Start Rot";
 }
-
-
 
 void processUI()
 {
@@ -84,7 +80,6 @@ void processUI()
   if (bShowTouch != null && bShowTouch.doProcess == true) 
   {
     showTouch = !showTouch;
-    //W.T.clear();
     g.background(0, 0);
   }
   
@@ -105,7 +100,13 @@ void processUI()
 }
 
 void drawHUD(var g)
-{   
+{ 
+  if (loop == false)
+  {
+    g.fill(255, 0, 0);
+    g.textAlign(LEFT, TOP);
+    g.text("STOPPED", 0, 0);
+  }
 }
 
 void resetData()

@@ -2,29 +2,34 @@ void Setup_Simulation5()
 {
   ////////////////////////////////////////////
   // SETUP CONSTANTS
+  
+  //density
   ParticleRadius = 3;
-  ParticleMass = 5;
+  ParticleMass = 10;
   
-  SpringNaturalLength = 20;
-  SpringConstant = 0.05; // 0.05
-  SpringDamping = 0.05; // 0.05
+  SpringNaturalLength = 50;
+  SpringConstant = 0.05;
+  SpringDamping = 0.05;
   
-  Gravity = 0.2;
   ConnectLength = 30;
-  BreakLength = 40;
+  BreakLength = 60;
   
-  Rotation = 0;
-  Temperature = 0;
+  // Note that this is accelration (i.e. gravity is accelration and not a Force)
+  Gravity = 0.05; 
   
-  //W.showRedCOLLISIONLine = true;
+  // 0 is lossless so full bounce, 1 is total loss so no bounce
+  EnergyLoss =  0.2; 
+  
+  Rotation = 0.01;
+  Temperature = 0.02;
   ////////////////////////////////////////////
   
   
   // Boundries
-  Boundry bLeft = new Boundry(new PVector(-100, -100, 0), new PVector(-100, 100, 0), new PVector(0, 0, 0)); W.addBoundry(bLeft);
-  Boundry bRight = new Boundry(new PVector(100, 100, 0), new PVector(100, -100, 0), new PVector(0, 0, 0)); W.addBoundry(bRight);
-  Boundry bTop = new Boundry(new PVector(100, -100, 0), new PVector(-100, -100, 0), new PVector(0, 0, 0)); W.addBoundry(bTop);
-  Boundry bBottom = new Boundry(new PVector(-100, 100, 0), new PVector(100, 100, 0), new PVector(0, 0, 0)); W.addBoundry(bBottom);
+  Boundry bLeft = new Boundry(new PVector(-100, -100), new PVector(-100, 100)); W.addBoundry(bLeft);
+  Boundry bRight = new Boundry(new PVector(100, 100), new PVector(100, -100)); W.addBoundry(bRight);
+  Boundry bTop = new Boundry(new PVector(100, -100), new PVector(-100, -100)); W.addBoundry(bTop);
+  Boundry bBottom = new Boundry(new PVector(-100, 100), new PVector(100, 100)); W.addBoundry(bBottom);
 
   
   // Excluded Zones
@@ -62,7 +67,7 @@ void Setup_Simulation5()
   // Particles
   for (int i = 0; i < 100; i++)
   {
-    Particle p = new Particle(new PVector(random(40)-20, 80+random(40)-20, 0)); W.addParticle(p);
+    Particle p = new Particle(new PVector(random(40)-20, 40+random(40)-20, 0)); W.addParticle(p);
   }
   
   selectedP = null;

@@ -1,7 +1,7 @@
 double Gravity = 1;
+var EnergyLoss =  0.2;
 double ConnectLength = 40;
 double BreakLength = 60;
-int collisionPathMemory = 100;
 
 class World
 {
@@ -9,30 +9,12 @@ class World
   ArrayList S = new ArrayList(); // list of springs
   ArrayList B = new ArrayList(); // list of boundries
   ArrayList Z = new ArrayList(); // excluded zones
-  
-  //ArrayList T = new ArrayList(); // touches
-  
-  var stickIntersect = null;
-  var stickBoundry = null;
-  var minDist = 0;
-  
   boolean showRedCOLLISIONLine = false;
   
   World() { }
   void addParticle(Particle p) { P.add(p); }
   void addBoundry(Boundry b) { B.add(b); }
   void addExcludedZone(var z) { Z.add(z); }
-  //void addTouch(var t) 
-  //{ 
-  //  if (T.size() > 10000)
-  //  {
-  //    int i = (int) random(0, T.size());
-   //   T.remove(i);
-  //  }
-  //  
-  //  T.add(t); 
-  //}
-  
   void showCollision() {showRedCOLLISIONLine = true;}
   
   void removeSrping(var s)
@@ -47,32 +29,30 @@ class World
     var SpringConstantTemp = SpringConstant / (1+Temperature * 10000);
     var ConnectLengthTemp = ConnectLength;// / (1+Temperature * 10);
     var BreakLengthTemp = BreakLength;// / (1+Temperature * 10);
-  
-    // apply gravity
-    for (int i = 0; i < P.size(); i++)
-    {
-      var p = P.get(i);
-      PVector g = new PVector(0, Gravity, 0); 
-      p.F.add(g);
-    }
     
     // update the springs
-    for (int i = 0; i < S.size(); i++)
+    /*for (int i = 0; i < S.size(); i++)
     {
       var s = S.get(i);
       s.k = SpringConstantTemp;
       s.update();
-    }
+    }*/
     
-    // update the particles
+    // apply gravity and update the particles
+    PVector g = new PVector(0, Gravity, 0); 
     for (int i = 0; i < P.size(); i++)
     {
       var p = P.get(i);
+      
+      // note: f = m x a (i.e. f = m x gravity)
+      var f = g.get();
+      f.mult(p.m); 
+      p.F.add(f);
       p.update();
     }
     
     // create or break springs
-    for (int i = 0; i < P.size()-1; i++)
+    /*for (int i = 0; i < P.size()-1; i++)
     {
       var A = (Particle) P.get(i);
       
@@ -103,74 +83,154 @@ class World
           S.remove(S.indexOf(joiningSpring));
         }
       }
-    }
-    
-    // remove springs that go across boundry
-    /*for (int i =  S.size()-1; i >= 0; i--)
-    {
-      var s = S.get(i);
-     
-      boolean inExcludeZoneA = false;
-      boolean inExcludeZoneB = false;
-      for (int e = 0; e < Z.size(); e++)
-      {
-        var z = Z.get(e);
-        inExcludeZoneA = Utils.pixelInPoly(s.A.l, z);
-        inExcludeZoneB = Utils.pixelInPoly(s.B.l, z);
-        if (inExcludeZoneA && inExcludeZoneB) break;
-      }
-      
-      //if (s.A.onEdge == false && s.B.onEdge == false)
-      //if ((!inExcludeZoneA && !inExcludeZoneB) && (s.A.onEdge == false && s.B.onEdge == false))
-      {
-        var sa = s.A.l.get();
-        var sb = s.B.l.get();
-        stroke(255, 0, 0); strokeWeight(2);
-        line(sa.x, sa.y, sb.x, sb.y);
-        
-        for (int j = 0; j < B.size(); j++)
-        {
-          var b = B.get(j);
-          PVector intersect = Utils.line_itersection(sa, sb, b.a, b.b);
-          if (intersect != null)
-          { println("A");
-            //s.A.removeSpring(s);
-            //s.B.removeSpring(s);
-            //S.remove(S.indexOf(s));
-          }
-        }
-      }
     }*/
     
     
-    // check boundy collision
+    // check collisions
+    checkBoundryCollision(EnergyLoss);
+    checkParticleParticleCollision(EnergyLoss);
+    checkExcludeZoneCollision(EnergyLoss);
+  }
+  
+  
+  void checkBoundryCollision(double EnergyLoss)
+  {
+    for (int j = 0; j < B.size(); j++)
+    {
+      var b = B.get(j);
+      
+      // normalise boundry by moving it to zero, zero corrodinates
+      // and then rotating the boarder to x-axis
+      // so that the problem becomes a simple circle hitting the floor problem
+      // i.e. radius below 0 line
+      var ba = b.a.get();
+      var bb = b.b.get();
+      var center = ba.get();
+      center.add(bb);
+      center.div(-2); // translation to zero, zero offset
+      ba.x += center.x; ba.y += center.y;
+      bb.x += center.x; bb.y += center.y;
+      double angle = -1*atan2(bb.y, bb.x); // rotation to x-axis offset
+      Utils.rotateZ(ba, angle);
+      Utils.rotateZ(bb, angle);
+    
+      //ellipse(center.x, center.y, 10, 10); // center of border
+      //line(ba.x, ba.y, bb.x, bb.y); // normalised border to zero, zero and rotated to x-axis
+
+      // now apply the same transform to the particles and see if it goes below zero
+      for (int i = 0; i < P.size(); i++)
+      {
+        var p = P.get(i);
+        
+        // normalise point to normalised boundry
+        var pl = p.l.get(); 
+        pl.x += center.x; pl.y += center.y;
+        Utils.rotateZ(pl, angle);
+        
+        //fill(255, 0,0); ellipse(pl.x, pl.y, p.r, p.r); // paricle on normalised boundy
+        
+        // collision
+        // see if the ball goes through the boundry line
+        // 1) The circle y must first be below 0 and
+        // 2) if the line ends are on either side of zero then collision at normal line  (i.e. center of circle)
+        // 3) if both ends of the line are on one side, then collison if one point is less than radius (edge)
+        
+        // 1): circle below zero
+        if ((pl.y >= -p.r && pl.y <= p.r))
+        {
+          var reaction = null;
+          
+          // 2): either side of center of ball
+          if ((ba.x <= pl.x && bb.x >= pl.x) || (ba.x >= pl.x && bb.x <= pl.x))
+          {
+            // move it back
+            pl.y = -p.r;
+            Utils.rotateZ(pl, -angle);
+            pl.x -= center.x; pl.y -= center.y;
+            p.l.x = pl.x; p.l.y = pl.y;         
+            
+            // reation is straight back
+            reaction = new PVector(0, -1);
+            var t = b.n.get(); t.mult(p.r); t.add(p.l);
+            
+            doTouch(t);
+          }
+          
+          // 3): edge collision
+          if ((ba.x <= pl.x && bb.x <= pl.x) || (ba.x >= pl.x && bb.x >= pl.x))
+          {
+            var d1 = dist(ba.x, 0, pl.x, pl.y);
+            var d2 = dist(bb.x, 0, pl.x, pl.y);
+            
+            if (d1 <= p.r || d2 <= p.r)
+            {
+              var dx;
+              var dy;
+              
+              // right edge (b)
+              if (pl.x >= bb.x)
+              {
+                // move it to the edge
+                var dd = p.r / min(d1, d2);
+                dx = bb.x + ((pl.x - bb.x) * dd);  
+                dx = dx - pl.x; 
+                dy = (pl.y) * dd;
+                dy = dy - pl.y;
+                
+                // reaction is from edge to center of ball
+                reaction = new PVector(pl.x - bb.x, pl.y);
+                
+                var t = b.b.get();
+                doTouch(t);
+              }
+              
+              // left edge (a)
+              else if (pl.x <= ba.x)
+              {
+                // move it to the edge
+                var dd = p.r / min(d1, d2);
+                dx = ba.x + ((pl.x - ba.x) * dd);
+                dx = dx - pl.x;
+                dy = (pl.y) * dd;
+                dy = dy - pl.y;
+                
+                // reaction is from edge to center of ball
+                reaction = new PVector(pl.x - ba.x, pl.y);
+                
+                var t = b.a.get();
+                doTouch(t);
+              }
+
+              // move it back to the edge
+              pl.x += dx;
+              pl.y += dy;
+              Utils.rotateZ(pl, -angle);
+              pl.x -= center.x; pl.y -= center.y;
+              p.l.x = pl.x; p.l.y = pl.y;
+            }
+          }
+          
+          if (reaction != null)
+          {
+            // apply force
+            reaction.normalize();
+            Utils.rotateZ(reaction, -angle);
+            var d = p.v.dot(reaction);
+            reaction.mult(-(1+(1-EnergyLoss))*d);
+            p.v.add(reaction);
+          }
+        }
+      }
+    }
+  }
+  
+  void checkExcludeZoneCollision(double EnergyLoss)
+  {
+    // check exclude zones
     for (int i = 0; i < P.size(); i++)
     {
       var p = P.get(i);
       
-      if (p.stuck) continue;
-      
-      //var maxDist = 0;
-      //var minDist = 0;
-      var l = p.l;
-      
-      stickIntersect = null;
-      stickBoundry = null;
-      
- //*     
-      // first see if the particle path crosses a boundry.
-      // keep the furthest away intersection
-      lookBack(p);
-      
-      if (stickIntersect != null)
-      {
-        p.stickToPoint(stickIntersect, stickBoundry);
-        continue;
-      }
-   //*/   
- 
-//* 
-      // otherwise check if it's in an exclude zone
       boolean inExcludeZone = false;
       for (int e = 0; e < Z.size(); e++)
       {
@@ -182,208 +242,95 @@ class World
       if (inExcludeZone)
       {
         // definately in exclude zone, so must interset with some boundry;
-        lookAround(p, 10, 0.2);
+        // so extend the hot radius and look around and keep the closest boundry
+        var stickIntersect = null; var stickBoundry = null; var minDist = 0;
         
-        if (stickIntersect != null)
-        {
-          p.stickToPoint(stickIntersect, stickBoundry);
-          continue;
-        }
-        
-        // if still didn't find, then extend the radius and look around
-        minDist = 0;
         for (int r = 0.2; r < 3; r+= 0.2)
         {
-          lookAround(p, 30, r);
+          var retVal = lookAround(p, 30, r, stickIntersect, stickBoundry, minDist);
+          stickIntersect = retVal[0]; stickBoundry = retVal[1]; minDist = retVal[2];
         }
         
         if (stickIntersect != null)
         {
-          p.stickToPoint(stickIntersect, stickBoundry);
-          //continue;
+          // move back to boundry
+          var sb = stickBoundry.n.get();
+          sb.mult(-1 * p.r);
+          sb.add(stickIntersect);
+          p.l.x = sb.x;
+          p.l.y = sb.y;
+          
+          // reaction
+          var v = stickBoundry.n.get();
+          var d = abs(p.v.dot(v));
+          v.mult(-(1+(1-EnergyLoss))*d);
+          p.v.x = v.x;
+          p.v.y = v.y;
+          
+          doTouch(stickIntersect);
         }
-       
       }
- //*/ 
-      
-      
-      
-      
-      
-      
-      
- /////////////////////////////////////////
-/* 
-      boolean inExcludeZone = false;
-      // excluded zones
-      for (int i = 0; i < Z.size(); i++)
-      {
-        var z = Z.get(i);
-        inExcludeZone = Utils.pixelInPoly(p.l, z);
-        if (inExcludeZone) break;
-      }
-      
-      if (inExcludeZone)
-      {  
-
-
-        /*var l = p.l.get();
-        
-        var t = p.v.get();
-        t.normalize();
-        t.mult(-1);
-        
-        for (int i = 1; i < 100; i++)
-        {
-            var last_l = l.get();
-            var tt = t.get();
-            tt.mult(i);
-            last_l.add(tt);
-            
-            stroke(255, 0, 0); strokeWeight(2); line(l.x, l.y, last_l.x, last_l.y); 
-            
-            for (int j = 0; j < B.size(); j++)
-            {
-              var b = B.get(j);
-              PVector intersect = Utils.line_itersection(last_l, l, b.a, b.b);
-              if (intersect != null) 
-              {
-                p.stickToPoint(intersect, b);
-                break;
-              }
-            }
-        }* /
-
-      
-        //println("HELLO");
-      
-        // see which boundry hit it
-      
-        
-          
-        //var d = p.l.get();
-        //d.sub(p.last_l[collisionPathMemory-2]);
-        //var m = mag(d.x, d.y, d.z);// < 0.2) 
-        //println(p.l);
-        
-        //for (int k = 1; k < collisionPathMemory; k++)
-        for (int k = collisionPathMemory-1; k > 0; k--)
-        {
-          var last_l = p.last_l[k-1];
-          var l = p.last_l[k];
-          
-          stroke(255, 0, 0); strokeWeight(2); line(l.x, l.y, last_l.x, last_l.y);          
-            
-          for (int j = 0; j < B.size(); j++)
-          {
-            var b = B.get(j);
-            //var minDist = 0;
-            
-           /* //  SMW
-            var l = p.l.get();
-            var t = p.v.get();// p.v.get();
-            t.normalize();
-            t.mult(-1 * 10);
-            
-            var last_l = l.get();
-            last_l.add(t);
-            
-            
-            var last_lttt = p.ttt.get();
-            //Utils.rotateZ(last_l, Rotation);
-            
-            
-            
-            //t.mult(-1);
-            //l.add(t);
-            
-             //var l = p.last_l[collisionPathMemory-1];
-             //var last_l = p.last_l[collisionPathMemory-2];
-            // Utils.rotateZ(last_l, Rotation);* /
-            
-            //var cc = map(k, 0, collisionPathMemory, 0, 40);
-            
-            
-            
-            // see if the p line and the b line intersect
-            PVector intersect = Utils.line_itersection(last_l, l, b.a, b.b);
-            
-            
-            
-            //p.ttt = last_l.get();
-            
-            //var intersetCirlceLine = Utils.circleLineIntersect(b.a.x, b.a.y, b.b.x, b.b.y, p.l.x, p.l.y, 1);
-            //PVector intersect = null;
-            
-            //if (intersetCirlceLine)
-            //{
-            //  println("A");
-            //}
-
-            if (intersect != null) 
-            {
-              p.stickToPoint(intersect, b);
-              break;
-              //loop = false;
-              //var distToBoundy = dist(l.x, l.y, l.z, intersect.x, intersect.y, intersect.z);
-              
-              // keep the closest boundary hit
-              //if ((p.stuck == false) || (distToBoundy < minDist))
-              //{
-              //  stickIntersect = intersect;
-              //  stickBoundry = b;
-              //}
-            }
-          } //SMW
-          
-        }//
-      }
-      
-      
-      
-      //if (stickIntersect != null)
-      //{
-      //  p.stickToPoint(stickIntersect, stickBoundry);
-      //}
-*/      
-///////////////////////////////////////////
     }
-    
-    
   }
   
-  
-  void lookBack(var p)
+  void doTouch(var p)
   {
-    var l = p.l;
-    var maxDist = 0;
-    var last_l = p.last_l[collisionPathMemory-2];
-    
-    if (showRedCOLLISIONLine) {stroke(255, 0, 0); strokeWeight(2); line(l.x, l.y, last_l.x, last_l.y);}
-    for (int j = 0; j < B.size(); j++)
+    if (showTouch)
     {
-      var b = B.get(j);
-      PVector intersect = Utils.line_itersection(last_l, l, b.a, b.b);
-      
-      if (intersect != null) 
+      var t = new PVector(p.x, p.y);
+      Utils.rotateZ(t, -totalRotation);
+      g.ellipse(t.x, t.y, 1, 1);
+    }
+  }
+  
+  void checkParticleParticleCollision(double EnergyLoss)
+  {
+    for (int i = 0; i < P.size()-1; i++) 
+    {
+      var p1 = P.get(i);
+   
+      for (int j = i + 1; j < P.size(); j++) 
       {
-        var distToBoundy = dist(l.x, l.y, l.z, intersect.x, intersect.y, intersect.z);
+        var p2 = P.get(j);
         
-        // keep the furtherest boundary hit
-        if (distToBoundy >= maxDist)
+        float dx = p2.l.x - p1.l.x;
+        float dy = p2.l.y - p1.l.y;
+        float dist = sqrt(dx * dx + dy * dy);
+        
+        // we need this in case two points overlap exactly and so dist is 0 and divide by zero error 
+        if (dist == 0) return;
+        
+        if (dist < (p2.r + p1.r)) 
         {
-          stickIntersect = intersect;
-          stickBoundry = b;
-          maxDist = distToBoundy;
+          // particles have contact so push back...
+          float normalX = dx / dist;
+          float normalY = dy / dist;
+          float midpointX = (p1.l.x + p2.l.x) / 2;
+          float midpointY = (p1.l.y + p2.l.y) / 2;
+          p1.l.x = midpointX - normalX * p1.r;
+          p1.l.y = midpointY - normalY * p1.r;
+          p2.l.x = midpointX + normalX * p2.r;
+          p2.l.y = midpointY + normalY * p2.r;
+          float dVector = (p1.v.x - p2.v.x) * normalX;
+          dVector += (p1.v.y - p2.v.y) * normalY;
+          float dvx = dVector * normalX * (1-EnergyLoss);
+          float dvy = dVector * normalY * (1-EnergyLoss);
+          p1.v.x -= dvx;
+          p1.v.y -= dvy;
+          p2.v.x += dvx;
+          p2.v.y += dvy;
         }
       }
     }
   }
   
-  void lookAround(var p, var length, var angle)
+  var lookAround(var p, var length, var angle, var _stickIntersect, var _stickBoundry, var _minDist)
   {
-    var l = p.l;
+    var stickIntersect = _stickIntersect;
+    var stickBoundry = _stickBoundry;
+    var minDist = _minDist;
     
+    var l = p.l;
     
     var tc = p.v.get();
     tc.normalize();
@@ -432,6 +379,8 @@ class World
         }
       }
     }
+    
+    return [stickIntersect, stickBoundry, minDist];
   }
   
   void draw()
@@ -470,14 +419,6 @@ class World
       var p = P.get(i);
       p.draw();
     }
-    
-    // touch
-    //for (int i = 0; i < T.size(); i++)
-    //{
-    //  var t = T.get(i);
-    //  fill(255,0,0); stroke(0), strokeWeight(0.001);
-    //  ellipse(t.x, t.y, 2, 2);
-    //}
   }
   
   void rotateZ(double angle)
@@ -498,23 +439,8 @@ class World
       var b = B.get(i);
       b.rotateZ(angle);
     }
-    
-    // particles
-    for (int i = 0; i < P.size(); i++)
-    {
-      var p = P.get(i);
-      p.rotateZ(angle);
-    }
-    
-    // touch
-    //for (int i = 0; i < T.size(); i++)
-    //{
-     // var t = T.get(i);
-     // Utils.rotateZ(t, angle);
-    //}
   }
 }
-
 
 
 // UTILS
@@ -553,25 +479,6 @@ static class Utils
       return new PVector(x1+t*bx, y1+t*by);
     }
     
-    
-    //https://forum.processing.org/one/topic/how-do-i-find-if-a-point-is-inside-a-complex-polygon.html
-    static boolean isInsidePolygon(PVector pos, PVector[] vertices) 
-    {
-      int i;
-      int j=vertices.length-1;
-      int sides = vertices.length;
-      boolean oddNodes = false;
-      for (i=0; i<sides; i++) 
-      {
-        if ((vertices[i].y < pos.y && vertices[j].y >= pos.y || vertices[j].y < pos.y && vertices[i].y >= pos.y) && (vertices[i].x <= pos.x || vertices[j].x <= pos.x)) 
-        {
-              oddNodes^=(vertices[i].x + (pos.y-vertices[i].y)/(vertices[j].y - vertices[i].y)*(vertices[j].x-vertices[i].x)<pos.x);
-        }
-        j=i;
-      }
-      return oddNodes;
-    }
-    
     static boolean pixelInPoly(PVector pos, PVector[] verts) 
     {
       int i;
@@ -590,78 +497,12 @@ static class Utils
       return c;
     }
     
-    static boolean circleLineIntersect(float x1, float y1, float x2, float y2, float cx, float cy, float cr ) 
-    {
-      float dx = x2 - x1;
-      float dy = y2 - y1;
-      float a = dx * dx + dy * dy;
-      float b = 2 * (dx * (x1 - cx) + dy * (y1 - cy));
-      float c = cx * cx + cy * cy;
-      c += x1 * x1 + y1 * y1;
-      c -= 2 * (cx * x1 + cy * y1);
-      c -= cr * cr;
-      float bb4ac = b * b - 4 * a * c;
-      return (bb4ac>=0);
-    }
-    
-  /*  boolean circleLineIntersect(float x1, float y1, float x2, float y2, float cx, float cy, float cr ) 
-    {
-      float dx = x2 - x1;
-      float dy = y2 - y1;
-      float a = dx * dx + dy * dy;
-      float b = 2 * (dx * (x1 - cx) + dy * (y1 - cy));
-      float c = cx * cx + cy * cy;
-      c += x1 * x1 + y1 * y1;
-      c -= 2 * (cx * x1 + cy * y1);
-      c -= cr * cr;
-      float bb4ac = b * b - 4 * a * c;
-
-      //println(bb4ac);
-
-      if (bb4ac < 0) {  // Not intersecting
-        return false;
-      } 
-    else {
-      
-      float mu = (-b + sqrt( b*b - 4*a*c )) / (2*a);
-      float ix1 = x1 + mu*(dx);
-      float iy1 = y1 + mu*(dy);
-      mu = (-b - sqrt(b*b - 4*a*c )) / (2*a);
-      float ix2 = x1 + mu*(dx);
-      float iy2 = y1 + mu*(dy);
-
-      // The intersection points
-      //ellipse(ix1, iy1, 10, 10);
-      //ellipse(ix2, iy2, 10, 10);
-      
-      float testX;
-      float testY;
-      // Figure out which point is closer to the circle
-      if (dist(x1, y1, cx, cy) < dist(x2, y2, cx, cy)) {
-        testX = x2;
-        testY = y2; 
-      } else {
-        testX = x1;
-        testY = y1; 
-      }
-      
-      if (dist(testX, testY, ix1, iy1) < dist(x1, y1, x2, y2) || dist(testX, testY, ix2, iy2) < dist(x1, y1, x2, y2)) {
-        return true;
-      } else {
-        return false;
-      }
-    }
-}*/
-    
     static void rotateZ(Pvector v, double angle)
     {
+      // PVector.rotate (v.rotate(angle);) doesn't work
+      // so:
       PMatrix2D t = new PMatrix2D();
       t.rotate(angle);
       PVector t1 = new PVector(); t.mult(v,v);
-      //var t = new PVector(v.x, v.y);
-      //t.rotate(angle);
-      //t.set(t.x, t.y, t.z);
-      //t.sub(v);
-      //v.add(t);
     }
   }

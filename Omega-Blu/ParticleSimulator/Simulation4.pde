@@ -10,6 +10,8 @@ void Setup_Simulation4()
   SpringDamping = 0.05;
   
   Gravity = 0.2;
+  EnergyLoss =  0.2;
+  
   ConnectLength = 40;
   BreakLength = 100;
   
@@ -19,10 +21,10 @@ void Setup_Simulation4()
   
   
   // Boundries
-  Boundry bLeft = new Boundry(new PVector(-100, -100, 0), new PVector(-100, 100, 0), new PVector(0, 0, 0)); W.addBoundry(bLeft);
-  Boundry bRight = new Boundry(new PVector(100, 100, 0), new PVector(100, -100, 0), new PVector(0, 0, 0)); W.addBoundry(bRight);
-  Boundry bTop = new Boundry(new PVector(100, -100, 0), new PVector(-100, -100, 0), new PVector(0, 0, 0)); W.addBoundry(bTop);
-  Boundry bBottom = new Boundry(new PVector(-100, 100, 0), new PVector(100, 100, 0), new PVector(0, 0, 0)); W.addBoundry(bBottom);
+  Boundry bLeft = new Boundry(new PVector(-100, -100), new PVector(-100, 100)); W.addBoundry(bLeft);
+  Boundry bRight = new Boundry(new PVector(100, 100), new PVector(100, -100)); W.addBoundry(bRight);
+  Boundry bTop = new Boundry(new PVector(100, -100), new PVector(-100, -100)); W.addBoundry(bTop);
+  Boundry bBottom = new Boundry(new PVector(-100, 100), new PVector(100, 100)); W.addBoundry(bBottom);
 
   // Particles
   Particle p1 = new Particle(new PVector(-30, -80, 0)); W.addParticle(p1);

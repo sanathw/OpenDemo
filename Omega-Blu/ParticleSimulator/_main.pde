@@ -1,32 +1,20 @@
 boolean loop = true;
+boolean stopAfter = false;
+
 var selectedP = null;
-double Rotation = 0.001;
+double Rotation = 0;
+double totalRotation = 0;
 boolean doRotation = false;
 double Temperature = 0;
 int simulation = 1;
 boolean showTouch = false;
 World W = new World();
-
 PGraphics2D g;
-double aa = 0;
 
-//boolean sim = 10;
 
 void setup()
 {
-  setupSimulation();
-  //W.rotateZ(PI/3);
-  
-  /*var v1 = new PVector(9, 9);
-  var v2 = [];
-  v2[0] = new PVector(-10, -10);
-  v2[1] = new PVector(10, -10);
-  v2[2] = new PVector(10, 10);
-  v2[3] = new PVector(-10, 10);
-  //var v3 = Utils.isInsidePolygon(v1, v2);
-  var v3 = Utils.pixelInPoly(v1, v2);
-  println(v3); */
-  
+  setupSimulation();  
   setSize(300, 300, P2D, FIT_INSIDE, this);
 }
 
@@ -38,65 +26,31 @@ void drawBackground(var g)
 
 void createG()
 {
-  g = createGraphics(300, 300, P2D);
-  g.strokeWeight(1);
-  g.noFill();
-  g.translate(300/2, 300/2);
-  g.ellipseMode(RADIUS);
-  g.fill(255,0,0); g.stroke(0), g.strokeWeight(0.001);
+  g = createGraphics(sw, sh, P2D);
+  g.translate(sw/2, sh/2);
+  g.ellipseMode(RADIUS); g.fill(255,0,0); g.stroke(0), g.strokeWeight(0.001);
 }
 
-void draw()
+void keyPressed()
 {
-  if (loop == false) return;
+  if ((int)key == ' ') { loop = !loop; stopAfter = false; }
   
-  
-  
-  updateDisplayInfo();
-  initDraw();
-  
-  //sim--;
-  //if (sim > 0) return;
-  //sim =0;
-  
-  if (mousePressed && selectedP) {selectedP.l.set(mouseX, mouseY, 0); selectedP.v.set(0, 0, 0); selectedP.stuck = false;}
-  
-  if (doRotation) {W.rotateZ(Rotation); aa += Rotation}
-  
-  //for (int i = 0; i < 2; i++)
-  W.update();
-  
-  W.draw();
-  
-  pushMatrix();
-  rotate(aa);
-  if (g == null) {createG();}
-  if (g != null)
+  if (key == CODED)
   {
-    imageMode(CENTER);
-    image(g, 0, 0);
+    if (keyCode == RIGHT) {loop = true; stopAfter = true;}
   }
-  popMatrix();
 }
 
 void setupSimulation()
 {
-  if (g != null ) g.background(0, 0);
-  
-  if (W != null)
-  {
-    W.P.clear();
-    W.S.clear();
-    W.B.clear();
-    W.Z.clear();
-  }
-  else
-  {
-  
-  
+  if (g != null ) {g.background(0, 0);}
   W = new World();
-  }
+
+  selectedP = null;
+  Rotation = 0;
+  totalRotation = 0;
   doRotation = false;
+  Temperature = 0;
    
   switch (simulation)
   {
@@ -106,4 +60,32 @@ void setupSimulation()
     case 4: Setup_Simulation4(); break;
     case 5: Setup_Simulation5(); break;
   }
+}
+
+void draw()
+{
+  updateDisplayInfo();
+  initDraw();
+  
+  if (loop)
+  {
+    if (mousePressed && selectedP) {selectedP.l.set(mouseX, mouseY, 0); selectedP.v.set(0, 0, 0);}
+    
+    if (doRotation) {W.rotateZ(Rotation); totalRotation += Rotation}
+    W.update();
+  }
+  W.draw();
+  
+  // display touches
+  if (g == null) {createG();}
+  else
+  {
+    pushMatrix();
+    rotate(totalRotation);
+    imageMode(CENTER);
+    image(g, 0, 0);
+    popMatrix();
+  }
+  
+  if (stopAfter) loop = false;
 }
