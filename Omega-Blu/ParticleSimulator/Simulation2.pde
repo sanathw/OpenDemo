@@ -26,7 +26,7 @@ void Setup_Simulation2()
   ////////////////////////////////////////////
   // MODEL CONFIG
   
-  var numberOfParticles = 100;
+  var numberOfParticles = 300;
     
   // BOX
   var box_top_left    = new PVector(-60, -100);                 var box_top_right   = new PVector(60, -100);

@@ -36,6 +36,7 @@ class World
     for (int i = 0; i < P.size()-1; i++)
     {
       var A = (Particle) P.get(i);
+      int springCount = 0;
       
       for (int j = i+1; j < P.size(); j++)
       {
@@ -51,7 +52,9 @@ class World
             S.add(s);
             s.k = SpringConstant;
             s.update();
-            break;
+            
+            springCount++;
+            if (springCount == 3) break;
           }
         }
       }

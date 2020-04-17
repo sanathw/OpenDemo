@@ -26,7 +26,7 @@ void setupUI()
     lStickProbability = addLabelBox(0, 0, 1, .3, "Stick prob:");
     
     sConnectionProbability = addScrollBar(0, 0.4, 1, .2, 0, 1, 0);
-    lConnectionProbability = addLabelBox(0, 0.4, 1, .2, "Blob prob:");
+    lConnectionProbability = addLabelBox(0, 0.4, 1, .2, "water                Blob prob:                 solid");
     
     sRotation = addScrollBar(0, 0.7, 1, .3, -0.2, 0.2, 0);
     lRotation = addLabelBox(0, 0.7, 1, .3, "Rot:");
@@ -51,7 +51,7 @@ void updateDisplayInfo()
   lStickProbability.txt = "Stick prob: " + StickProbability.toFixed(3);
   
   sConnectionProbability.curV = ConnectionProbability;
-  lConnectionProbability.txt = "Blob prob: " + ConnectionProbability.toFixed(3);
+  lConnectionProbability.txt = "water                Blob prob: " + ConnectionProbability.toFixed(3) + "                solid";
   
   sRotation.curV = Rotation;
   lRotation.txt = "-    Rot: " + Rotation.toFixed(3) + "    +";
