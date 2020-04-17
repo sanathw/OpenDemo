@@ -1,7 +1,9 @@
 double SpringNaturalLength = 40;
 double SpringConstant = 0.25;
 double SpringDamping = 0.05;
-double showSprings = false;
+double ConnectLength = 40;
+double ConnectionProbability = 0;
+double showSprings = true;
 
 class Spring
 {
@@ -21,9 +23,6 @@ class Spring
     PVector seperationVector = B.l.get(); seperationVector.sub(A.l); //B.l - A.l
     cur_l = seperationVector.mag();
     //l = cur_l; // start of with the natural length being the current length
-    
-    A.S.add(this);
-    B.S.add(this);
   }
   
   void update() 
@@ -52,10 +51,7 @@ class Spring
   
   void draw()
   {
-    if (showSprings)
-    {
-      stroke(0, 0, 255, 90); strokeWeight(0.5);
-      line(A.l.x, A.l.y, B.l.x, B.l.y);
-    }
+    stroke(0, 0, 255, 120); strokeWeight(1);
+    line(A.l.x, A.l.y, B.l.x, B.l.y);
   }
 }

@@ -4,9 +4,11 @@ void Setup_Simulation3()
   ParticleRadius = 10;
   ParticleMass = 5;
   //
-  SpringNaturalLength = 40;
-  SpringConstant = 0.25;
+  SpringNaturalLength = 1;
+  SpringConstant = 1;
   SpringDamping = 0.05;
+  ConnectLength = 10;
+  if (simChange) { ConnectionProbability = 0; StickProbability = 0; }
   
   //
   Gravity = 0.2;

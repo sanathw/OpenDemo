@@ -3,17 +3,16 @@ void Setup_Simulation4()
   ////////////////////////////////////////////
   // SETUP CONSTANTS
   ParticleRadius = 10;
-  ParticleMass = 5;
+  ParticleMass = 10;
   
-  SpringNaturalLength = 40;
-  SpringConstant = 0.25;
+  SpringNaturalLength = 20;
+  SpringConstant = 1;
   SpringDamping = 0.05;
+  ConnectLength = 40;
+  if (simChange) { ConnectionProbability = 1; StickProbability = 0; }
   
   Gravity = 0.2;
   EnergyLoss =  0.2;
-  
-  ConnectLength = 40;
-  BreakLength = 100;
   
   Rotation = 0;
   Temperature = 0;

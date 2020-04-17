@@ -1,9 +1,9 @@
 Button bSimulation;
 Button bReset;
-Button bShowSprings;
 Button bShowTouch;
 Container c1;
-ScrollBar sTemperature; LabelBox lTemperature;
+ScrollBar sStickProbability; LabelBox lStickProbability;
+ScrollBar sConnectionProbability; LabelBox lConnectionProbability;
 ScrollBar sRotation; LabelBox lRotation;
 Button bStopStartRotation;
 
@@ -12,22 +12,24 @@ void setupUI()
 {
   with (pjsCM)
   {
-    setupCM(SHOW_AS_HORIZONTAL, SHOW_AT_BOTTOM, 3, START_OPENED);
+    setupCM(SHOW_AS_HORIZONTAL, SHOW_AT_BOTTOM, 4, START_OPENED);
     
     bSimulation =  addButton(0, 0, .1, 1, "Sim:");
     bReset = addButton(0.11, 0, .1, 1, "Reset");
     
-    bShowSprings = addButton(0.22, 0, .06, 0.45, "Springs");
-    bShowTouch = addButton(0.22, 0.55, .06, 0.45, "Touch");
+    bShowTouch = addButton(0.22, 0, .06, 1, "Touch");
     
     c1 = addContainer(0.3, 0, .45, 1); c1.hasBorder = false;
     setContainer(c1);
 
-    sTemperature = addScrollBar(0, 0, 1, .4, 0, 1, 0);
-    lTemperature = addLabelBox(0, 0, 1, .4, "Temp:");
+    sStickProbability = addScrollBar(0, 0, 1, .3, 0, 1, 0);
+    lStickProbability = addLabelBox(0, 0, 1, .3, "Stick prob:");
     
-    sRotation = addScrollBar(0, 0.6, 1, .4, -0.2, 0.2, 0);
-    lRotation = addLabelBox(0, 0.6, 1, .4, "Rot:");
+    sConnectionProbability = addScrollBar(0, 0.4, 1, .2, 0, 1, 0);
+    lConnectionProbability = addLabelBox(0, 0.4, 1, .2, "Connect prob:");
+    
+    sRotation = addScrollBar(0, 0.7, 1, .3, -0.2, 0.2, 0);
+    lRotation = addLabelBox(0, 0.7, 1, .3, "Rot:");
     
     setContainer(null);
     bStopStartRotation = addButton(0.78, 0, .1, 1, "Stop Rot");
@@ -43,11 +45,13 @@ void updateDisplayInfo()
   
   bSimulation.txt = "Sim: " + simulation;
   
-  bShowSprings.isOn = showSprings;
   bShowTouch.isOn = showTouch;
 
-  sTemperature.curV = Temperature;
-  lTemperature.txt = "Temp: " + Temperature.toFixed(3);
+  sStickProbability.curV = StickProbability;
+  lStickProbability.txt = "Stick prob: " + StickProbability.toFixed(3);
+  
+  sConnectionProbability.curV = ConnectionProbability;
+  lConnectionProbability.txt = "Connect prob: " + ConnectionProbability.toFixed(3);
   
   sRotation.curV = Rotation;
   lRotation.txt = "-    Rot: " + Rotation.toFixed(3) + "    +";
@@ -62,6 +66,7 @@ void processUI()
 {
   if (bSimulation != null && bSimulation.doProcess == true) 
   {
+    simChange = true;
     simulation++;
     if (simulation > 5) simulation = 1;
     setupSimulation();
@@ -69,12 +74,8 @@ void processUI()
   
   if (bReset != null && bReset.doProcess == true) 
   {
+    simChange = false;
     setupSimulation();
-  }
-  
-  if (bShowSprings != null && bShowSprings.doProcess == true) 
-  {
-    showSprings = !showSprings;
   }
   
   if (bShowTouch != null && bShowTouch.doProcess == true) 
@@ -83,9 +84,14 @@ void processUI()
     g.background(0, 0);
   }
   
-  if (sTemperature != null && sTemperature.doProcess == true) 
+  if (sStickProbability != null && sStickProbability.doProcess == true) 
   {
-    Temperature = sTemperature.curV;
+    StickProbability = sStickProbability.curV;
+  }
+  
+  if (sConnectionProbability != null && sConnectionProbability.doProcess == true) 
+  {
+    ConnectionProbability = sConnectionProbability.curV;
   }
   
   if (sRotation != null && sRotation.doProcess == true) 

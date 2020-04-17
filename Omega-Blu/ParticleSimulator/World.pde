@@ -1,7 +1,6 @@
 double Gravity = 1;
 var EnergyLoss =  0.2;
-double ConnectLength = 40;
-double BreakLength = 60;
+double StickProbability = 0;
 
 class World
 {
@@ -17,27 +16,8 @@ class World
   void addExcludedZone(var z) { Z.add(z); }
   void showCollision() {showRedCOLLISIONLine = true;}
   
-  void removeSrping(var s)
-  {
-    s.A.removeSpring(s);
-    s.B.removeSpring(s);
-    S.remove(S.indexOf(s));
-  }
-  
   void update()
-  {
-    var SpringConstantTemp = SpringConstant / (1+Temperature * 10000);
-    var ConnectLengthTemp = ConnectLength;// / (1+Temperature * 10);
-    var BreakLengthTemp = BreakLength;// / (1+Temperature * 10);
-    
-    // update the springs
-    /*for (int i = 0; i < S.size(); i++)
-    {
-      var s = S.get(i);
-      s.k = SpringConstantTemp;
-      s.update();
-    }*/
-    
+  {    
     // apply gravity and update the particles
     PVector g = new PVector(0, Gravity, 0); 
     for (int i = 0; i < P.size(); i++)
@@ -51,8 +31,9 @@ class World
       p.update();
     }
     
-    // create or break springs
-    /*for (int i = 0; i < P.size()-1; i++)
+    
+    // create a spring
+    for (int i = 0; i < P.size()-1; i++)
     {
       var A = (Particle) P.get(i);
       
@@ -60,31 +41,21 @@ class World
       {
         var B = (Particle) P.get(j);
         
-        PVector seperationVector = B.l.get(); seperationVector.sub(A.l); //B.l - A.l
-        var l = seperationVector.mag();
+        var d = dist(A.l.x, A.l.y, B.l.x, B.l.y);
         
-        var joiningSpring = A.getAttachedToOtherParticelSpring(B);
-        
-        // create a spring if two particels are close together
-        // and the two particel are not already joined
-        if(joiningSpring == null && l <= ConnectLengthTemp && (!A.stuck && !B.stuck))
+        if (d <= ConnectLength)
         {
-          //if (A.S.size() < 10 && B.S.size() < 10) // limit the number of spring...because it ake it slow
+          if (random() <= ConnectionProbability)
           {
             Spring s = new Spring(A, B);
             S.add(s);
+            s.k = SpringConstant;
+            s.update();
+            break;
           }
         }
-        // break the spring if it's too far apart
-        else if(joiningSpring != null && (l > BreakLengthTemp || (A.stuck || B.stuck)))
-        {
-          A.removeSpring(joiningSpring);
-          B.removeSpring(joiningSpring);
-          S.remove(S.indexOf(joiningSpring));
-        }
       }
-    }*/
-    
+    }
     
     // check collisions
     checkBoundryCollision(EnergyLoss);
@@ -121,6 +92,7 @@ class World
       for (int i = 0; i < P.size(); i++)
       {
         var p = P.get(i);
+        if (p.isStuck) continue;
         
         // normalise point to normalised boundry
         var pl = p.l.get(); 
@@ -153,7 +125,7 @@ class World
             reaction = new PVector(0, -1);
             var t = b.n.get(); t.mult(p.r); t.add(p.l);
             
-            doTouch(t);
+            doTouch(t, p);
           }
           
           // 3): edge collision
@@ -181,7 +153,7 @@ class World
                 reaction = new PVector(pl.x - bb.x, pl.y);
                 
                 var t = b.b.get();
-                doTouch(t);
+                doTouch(t, p);
               }
               
               // left edge (a)
@@ -198,7 +170,7 @@ class World
                 reaction = new PVector(pl.x - ba.x, pl.y);
                 
                 var t = b.a.get();
-                doTouch(t);
+                doTouch(t, p);
               }
 
               // move it back to the edge
@@ -230,6 +202,7 @@ class World
     for (int i = 0; i < P.size(); i++)
     {
       var p = P.get(i);
+      if (p.isStuck) continue;
       
       boolean inExcludeZone = false;
       for (int e = 0; e < Z.size(); e++)
@@ -267,20 +240,22 @@ class World
           p.v.x = v.x;
           p.v.y = v.y;
           
-          doTouch(stickIntersect);
+          doTouch(stickIntersect, p);
         }
       }
     }
   }
   
-  void doTouch(var p)
+  void doTouch(var l, var p)
   {
     if (showTouch)
     {
-      var t = new PVector(p.x, p.y);
+      var t = new PVector(l.x, l.y);
       Utils.rotateZ(t, -totalRotation);
       g.ellipse(t.x, t.y, 1, 1);
     }
+    
+    if (random() <= (StickProbability*StickProbability)) p.isStuck = true;
   }
   
   void checkParticleParticleCollision(double EnergyLoss)
@@ -307,14 +282,24 @@ class World
           float normalY = dy / dist;
           float midpointX = (p1.l.x + p2.l.x) / 2;
           float midpointY = (p1.l.y + p2.l.y) / 2;
-          p1.l.x = midpointX - normalX * p1.r;
-          p1.l.y = midpointY - normalY * p1.r;
-          p2.l.x = midpointX + normalX * p2.r;
-          p2.l.y = midpointY + normalY * p2.r;
+          
+          if (!p1.isStuck)
+          {
+            p1.l.x = midpointX - normalX * p1.r;
+            p1.l.y = midpointY - normalY * p1.r;
+          }
+          
+          if (!p2.isStuck)
+          {
+            p2.l.x = midpointX + normalX * p2.r;
+            p2.l.y = midpointY + normalY * p2.r;
+          }
+          
           float dVector = (p1.v.x - p2.v.x) * normalX;
           dVector += (p1.v.y - p2.v.y) * normalY;
           float dvx = dVector * normalX * (1-EnergyLoss);
           float dvy = dVector * normalY * (1-EnergyLoss);
+          
           p1.v.x -= dvx;
           p1.v.y -= dvy;
           p2.v.x += dvx;
@@ -412,6 +397,7 @@ class World
       var s = S.get(i);
       s.draw();
     }
+    S.clear();
     
     // particles
     for (int i = 0; i < P.size(); i++)
@@ -438,6 +424,13 @@ class World
     {
       var b = B.get(i);
       b.rotateZ(angle);
+    }
+    
+    // particles
+    for (int i = 0; i < P.size(); i++)
+    {
+      var p = P.get(i);
+      p.rotateZ(angle);
     }
   }
 }

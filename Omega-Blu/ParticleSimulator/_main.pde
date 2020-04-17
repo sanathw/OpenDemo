@@ -1,13 +1,14 @@
 boolean loop = true;
 boolean stopAfter = false;
 
+int simulation = 1;
+
 var selectedP = null;
 double Rotation = 0;
 double totalRotation = 0;
 boolean doRotation = false;
-double Temperature = 0;
-int simulation = 1;
 boolean showTouch = false;
+boolean simChange = true;
 World W = new World();
 PGraphics2D g;
 
@@ -20,7 +21,7 @@ void setup()
 
 void drawBackground(var g)
 {
-  var c = map (Temperature, 0, 0.4, 255, 0);
+  var c = 240;
   g.background(255, c, c);
 }
 
@@ -50,7 +51,6 @@ void setupSimulation()
   Rotation = 0;
   totalRotation = 0;
   doRotation = false;
-  Temperature = 0;
    
   switch (simulation)
   {

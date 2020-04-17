@@ -7,12 +7,11 @@ void Setup_Simulation1()
   ParticleRadius = 3;
   ParticleMass = 10;
   
-  SpringNaturalLength = 50;
-  SpringConstant = 0.05;
+  SpringNaturalLength = 1;
+  SpringConstant = 1;
   SpringDamping = 0.05;
-  
-  ConnectLength = 30;
-  BreakLength = 60;
+  ConnectLength = 10;
+  if (simChange) { ConnectionProbability = 0; StickProbability = 0; }
   
   // Note that this is accelration (i.e. gravity is accelration and not a Force)
   Gravity = 0.05; 
@@ -20,9 +19,7 @@ void Setup_Simulation1()
   // 0 is lossless so full bounce, 1 is total loss so no bounce
   EnergyLoss =  0.2; 
   
-  Rotation = 0.01;
-  Temperature = 0.02;
-  
+  Rotation = 0.015;
   
   ////////////////////////////////////////////
   // MODEL CONFIG
