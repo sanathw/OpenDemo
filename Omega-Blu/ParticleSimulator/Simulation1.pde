@@ -7,12 +7,15 @@ void Setup_Simulation1()
   ParticleRadius = 3;
   ParticleMass = 10;
   
+  // Note that these spring values only apply if the ConnectionProbability hits
   SpringNaturalLength = 1;
   SpringConstant = 1;
   SpringDamping = 0.05;
   ConnectLength = 10;
-  if (simChange) { StickProbability = 0; ConnectionProbability = 0; } // stick to wall and blob probability
-                                                                      // if stick to wall then particle get used up
+  
+  if (simChange) { Rotation = 0.015; StickProbability = 0; ConnectionProbability = 0; }
+  // StickProbability is the probability of sticking to a wall
+  // ConnectionProbability is the probability of becoming a blob
   
   // Note that this is accelration (i.e. gravity is accelration and not a Force)
   Gravity = 0.05; 
@@ -20,12 +23,10 @@ void Setup_Simulation1()
   // 0 is lossless so full bounce, 1 is total loss so no bounce
   EnergyLoss =  0.2; 
   
-  Rotation = 0.015;
-  
   ////////////////////////////////////////////
   // MODEL CONFIG
   
-  var numberOfParticles = 100;
+  var numberOfParticles = 300;
   
   // BOX
   var box_top_left    = new PVector(-60, -100);                 var box_top_right   = new PVector(60, -100);

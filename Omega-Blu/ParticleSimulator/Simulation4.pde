@@ -7,12 +7,15 @@ void Setup_Simulation4()
   ParticleRadius = 10;
   ParticleMass = 10;
   
+  // Note that these spring values only apply if the ConnectionProbability hits
   SpringNaturalLength = 20;
   SpringConstant = 1;
   SpringDamping = 0.05;
   ConnectLength = 40;
-  if (simChange) { StickProbability = 0; ConnectionProbability = 1; } // stick to wall and blob probability
-                                                                      // if stick to wall then particle get used up
+  
+  if (simChange) { Rotation = 0; StickProbability = 0; ConnectionProbability = 1; }
+  // StickProbability is the probability of sticking to a wall
+  // ConnectionProbability is the probability of becoming a blob
   
   // Note that this is accelration (i.e. gravity is accelration and not a Force)
   Gravity = 0.2;
@@ -20,8 +23,6 @@ void Setup_Simulation4()
   // 0 is lossless so full bounce, 1 is total loss so no bounce
   EnergyLoss =  0.2;
   
-  Rotation = 0;
-
   ////////////////////////////////////////////
   
   // Boundries
@@ -29,6 +30,7 @@ void Setup_Simulation4()
   Boundry bRight = new Boundry(new PVector(100, 100), new PVector(100, -100)); W.addBoundry(bRight);
   Boundry bTop = new Boundry(new PVector(100, -100), new PVector(-100, -100)); W.addBoundry(bTop);
   Boundry bBottom = new Boundry(new PVector(-100, 100), new PVector(100, 100)); W.addBoundry(bBottom);
+  
 
   // Particles
   Particle p1 = new Particle(new PVector(-30, -80, 0)); W.addParticle(p1);

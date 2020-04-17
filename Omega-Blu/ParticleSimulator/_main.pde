@@ -32,6 +32,8 @@ void createG()
   g.ellipseMode(RADIUS); g.fill(255,0,0); g.stroke(0), g.strokeWeight(0.001);
 }
 
+// On the desktop you can pause/play the simulation by pressing the spacebar
+// and step a frame aa time by pressing the right arrow key
 void keyPressed()
 {
   if ((int)key == ' ') { loop = !loop; stopAfter = false; }
@@ -48,7 +50,6 @@ void setupSimulation()
   W = new World();
 
   selectedP = null;
-  Rotation = 0;
   totalRotation = 0;
   doRotation = false;
    
