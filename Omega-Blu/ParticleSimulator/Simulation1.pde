@@ -57,7 +57,6 @@ void Setup_Simulation1()
   Boundry tR2 = new Boundry(triangle_right_right,  triangle_right_bottom); W.addBoundry(tR2);
   Boundry tR3 = new Boundry(triangle_right_bottom, triangle_right_top); W.addBoundry(tR3);
   
-  
   // Excluded Zones
   // outside left
   var z = [];

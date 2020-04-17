@@ -40,8 +40,12 @@ void Setup_Simulation2()
   var inset_right_top_left    = new PVector(30, -10);           var inset_right_top_right    = new PVector(60, -10);
   var inset_right_bottom_left = new PVector(30, 10);            var inset_right_bottom_right = new PVector(60, 10);
   
+  
+  //_________________________________________________________________________________
   // Boundries
+  
   Boundry b;
+  
   //Left
   b = new Boundry(box_top_left, inset_left_top_left); W.addBoundry(b);
   b = new Boundry(inset_left_top_left, inset_left_top_right); W.addBoundry(b);
@@ -110,7 +114,6 @@ void Setup_Simulation2()
   z[2] = inset_right_bottom_left.get();
   z[3] = inset_right_bottom_right.get();
   W.addExcludedZone(z);
-  
   
   // Particles
   for (int i = 0; i < numberOfParticles; i++)

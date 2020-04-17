@@ -31,7 +31,6 @@ void Setup_Simulation4()
   Boundry bTop = new Boundry(new PVector(100, -100), new PVector(-100, -100)); W.addBoundry(bTop);
   Boundry bBottom = new Boundry(new PVector(-100, 100), new PVector(100, 100)); W.addBoundry(bBottom);
   
-
   // Particles
   Particle p1 = new Particle(new PVector(-30, -80, 0)); W.addParticle(p1);
   Particle p2 = new Particle(new PVector(0, 0, 0)); W.addParticle(p2);

@@ -32,7 +32,7 @@ void Setup_Simulation5()
   var box_top_left    = new PVector(-100, -100);                 var box_top_right   = new PVector(100, -100);
   var box_bottom_left = new PVector(-100, 100);                  var box_bottom_right = new PVector(100, 100);
   
-    //_________________________________________________________________________________
+  //_________________________________________________________________________________
   // Boundries
   
   //Box
