@@ -11,7 +11,8 @@ void Setup_Simulation2()
   SpringConstant = 1;
   SpringDamping = 0.05;
   ConnectLength = 10;
-  if (simChange) { ConnectionProbability = 0;  StickProbability = 0; }
+  if (simChange) { StickProbability = 0; ConnectionProbability = 0; } // stick to wall and blob probability
+                                                                      // if stick to wall then particle get used up
   
   // Note that this is accelration (i.e. gravity is accelration and not a Force)
   Gravity = 0.05; 
@@ -20,8 +21,6 @@ void Setup_Simulation2()
   EnergyLoss =  0.2; 
   
   Rotation = 0.01;
-  Temperature = 0.02;
-  
   
   ////////////////////////////////////////////
   // MODEL CONFIG

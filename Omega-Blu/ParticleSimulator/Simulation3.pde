@@ -1,23 +1,28 @@
 void Setup_Simulation3()
 {
-  //
+  ////////////////////////////////////////////
+  // SETUP CONSTANTS
+  
+  //density
   ParticleRadius = 10;
   ParticleMass = 5;
-  //
+  
   SpringNaturalLength = 1;
   SpringConstant = 1;
   SpringDamping = 0.05;
   ConnectLength = 10;
-  if (simChange) { ConnectionProbability = 0; StickProbability = 0; }
+  if (simChange) { StickProbability = 0; ConnectionProbability = 0; } // stick to wall and blob probability
+                                                                      // if stick to wall then particle get used up
   
-  //
+  // Note that this is accelration (i.e. gravity is accelration and not a Force)
   Gravity = 0.2;
-  ConnectLength = 40;
-  BreakLength = 60;
+  
+  // 0 is lossless so full bounce, 1 is total loss so no bounce
+  EnergyLoss =  0.2;
   
   Rotation = 0;
-  Temperature = 0;
-  
+    
+  ////////////////////////////////////////////
   
   // Boundries
   Boundry b1 = new Boundry(new PVector(-50, 80), new PVector(70, 90)); W.addBoundry(b1);
