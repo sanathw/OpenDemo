@@ -12,11 +12,15 @@ boolean simChange = true;
 World W = new World();
 PGraphics2D g;
 
+int screenWidth = 300;
+int screenHeight = 300;
+double half_screenWidth = screenWidth/ 2;
+double half_screenHeight = screenHeight/ 2;
 
 void setup()
 {
   setupSimulation();  
-  setSize(300, 300, P2D, FIT_INSIDE, this);
+  setSize(screenWidth, screenHeight, P2D, FIT_INSIDE, this);
 }
 
 void drawBackground(var g)
@@ -27,8 +31,8 @@ void drawBackground(var g)
 
 void createG()
 {
-  g = createGraphics(sw, sh, P2D);
-  g.translate(sw/2, sh/2);
+  g = createGraphics(screenWidth, screenHeight, P2D);
+  g.translate(half_screenWidth, half_screenHeight);
   g.ellipseMode(RADIUS); g.fill(255,0,0); g.stroke(0), g.strokeWeight(0.001);
 }
 
@@ -59,7 +63,9 @@ void setupSimulation()
     case 2: Setup_Simulation2(); break;
     case 3: Setup_Simulation3(); break;
     case 4: Setup_Simulation4(); break;
-    case 5: Setup_Simulation5(); break;
+    case 5: Setup_Simulation_smw_a(); break;
+    case 6: Setup_Simulation_smw_b(); break;
+    case 7: Setup_Simulation_smw_c(); break;
   }
 }
 
@@ -73,7 +79,7 @@ void draw()
     if (mousePressed && selectedP) {selectedP.l.set(mouseX, mouseY, 0); selectedP.v.set(0, 0, 0);}
     
     if (doRotation) {W.rotateZ(Rotation); totalRotation += Rotation}
-    W.update();
+    for (int i = 0; i < 1; i++) W.update();
   }
   W.draw();
   

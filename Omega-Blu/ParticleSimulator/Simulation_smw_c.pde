@@ -1,4 +1,4 @@
-void Setup_Simulation1()
+void Setup_Simulation_smw_c()
 {
   ////////////////////////////////////////////
   // SETUP CONSTANTS
@@ -13,7 +13,7 @@ void Setup_Simulation1()
   SpringDamping = 0.05;
   ConnectLength = 10;
   
-  if (simChange) { Rotation = 0.015; StickProbability = 0; ConnectionProbability = 0; }
+  if (simChange) { Rotation = 0.01; StickProbability = 0; ConnectionProbability = 0; }
   // StickProbability is the probability of sticking to a wall
   // ConnectionProbability is the probability of becoming a blob
   
@@ -22,22 +22,16 @@ void Setup_Simulation1()
   
   // 0 is lossless so full bounce, 1 is total loss so no bounce
   EnergyLoss =  0.2; 
-  
+
   ////////////////////////////////////////////
   // MODEL CONFIG
   
-  var numberOfParticles = 300;
+  var numberOfParticles = 100;
   
-  var s = 1; // scale 
+  var s = 1; // scale
   // BOX
-  var box_top_left    = new PVector(-60*s, -100*s);                 var box_top_right   = new PVector(60*s, -100*s);
-  var box_bottom_left = new PVector(-60*s, 100*s);                  var box_bottom_right = new PVector(60*s, 100*s);
-  
-  // LEFT TIANGLE                                                   // RIGHT TIANGLE
-            var triangle_left_top    = new PVector(-30*s, -10*s);   var triangle_right_top    = new PVector(30*s, -10*s);
-  var triangle_left_middle   = new PVector(-50*s, 0*s);                      var triangle_right_middle   = new PVector(50*s, 0*s);
-            var triangle_left_bottom = new PVector(-30*s, 10*s);    var triangle_right_bottom = new PVector(30*s, 10*s);
-  
+  var box_top_left    = new PVector(-100*s, -100*s);                 var box_top_right   = new PVector(100*s, -100*s);
+  var box_bottom_left = new PVector(-100*s, 100*s);                  var box_bottom_right = new PVector(100*s, 100*s);
   
   //_________________________________________________________________________________
   // Boundries
@@ -47,16 +41,6 @@ void Setup_Simulation1()
   Boundry bRight = new Boundry(box_bottom_right, box_top_right); W.addBoundry(bRight);
   Boundry bTop = new Boundry(box_top_right, box_top_left); W.addBoundry(bTop);
   Boundry bBottom = new Boundry(box_bottom_left, box_bottom_right); W.addBoundry(bBottom);
-
-  // Left triangle
-  Boundry tL1 = new Boundry(triangle_left_middle, triangle_left_top); W.addBoundry(tL1);
-  Boundry tL2 = new Boundry(triangle_left_bottom, triangle_left_middle); W.addBoundry(tL2);
-  Boundry tL3 = new Boundry(triangle_left_top, triangle_left_bottom); W.addBoundry(tL3);
-  
-  // Right Triangle
-  Boundry tR1 = new Boundry(triangle_right_top, triangle_right_middle); W.addBoundry(tR1);
-  Boundry tR2 = new Boundry(triangle_right_middle,  triangle_right_bottom); W.addBoundry(tR2);
-  Boundry tR3 = new Boundry(triangle_right_bottom, triangle_right_top); W.addBoundry(tR3);
   
   // Excluded Zones
   // outside left
@@ -89,20 +73,6 @@ void Setup_Simulation1()
   z[1] = box_bottom_left.get();
   z[2] = box_bottom_right.get();
   z[3] = new PVector(half_screenWidth, half_screenHeight);
-  W.addExcludedZone(z);
-  
-  // left triangle
-  z = [];
-  z[0] = triangle_left_middle.get();
-  z[1] = triangle_left_top.get();
-  z[2] = triangle_left_bottom.get();
-  W.addExcludedZone(z);
-  
-  // right triangle
-  z = [];
-  z[0] = triangle_right_middle.get();
-  z[1] = triangle_right_top.get();
-  z[2] = triangle_right_bottom.get();
   W.addExcludedZone(z);
   
   // Particles

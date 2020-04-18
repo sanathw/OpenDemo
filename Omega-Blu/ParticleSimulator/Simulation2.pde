@@ -27,18 +27,19 @@ void Setup_Simulation2()
   // MODEL CONFIG
   
   var numberOfParticles = 300;
-    
+  
+  var s = 1; // scale  
   // BOX
-  var box_top_left    = new PVector(-60, -100);                 var box_top_right   = new PVector(60, -100);
-  var box_bottom_left = new PVector(-60, 100);                  var box_bottom_right = new PVector(60, 100);
+  var box_top_left    = new PVector(-60*s, -100*s);                 var box_top_right   = new PVector(60*s, -100*s);
+  var box_bottom_left = new PVector(-60*s, 100*s);                  var box_bottom_right = new PVector(60*s, 100*s);
   
   // LEFT INSET
-  var inset_left_top_left    = new PVector(-60, -10);           var inset_left_top_right    = new PVector(-30, -10);
-  var inset_left_bottom_left = new PVector(-60, 10);            var inset_left_bottom_right = new PVector(-30, 10);
+  var inset_left_top_left    = new PVector(-60*s, -10*s);           var inset_left_top_right    = new PVector(-30*s, -10*s);
+  var inset_left_bottom_left = new PVector(-60*s, 10*s);            var inset_left_bottom_right = new PVector(-30*s, 10*s);
   
   // RIGHT INSET
-  var inset_right_top_left    = new PVector(30, -10);           var inset_right_top_right    = new PVector(60, -10);
-  var inset_right_bottom_left = new PVector(30, 10);            var inset_right_bottom_right = new PVector(60, 10);
+  var inset_right_top_left    = new PVector(30*s, -10*s);           var inset_right_top_right    = new PVector(60*s, -10*s);
+  var inset_right_bottom_left = new PVector(30*s, 10*s);            var inset_right_bottom_right = new PVector(60*s, 10*s);
   
   
   //_________________________________________________________________________________
@@ -69,34 +70,34 @@ void Setup_Simulation2()
   // Excluded Zones
   // outside left
   var z = [];
-  z[0] = new PVector(-150, 150);
+  z[0] = new PVector(-half_screenWidth, half_screenHeight);
   z[1] = box_bottom_left.get();
   z[2] = box_top_left.get();
-  z[3] = new PVector(-150, -150);
+  z[3] = new PVector(-half_screenWidth, -half_screenHeight);
   W.addExcludedZone(z);
   
   // outside right
   z = [];
-  z[0] = new PVector(150, 150);
+  z[0] = new PVector(half_screenWidth, half_screenHeight);
   z[1] = box_bottom_right.get();
   z[2] = box_top_right.get();
-  z[3] = new PVector(150, -150);
+  z[3] = new PVector(half_screenWidth, -half_screenHeight);
   W.addExcludedZone(z);
   
   // outside top
   z = [];
-  z[0] = new PVector(-150, -150);
+  z[0] = new PVector(-half_screenWidth, -half_screenHeight);
   z[1] = box_top_left.get();
   z[2] = box_top_right.get();
-  z[3] = new PVector(150, -150);
+  z[3] = new PVector(half_screenWidth, -half_screenHeight);
   W.addExcludedZone(z);
   
   // outside bottom
   z = [];
-  z[0] = new PVector(-150, 150);
+  z[0] = new PVector(-half_screenWidth, half_screenHeight);
   z[1] = box_bottom_left.get();
   z[2] = box_bottom_right.get();
-  z[3] = new PVector(150, 150);
+  z[3] = new PVector(half_screenWidth, half_screenHeight);
   W.addExcludedZone(z);
   
   //left inset
@@ -118,7 +119,7 @@ void Setup_Simulation2()
   // Particles
   for (int i = 0; i < numberOfParticles; i++)
   {
-    Particle p = new Particle(new PVector(random(40)-20, 40+random(40)-20, 0)); W.addParticle(p);
+    Particle p = new Particle(new PVector(random(40*s)-20*s, 40*s+random(40*s)-20*s)); W.addParticle(p);
   }
   
   selectedP = null;
