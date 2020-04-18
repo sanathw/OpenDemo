@@ -482,7 +482,7 @@ static class Utils
       boolean c = false;
       int sides = verts.length;
     
-      for (i=0,j=sides-1;i<sides;j=i++) 
+      for (i = 0,j = sides-1; i < sides; j=i++) 
       {
         if (( ((verts[i].y <= pos.y) && (pos.y < verts[j].y)) || ((verts[j].y <= pos.y) && (pos.y < verts[i].y))) &&
             (pos.x < (verts[j].x - verts[i].x) * (pos.y - verts[i].y) / (verts[j].y - verts[i].y) + verts[i].x)) 
