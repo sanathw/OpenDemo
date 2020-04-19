@@ -12,6 +12,7 @@ void Setup_Simulation3()
   SpringConstant = 1;
   SpringDamping = 0.05;
   ConnectLength = 10;
+  MaxSprings = 3; // more springs the more solid, but slower the demo
   
   if (simChange) { Rotation = 0.01; StickProbability = 0; ConnectionProbability = 0; }
   // StickProbability is the probability of sticking to a wall
@@ -33,12 +34,12 @@ void Setup_Simulation3()
   var box_top_left    = new PVector(-37.212, -112);                 var box_top_right   = new PVector(37.212, -112);
   var box_bottom_left = new PVector(-37.212, 112);                  var box_bottom_right = new PVector(37.212, 112);
   
-  // LEFT INSET (starting at y zero)
-  var inset_left_top_left    = new PVector(-37.212, 0);             var inset_left_top_right    = new PVector(-28.727, 0);
-  var inset_left_bottom_left = new PVector(-37.212, 7.0304);        var inset_left_bottom_right = new PVector(-28.727, 7.0304);
+  // INSET TEMPLATE from the left (offset starting at top left corner of box)
+  var inset_left_top_left    = new PVector(0, 0);             var inset_left_top_right    = new PVector(8.485, 0);
+  var inset_left_bottom_left = new PVector(0, 7.0304);        var inset_left_bottom_right = new PVector(8.485, 7.0304);
   
-  // inset left is repeated on the right and also duplicated at y offset intervals as below
-  var inset_offsets_y = [-40, 13.333, 65.454];
+  // INSET repeated on the left and right and also duplicated at y offset intervals from the top of box
+  var inset_offsets_y = [72, 125.333, 177.454];
   
   
   //_________________________________________________________________________________
@@ -60,10 +61,10 @@ void Setup_Simulation3()
   {
     offsety = inset_offsets_y[i] * s;
     
-    var i1 = new PVector(inset_left_top_left.x, inset_left_top_left.y + offsety);
-    var i2 = new PVector(inset_left_top_right.x, inset_left_top_right.y + offsety);
-    var i3 = new PVector(inset_left_bottom_right.x, inset_left_bottom_right.y + offsety);
-    var i4 = new PVector(inset_left_bottom_left.x, inset_left_bottom_left.y + offsety);
+    var i1 = new PVector(box_top_left.x + inset_left_top_left.x,     box_top_left.y + offsety + inset_left_top_left.y);
+    var i2 = new PVector(box_top_left.x + inset_left_top_right.x,    box_top_left.y + offsety + inset_left_top_right.y);
+    var i3 = new PVector(box_top_left.x + inset_left_bottom_right.x, box_top_left.y + offsety + inset_left_bottom_right.y);
+    var i4 = new PVector(box_top_left.x + inset_left_bottom_left.x,  box_top_left.y + offsety + inset_left_bottom_left.y);
     
     b = new Boundry(lastPoint, i1); W.addBoundry(b);
     b = new Boundry(i1, i2); W.addBoundry(b);
@@ -89,10 +90,10 @@ void Setup_Simulation3()
   {
     offsety = inset_offsets_y[i];
     
-    var i1 = new PVector(-inset_left_top_left.x, inset_left_top_left.y + offsety);
-    var i2 = new PVector(-inset_left_top_right.x, inset_left_top_right.y + offsety);
-    var i3 = new PVector(-inset_left_bottom_right.x, inset_left_bottom_right.y + offsety);
-    var i4 = new PVector(-inset_left_bottom_left.x, inset_left_bottom_left.y + offsety);
+    var i1 = new PVector(box_top_right.x-inset_left_top_left.x,      box_top_left.y + offsety + inset_left_top_left.y);
+    var i2 = new PVector(box_top_right.x-inset_left_top_right.x,     box_top_left.y + offsety + inset_left_top_right.y);
+    var i3 = new PVector(box_top_right.x-inset_left_bottom_right.x,  box_top_left.y + offsety + inset_left_bottom_right.y);
+    var i4 = new PVector(box_top_right.x-inset_left_bottom_left.x,   box_top_left.y + offsety + inset_left_bottom_left.y);
     
     b = new Boundry(i1, lastPoint); W.addBoundry(b);
     b = new Boundry(i2, i1); W.addBoundry(b);

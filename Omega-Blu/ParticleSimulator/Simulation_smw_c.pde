@@ -12,6 +12,7 @@ void Setup_Simulation_smw_c()
   SpringConstant = 1;
   SpringDamping = 0.05;
   ConnectLength = 10;
+  MaxSprings = 3; // more springs the more solid, but slower the demo
   
   if (simChange) { Rotation = 0.01; StickProbability = 0; ConnectionProbability = 0; }
   // StickProbability is the probability of sticking to a wall

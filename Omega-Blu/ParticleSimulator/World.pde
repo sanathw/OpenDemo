@@ -1,6 +1,7 @@
 double Gravity = 1;
 var EnergyLoss =  0.2;
 double StickProbability = 0;
+int MaxSprings = 3;
 
 class World
 {
@@ -54,7 +55,7 @@ class World
             s.update();
             
             springCount++;
-            if (springCount == 3) break;
+            if (springCount == MaxSprings) break;
           }
         }
       }
@@ -193,6 +194,8 @@ class World
             var d = p.v.dot(reaction);
             reaction.mult(-(1+(1-EnergyLoss))*d);
             p.v.add(reaction);
+            
+            //p.update(); /////////This makes the particles stick less to the wall..but don't know why it may be needed
           }
         }
       }

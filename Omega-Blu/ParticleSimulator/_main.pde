@@ -78,7 +78,7 @@ void draw()
   {
     if (mousePressed && selectedP) {selectedP.l.set(mouseX, mouseY, 0); selectedP.v.set(0, 0, 0);}
     
-    if (doRotation) {W.rotateZ(Rotation); totalRotation += Rotation}
+    if (doRotation && frameCount % 1 == 0) {W.rotateZ(Rotation); totalRotation += Rotation}
     for (int i = 0; i < 1; i++) W.update();
   }
   W.draw();
