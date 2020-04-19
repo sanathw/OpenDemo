@@ -24,8 +24,10 @@ void Setup_Simulation_smw_b()
   EnergyLoss =  0.2;
   
   ////////////////////////////////////////////
+  // MODEL CONFIG
   
   var s = 1; // scale  
+  
   // Boundries
   Boundry bLeft = new Boundry(new PVector(-100*s, -100*s), new PVector(-100*s, 100*s)); W.addBoundry(bLeft);
   Boundry bRight = new Boundry(new PVector(100*s, 100*s), new PVector(100*s, -100*s)); W.addBoundry(bRight);

@@ -27,24 +27,31 @@ void Setup_Simulation4()
   // MODEL CONFIG
   
   var numberOfParticles = 300;
+  var s = 1; // scale
   
-  var s = 0.9; // scale
   // BOX
-  var box_top_left    = new PVector(-80*s, -113.25*s);                 var box_top_right   = new PVector(80*s, -113.25*s);
-  var box_bottom_left = new PVector(-80*s, 113.25*s);                  var box_bottom_right = new PVector(80*s, 113.25*s);
+  var box_top_left    = new PVector(-72, -101.925);                 var box_top_right   = new PVector(72, -101.925);
+  var box_bottom_left = new PVector(-72, 101.925);                  var box_bottom_right = new PVector(72, 101.925);
   
   // TOP INSET
-  var inset_top_top_left    = new PVector(-69.5*s, -113.25*s);         var inset_top_top_right    = new PVector(69.5*s, -113.25*s);
-  var inset_top_bottom_left = new PVector(-69.5*s, -102.75*s);         var inset_top_bottom_right = new PVector(69.5*s, -102.75*s);
+  var inset_top_top_left    = new PVector(-62.55, -101.925);        var inset_top_top_right    = new PVector(62.55, -101.925);
+  var inset_top_bottom_left = new PVector(-62.55, -92.475);         var inset_top_bottom_right = new PVector(62.55, -92.475);
   
   // BOTTOM INSET
-  var inset_bottom_top_left    = new PVector(-69.5*s, 102.75*s);       var inset_bottom_top_right    = new PVector(69.5*s, 102.75*s);
-  var inset_bottom_bottom_left = new PVector(-69.5*s, 113.25*s);       var inset_bottom_bottom_right = new PVector(69.5*s, 113.25*s);
+  var inset_bottom_top_left    = new PVector(-62.55, 92.475);       var inset_bottom_top_right    = new PVector(62.55, 92.475);
+  var inset_bottom_bottom_left = new PVector(-62.55, 101.925);      var inset_bottom_bottom_right = new PVector(62.55, 101.925);
   
   
   //_________________________________________________________________________________
-  // Boundries
+  //apply scale
+  box_top_left.mult(s);  box_top_right.mult(s);
+  box_bottom_left.mult(s);  box_bottom_right.mult(s);
+  inset_top_top_left.mult(s);  inset_top_top_right.mult(s);
+  inset_top_bottom_left.mult(s);  inset_top_bottom_right.mult(s);
+  inset_bottom_top_left.mult(s);  inset_bottom_top_right.mult(s);
+  inset_bottom_bottom_left.mult(s);  inset_bottom_bottom_right.mult(s);
   
+  // Boundries
   Boundry b;
   
   //Top
@@ -119,7 +126,9 @@ void Setup_Simulation4()
   // Particles
   for (int i = 0; i < numberOfParticles; i++)
   {
-    Particle p = new Particle(new PVector(random(40*s)-20*s, 40*s+random(40*s)-20*s)); W.addParticle(p);
+    PVector l = new PVector(random(40)-20, 40+random(40)-20);
+    l.mult(s);
+    Particle p = new Particle(l); W.addParticle(p);
   }
   
   selectedP = null;

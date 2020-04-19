@@ -27,23 +27,28 @@ void Setup_Simulation3()
   // MODEL CONFIG
   
   var numberOfParticles = 300;
+  var s = 1; // scale  
   
-  var s = 0.8; // scale  
   // BOX
-  var box_top_left    = new PVector(-46.515*s, -140*s);                 var box_top_right   = new PVector(46.515*s, -140*s);
-  var box_bottom_left = new PVector(-46.515*s, 140*s);                  var box_bottom_right = new PVector(46.515*s, 140*s);
+  var box_top_left    = new PVector(-37.212, -112);                 var box_top_right   = new PVector(37.212, -112);
+  var box_bottom_left = new PVector(-37.212, 112);                  var box_bottom_right = new PVector(37.212, 112);
   
   // LEFT INSET (starting at y zero)
-  var inset_left_top_left    = new PVector(-46.515*s, 0*s);             var inset_left_top_right    = new PVector(-35.909*s, 0*s);
-  var inset_left_bottom_left = new PVector(-46.515*s, 8.788*s);         var inset_left_bottom_right = new PVector(-35.909*s, 8.788*s);
+  var inset_left_top_left    = new PVector(-37.212, 0);             var inset_left_top_right    = new PVector(-28.727, 0);
+  var inset_left_bottom_left = new PVector(-37.212, 7.0304);        var inset_left_bottom_right = new PVector(-28.727, 7.0304);
   
   // inset left is repeated on the right and also duplicated at y offset intervals as below
-  var inset_offsets_y = [-50*s, 16.666*s, 81.818*s];
+  var inset_offsets_y = [-40, 13.333, 65.454];
   
   
   //_________________________________________________________________________________
-  // Boundries
+  //apply scale
+  box_top_left.mult(s); box_top_right.mult(s);
+  box_bottom_left.mult(s);   box_bottom_right.mult(s);
+  inset_left_top_left.mult(s);   inset_left_top_right.mult(s);
+  inset_left_bottom_left.mult(s);   inset_left_bottom_right.mult(s);
   
+  // Boundries & Zones
   Boundry b;
   var z = [];
   
@@ -53,7 +58,7 @@ void Setup_Simulation3()
 
   for (int i = 0; i< inset_offsets_y.length; i++)
   {
-    offsety = inset_offsets_y[i];
+    offsety = inset_offsets_y[i] * s;
     
     var i1 = new PVector(inset_left_top_left.x, inset_left_top_left.y + offsety);
     var i2 = new PVector(inset_left_top_right.x, inset_left_top_right.y + offsety);
@@ -148,7 +153,9 @@ void Setup_Simulation3()
   // Particles
   for (int i = 0; i < numberOfParticles; i++)
   {
-    Particle p = new Particle(new PVector(random(40*s)-20*s, 40*s+random(40*s)-20*s)); W.addParticle(p);
+    PVector l = new PVector(random(40)-20, 40+random(40)-20);
+    l.mult(s);
+    Particle p = new Particle(l);W.addParticle(p);
   }
   
   selectedP = null;

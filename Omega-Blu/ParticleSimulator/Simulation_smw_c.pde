@@ -27,15 +27,18 @@ void Setup_Simulation_smw_c()
   // MODEL CONFIG
   
   var numberOfParticles = 100;
-  
   var s = 1; // scale
+  
   // BOX
-  var box_top_left    = new PVector(-100*s, -100*s);                 var box_top_right   = new PVector(100*s, -100*s);
-  var box_bottom_left = new PVector(-100*s, 100*s);                  var box_bottom_right = new PVector(100*s, 100*s);
+  var box_top_left    = new PVector(-100, -100);                 var box_top_right   = new PVector(100, -100);
+  var box_bottom_left = new PVector(-100, 100);                  var box_bottom_right = new PVector(100, 100);
   
   //_________________________________________________________________________________
-  // Boundries
+  //apply scale
+  box_top_left.mult(s);  box_top_right.mult(s);
+  box_bottom_left.mult(s);  box_bottom_right.mult(s);
   
+  // Boundries
   //Box
   Boundry bLeft = new Boundry(box_top_left, box_bottom_left); W.addBoundry(bLeft);
   Boundry bRight = new Boundry(box_bottom_right, box_top_right); W.addBoundry(bRight);
@@ -78,7 +81,9 @@ void Setup_Simulation_smw_c()
   // Particles
   for (int i = 0; i < numberOfParticles; i++)
   {
-    Particle p = new Particle(new PVector(random(40*s)-20*s, 40*s+random(40*s)-20*s)); W.addParticle(p);
+    Pvector l = new PVector(random(40)-20, 40+random(40)-20);
+    l.mult(s);
+    Particle p = new Particle(l); W.addParticle(p);
   }
   
   selectedP = null;

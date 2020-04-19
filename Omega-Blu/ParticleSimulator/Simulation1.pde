@@ -27,21 +27,27 @@ void Setup_Simulation1()
   // MODEL CONFIG
   
   var numberOfParticles = 300;
-  
   var s = 1; // scale 
+  
   // BOX
-  var box_top_left    = new PVector(-60*s, -100*s);                 var box_top_right   = new PVector(60*s, -100*s);
-  var box_bottom_left = new PVector(-60*s, 100*s);                  var box_bottom_right = new PVector(60*s, 100*s);
+  var box_top_left    = new PVector(-60, -100);                 var box_top_right   = new PVector(60, -100);
+  var box_bottom_left = new PVector(-60, 100);                  var box_bottom_right = new PVector(60, 100);
   
   // LEFT TIANGLE                                                   // RIGHT TIANGLE
-            var triangle_left_top    = new PVector(-30*s, -10*s);   var triangle_right_top    = new PVector(30*s, -10*s);
-  var triangle_left_middle   = new PVector(-50*s, 0*s);                      var triangle_right_middle   = new PVector(50*s, 0*s);
-            var triangle_left_bottom = new PVector(-30*s, 10*s);    var triangle_right_bottom = new PVector(30*s, 10*s);
+            var triangle_left_top    = new PVector(-30, -10);   var triangle_right_top    = new PVector(30, -10);
+  var triangle_left_middle   = new PVector(-50, 0);                      var triangle_right_middle   = new PVector(50, 0);
+            var triangle_left_bottom = new PVector(-30, 10);    var triangle_right_bottom = new PVector(30, 10);
   
   
   //_________________________________________________________________________________
-  // Boundries
+  //apply scale
+  box_top_left.mult(s);  box_top_right.mult(s);
+  box_bottom_left.mult(s);  box_bottom_right.mult(s);
+  triangle_left_top.mult(s);  triangle_right_top.mult(s);
+  triangle_left_middle.mult(s);  triangle_right_middle.mult(s);
+  triangle_left_bottom.mult(s);  triangle_right_bottom.mult(s);
   
+  // Boundries
   //Box
   Boundry bLeft = new Boundry(box_top_left, box_bottom_left); W.addBoundry(bLeft);
   Boundry bRight = new Boundry(box_bottom_right, box_top_right); W.addBoundry(bRight);
@@ -108,7 +114,9 @@ void Setup_Simulation1()
   // Particles
   for (int i = 0; i < numberOfParticles; i++)
   {
-    Particle p = new Particle(new PVector(random(40*s)-20*s, 40*s+random(40*s)-20*s)); W.addParticle(p);
+    Pvector l = new PVector(random(40)-20, 40+random(40)-20);
+    l.mult(s);
+    Particle p = new Particle(l); W.addParticle(p);
   }
   
   selectedP = null;
