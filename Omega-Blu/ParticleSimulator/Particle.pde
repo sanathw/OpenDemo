@@ -12,6 +12,9 @@ class Particle
   
   boolean isStuck = false;
   
+  boolean isCornerHit = false;
+  PVector cornerHitPoint = null;
+  
   Particle(PVector _l)
   {
     l = _l.get();

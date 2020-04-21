@@ -68,7 +68,7 @@ void processUI()
   {
     simChange = true;
     simulation++;
-    if (simulation > 7) simulation = 1;
+    if (simulation > 8) simulation = 1;
     setupSimulation();
   }
   

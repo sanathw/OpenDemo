@@ -4,88 +4,40 @@ void Setup_Simulation_smw_c()
   // SETUP CONSTANTS
   
   //density
-  ParticleRadius = 3;
+  ParticleRadius = 10;
   ParticleMass = 10;
   
   // Note that these spring values only apply if the ConnectionProbability hits
-  SpringNaturalLength = 1;  // Ideally should be 2 x ParticleRadius. If this is 2 x ParticleRadius or greater then more viscous. If less there is more solid, but more force to fly off.
+  SpringNaturalLength = 20;  // Ideally should be 2 x ParticleRadius. If this is 2 x ParticleRadius or greater then more viscous. If less there is more solid, but more force to fly off.
   SpringConstant = 1;       // Low values more viscous, High values more solid
   SpringDamping = 0.05;     // Low values more viscous, High values more solid
-  ConnectLength = 10;       // Ideally around 2 x ParticleRadius. But should be >= SpringNaturalLength. The greater the value the more viscous
-  MaxSprings = 3;           // Less springs the more viscous. More springs the more solid, but the demo will run slower
+  ConnectLength = 40;       // Ideally around 2 x ParticleRadius. But should be >= SpringNaturalLength. The greater the value the more viscous
+  MaxSprings = 8;           // Less springs the more viscous. More springs the more solid, but the demo will run slower
   
-  if (simChange) { Rotation = 0.01; StickProbability = 0; ConnectionProbability = 0; }
+  if (simChange) { Rotation = 0; StickProbability = 0; ConnectionProbability = 1; }
   // StickProbability is the probability of sticking to a wall
   // ConnectionProbability is the probability of becoming a blob
   
   // Note that this is accelration (i.e. gravity is accelration and not a Force)
-  Gravity = 0.05; 
+  Gravity = 0.2;
   
   // 0 is lossless so full bounce, 1 is total loss so no bounce
-  EnergyLoss =  0.2; 
-
+  EnergyLoss =  0;
+  
   ////////////////////////////////////////////
   // MODEL CONFIG
   
-  var numberOfParticles = 100;
-  var s = 1; // scale
-  
-  // BOX
-  var box_top_left    = new PVector(-100, -100);                 var box_top_right   = new PVector(100, -100);
-  var box_bottom_left = new PVector(-100, 100);                  var box_bottom_right = new PVector(100, 100);
-  
-  //_________________________________________________________________________________
-  //apply scale
-  box_top_left.mult(s);  box_top_right.mult(s);
-  box_bottom_left.mult(s);  box_bottom_right.mult(s);
+  var s = 1; // scale  
   
   // Boundries
-  //Box
-  Boundry bLeft = new Boundry(box_top_left, box_bottom_left); W.addBoundry(bLeft);
-  Boundry bRight = new Boundry(box_bottom_right, box_top_right); W.addBoundry(bRight);
-  Boundry bTop = new Boundry(box_top_right, box_top_left); W.addBoundry(bTop);
-  Boundry bBottom = new Boundry(box_bottom_left, box_bottom_right); W.addBoundry(bBottom);
-  
-  // Excluded Zones
-  // outside left
-  var z = [];
-  z[0] = new PVector(-half_screenWidth, half_screenHeight);
-  z[1] = box_bottom_left.get();
-  z[2] = box_top_left.get();
-  z[3] = new PVector(-half_screenWidth, -half_screenHeight);
-  W.addExcludedZone(z);
-  
-  // outside right
-  z = [];
-  z[0] = new PVector(half_screenWidth, half_screenHeight);
-  z[1] = box_bottom_right.get();
-  z[2] = box_top_right.get();
-  z[3] = new PVector(half_screenWidth, -half_screenHeight);
-  W.addExcludedZone(z);
-  
-  // outside top
-  z = [];
-  z[0] = new PVector(-half_screenWidth, -half_screenHeight);
-  z[1] = box_top_left.get();
-  z[2] = box_top_right.get();
-  z[3] = new PVector(half_screenWidth, -half_screenHeight);
-  W.addExcludedZone(z);
-  
-  // outside bottom
-  z = [];
-  z[0] = new PVector(-half_screenWidth, half_screenHeight);
-  z[1] = box_bottom_left.get();
-  z[2] = box_bottom_right.get();
-  z[3] = new PVector(half_screenWidth, half_screenHeight);
-  W.addExcludedZone(z);
+  Boundry bLeft = new Boundry(new PVector(-100*s, -100*s), new PVector(-100*s, 100*s)); W.addBoundry(bLeft);
+  Boundry bRight = new Boundry(new PVector(100*s, 100*s), new PVector(100*s, -100*s)); W.addBoundry(bRight);
+  Boundry bTop = new Boundry(new PVector(100*s, -100*s), new PVector(-100*s, -100*s)); W.addBoundry(bTop);
+  Boundry bBottom = new Boundry(new PVector(-100*s, 100*s), new PVector(100*s, 100*s)); W.addBoundry(bBottom);
   
   // Particles
-  for (int i = 0; i < numberOfParticles; i++)
-  {
-    Pvector l = new PVector(random(40)-20, 40+random(40)-20);
-    l.mult(s);
-    Particle p = new Particle(l); W.addParticle(p);
-  }
+  Particle p1 = new Particle(new PVector(-30*s, -80*s)); W.addParticle(p1);
+  Particle p2 = new Particle(new PVector(0*s, 0*s)); W.addParticle(p2);
   
-  selectedP = null;
+  selectedP = p1;
 }

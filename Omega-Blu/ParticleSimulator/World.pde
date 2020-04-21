@@ -37,11 +37,14 @@ class World
     for (int i = 0; i < P.size()-1; i++)
     {
       var A = (Particle) P.get(i);
+      if (A.isStuck) continue;
+      
       int springCount = 0;
       
       for (int j = i+1; j < P.size(); j++)
       {
         var B = (Particle) P.get(j);
+        if (B.isStuck) continue;
         
         var d = dist(A.l.x, A.l.y, B.l.x, B.l.y);
         
@@ -62,14 +65,21 @@ class World
     }
     
     // check collisions
-    checkBoundryCollision(EnergyLoss);
     checkParticleParticleCollision(EnergyLoss);
+    checkBoundryCollision(EnergyLoss);
     checkExcludeZoneCollision(EnergyLoss);
   }
   
-  
   void checkBoundryCollision(double EnergyLoss)
   {
+    // keep a note of the last particle locations
+    // to be used for edge point collion velocity
+    for (int i = 0; i < P.size(); i++) 
+    {
+      var p = P.get(i);
+      p.isCornerHit = false;
+    }
+    
     for (int j = 0; j < B.size(); j++)
     {
       var b = B.get(j);
@@ -89,6 +99,7 @@ class World
       Utils.rotateZ(ba, angle);
       Utils.rotateZ(bb, angle);
     
+      // DEBUG
       //ellipse(center.x, center.y, 10, 10); // center of border
       //line(ba.x, ba.y, bb.x, bb.y); // normalised border to zero, zero and rotated to x-axis
 
@@ -103,100 +114,116 @@ class World
         pl.x += center.x; pl.y += center.y;
         Utils.rotateZ(pl, angle);
         
+        // DEBUG
         //fill(255, 0,0); ellipse(pl.x, pl.y, p.r, p.r); // paricle on normalised boundy
         
         // collision
         // see if the ball goes through the boundry line
         // 1) The circle y must first be below 0 and
         // 2) if the line ends are on either side of zero then collision at normal line  (i.e. center of circle)
-        // 3) if both ends of the line are on one side, then collison if one point is less than radius (edge)
+        // 3) otherwise if one side is less than radius, then it's on a CORNER
         
         // 1): circle below zero
         if ((pl.y >= -p.r && pl.y <= p.r))
-        {
-          var reaction = null;
-          
+        { 
           // 2): either side of center of ball
-          if ((ba.x <= pl.x && bb.x >= pl.x) || (ba.x >= pl.x && bb.x <= pl.x))
+          if ( ((ba.x <= pl.x && bb.x >= pl.x) || (ba.x >= pl.x && bb.x <= pl.x)))
           {
             // move it back
             pl.y = -p.r;
             Utils.rotateZ(pl, -angle);
             pl.x -= center.x; pl.y -= center.y;
-            p.l.x = pl.x; p.l.y = pl.y;         
             
             // reation is straight back
-            reaction = new PVector(0, -1);
-            var t = b.n.get(); t.mult(p.r); t.add(p.l);
-            
-            doTouch(t, p);
-          }
-          
-          // 3): edge collision
-          if ((ba.x <= pl.x && bb.x <= pl.x) || (ba.x >= pl.x && bb.x >= pl.x))
-          {
-            var d1 = dist(ba.x, 0, pl.x, pl.y);
-            var d2 = dist(bb.x, 0, pl.x, pl.y);
-            
-            if (d1 <= p.r || d2 <= p.r)
-            {
-              var dx;
-              var dy;
-              
-              // right edge (b)
-              if (pl.x >= bb.x)
-              {
-                // move it to the edge
-                var dd = p.r / min(d1, d2);
-                dx = bb.x + ((pl.x - bb.x) * dd);  
-                dx = dx - pl.x; 
-                dy = (pl.y) * dd;
-                dy = dy - pl.y;
-                
-                // reaction is from edge to center of ball
-                reaction = new PVector(pl.x - bb.x, pl.y);
-                
-                var t = b.b.get();
-                doTouch(t, p);
-              }
-              
-              // left edge (a)
-              else if (pl.x <= ba.x)
-              {
-                // move it to the edge
-                var dd = p.r / min(d1, d2);
-                dx = ba.x + ((pl.x - ba.x) * dd);
-                dx = dx - pl.x;
-                dy = (pl.y) * dd;
-                dy = dy - pl.y;
-                
-                // reaction is from edge to center of ball
-                reaction = new PVector(pl.x - ba.x, pl.y);
-                
-                var t = b.a.get();
-                doTouch(t, p);
-              }
+            var reaction = new PVector(pl.x - p.l.x, pl.y - p.l.y);
+            p.l.x = pl.x; p.l.y = pl.y;
 
-              // move it back to the edge
-              pl.x += dx;
-              pl.y += dy;
-              Utils.rotateZ(pl, -angle);
-              pl.x -= center.x; pl.y -= center.y;
-              p.l.x = pl.x; p.l.y = pl.y;
+            var t = b.n.get(); t.mult(p.r); t.add(p.l);
+            doTouch(t, p);
+
+            // apply force
+            
+            var t = reaction.get();
+            t.normalize();
+            var d = t.dot(p.v);
+          
+            // ONLY APPLY FORCE IF IT NEEDS TO BE OPPOSITE THE CURRENT PARTICLE DIRECTION
+            // Otherwise paricles can stick to the wall!
+            // For example, if a particle is on a boundry and if the velocity is out of the boundry 
+            // (i.e. it's already going in the right direction out of the boundry),
+            // then without this negative check, it will try and push the particle velocity more into the wall.
+            if (d < 0)
+            {
+              reaction.normalize();
+              reaction.mult(-(1+(1-EnergyLoss))*d);
+              p.v.add(reaction);
+            }
+            else
+            {
+              reaction.mult((1-EnergyLoss));
+              p.v.add(reaction);
+            }
+          }
+          else
+          {
+            // 3): CORNER hit
+            boolean hitA = false;
+            boolean hitB = false;
+        
+            if (dist(pl.x, pl.y, ba.x, ba.y) <= p.r) hitA = true;
+            if (dist(pl.x, pl.y, bb.x, bb.y) <= p.r) hitB = true;
+            if (hitA || hitB )
+            { 
+              p.isCornerHit = true;
+              if (hitA) p.cornerHitPoint = b.a.get();
+              else p.cornerHitPoint = b.b.get();
+              // NOTE: the actual reaction is calculate in seperate for loop below
             }
           }
           
-          if (reaction != null)
-          {
-            // apply force
-            reaction.normalize();
-            Utils.rotateZ(reaction, -angle);
-            var d = p.v.dot(reaction);
-            reaction.mult(-(1+(1-EnergyLoss))*d);
-            p.v.add(reaction);
+        }
+      }
+    }
+    
+    // apply the Corner force
+    for (int i = 0; i < P.size(); i++) 
+    {
+      var p = P.get(i);
+      
+      if (p.isCornerHit)
+      {
+        // DEBUG
+        //fill(255, 0, 0); ellipse(p.l.x, p.l.y, 5, 5);
             
-            //p.update(); /////////This makes the particles stick less to the wall..but don't know why it may be needed
-          }
+        PVector pl = p.cornerHitPoint.get();
+        pl.sub(p.l);
+        pl.normalize();
+        pl.mult(-p.r);
+        pl.add(p.cornerHitPoint);
+        
+        // before moving it back to the corner, calculate the reaction force
+        var reaction = new PVector(pl.x - p.l.x, pl.y - p.l.y);
+        p.l.x = pl.x;
+        p.l.y = pl.y;
+        
+        doTouch(p.cornerHitPoint, p);
+        
+        var t = reaction.get();
+        t.normalize();
+        var d = t.dot(p.v);
+        
+        // ONLY APPLY FORCE IF IT NEEDS TO BE OPPOSITE THE CURRENT PARTICLE DIRECTION
+        // (as above)
+        if (d < 0)
+        {
+          reaction.normalize();
+          reaction.mult(-(1+(1-EnergyLoss))*d);
+          p.v.add(reaction);
+        }
+        else
+        {
+          reaction.mult((1-EnergyLoss));
+          p.v.add(reaction);
         }
       }
     }
@@ -214,6 +241,9 @@ class World
       for (int e = 0; e < Z.size(); e++)
       {
         var z = Z.get(e);
+        
+        // Note: we are checking if the point in the center of the circle is inside a polygon
+        // we can do this becacuse the outside of the circle should have been caught by checkBoundryCollision()
         inExcludeZone = Utils.pixelInPoly(p.l, z);
         if (inExcludeZone) break;
       }
@@ -236,15 +266,28 @@ class World
           var sb = stickBoundry.n.get();
           sb.mult(-1 * p.r);
           sb.add(stickIntersect);
+          
+          var reaction = new PVector(sb.x - p.l.x, sb.y - p.l.y);
           p.l.x = sb.x;
           p.l.y = sb.y;
-          
+
           // reaction
-          var v = stickBoundry.n.get();
-          var d = abs(p.v.dot(v));
-          v.mult(-(1+(1-EnergyLoss))*d);
-          p.v.x = v.x;
-          p.v.y = v.y;
+          var t = reaction.get();
+          t.normalize();
+          var d = t.dot(p.v);
+          
+          // ONLY APPLY FORCE IF IT NEEDS TO BE OPPOSITE THE CURRENT PARTICLE DIRECTION
+          if (d < 0)
+          {
+            reaction.normalize();
+            reaction.mult(-(1+(1-EnergyLoss))*d);
+            p.v.add(reaction);
+          }
+          else
+          {
+            reaction.mult((1-EnergyLoss));
+            p.v.add(reaction);
+          }
           
           doTouch(stickIntersect, p);
         }

@@ -12,17 +12,17 @@ void Setup_Simulation_smw_b()
   SpringConstant = 1;       // Low values more viscous, High values more solid
   SpringDamping = 0.05;     // Low values more viscous, High values more solid
   ConnectLength = 40;       // Ideally around 2 x ParticleRadius. But should be >= SpringNaturalLength. The greater the value the more viscous
-  MaxSprings = 3;           // Less springs the more viscous. More springs the more solid, but the demo will run slower
+  MaxSprings = 8;           // Less springs the more viscous. More springs the more solid, but the demo will run slower
   
-  if (simChange) { Rotation = 0; StickProbability = 0; ConnectionProbability = 1; }
+  if (simChange) { Rotation = 0; StickProbability = 0; ConnectionProbability = 0; }
   // StickProbability is the probability of sticking to a wall
   // ConnectionProbability is the probability of becoming a blob
   
   // Note that this is accelration (i.e. gravity is accelration and not a Force)
-  Gravity = 0.2;
+  Gravity = 0.0;
   
   // 0 is lossless so full bounce, 1 is total loss so no bounce
-  EnergyLoss =  0.2;
+  EnergyLoss =  0;
   
   ////////////////////////////////////////////
   // MODEL CONFIG
@@ -36,8 +36,9 @@ void Setup_Simulation_smw_b()
   Boundry bBottom = new Boundry(new PVector(-100*s, 100*s), new PVector(100*s, 100*s)); W.addBoundry(bBottom);
   
   // Particles
-  Particle p1 = new Particle(new PVector(-30*s, -80*s)); W.addParticle(p1);
-  Particle p2 = new Particle(new PVector(0*s, 0*s)); W.addParticle(p2);
+  Particle p1 = new Particle(new PVector(-30*s, 0*s)); W.addParticle(p1);
+  Particle p2 = new Particle(new PVector(30*s, 0*s)); W.addParticle(p2);
+  p1.v = new PVector(3,0);
   
   selectedP = p1;
 }

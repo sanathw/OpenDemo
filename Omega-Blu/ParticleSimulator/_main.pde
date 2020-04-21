@@ -66,6 +66,7 @@ void setupSimulation()
     case 5: Setup_Simulation_smw_a(); break;
     case 6: Setup_Simulation_smw_b(); break;
     case 7: Setup_Simulation_smw_c(); break;
+    case 8: Setup_Simulation_smw_d(); break;
   }
 }
 
@@ -81,6 +82,22 @@ void draw()
     if (doRotation && frameCount % 1 == 0) {W.rotateZ(Rotation); totalRotation += Rotation}
     for (int i = 0; i < 1; i++) W.update();
   }
+  else
+  {
+    // DEBUG
+    // remove particle if clicked
+    /*if (mousePressed && !pmousePressed)
+    {
+      for (int i = 0; i < W.P.size(); i++)
+      {
+        var p = W.P.get(i);
+        var d = dist(p.l.x, p.l.y, mouseX, mouseY);
+        if (d <= p.r) { W.P.remove(i); break; }
+      }
+    }*/
+  }
+  
+  
   W.draw();
   
   // display touches
