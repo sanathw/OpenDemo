@@ -1,10 +1,10 @@
-void Setup_Simulation_smw_d()
+void Setup_Simulation_smw_e()
 {
   ////////////////////////////////////////////
   // SETUP CONSTANTS
   
   //density
-  ParticleRadius = 10;
+  ParticleRadius = 3;
   ParticleMass = 10;
   
   // Note that these spring values only apply if the ConnectionProbability hits
@@ -51,17 +51,6 @@ void Setup_Simulation_smw_d()
   Boundry bTop = new Boundry(box_top_right, box_top_left); W.addBoundry(bTop);
   Boundry bBottom = new Boundry(box_bottom_left, box_bottom_right); W.addBoundry(bBottom);
   
-  Boundry t1 = new Boundry(triangle_left, triangle_top); W.addBoundry(t1);
-  Boundry t2 = new Boundry(triangle_right, triangle_left); W.addBoundry(t2);
-  Boundry t3 = new Boundry(triangle_top, triangle_right); W.addBoundry(t3);
-  
-  // add one particle
-  
-  Pvector l = new PVector(random(6)-3, -20); 
-  l.x = 0.45326171245805114; l.mult(s); 
-  Particle p = new Particle(l); W.addParticle(p);
-  debugMessage = "" + l.get();
-  
   // Excluded Zones
   // outside left
   var z = [];
@@ -96,12 +85,17 @@ void Setup_Simulation_smw_d()
   W.addExcludedZone(z);
   
   // Particles
-  for (int i = 0; i < numberOfParticles; i++)
+  AddSpecialParicles = true;
+  
+  /*for (int i = 0; i < 10; i++)
   {
-    Pvector l = new PVector(random(40)-20, 40+random(40)-20);
-    l.mult(s);
-    Particle p = new Particle(l); W.addParticle(p);
-  }
+    for (int j = 0; j < 10; j++)
+    {
+      Pvector l = new PVector(-20+i*6, 20+j*6);
+      l.mult(s);
+      Particle p = new Particle(l); W.addParticle(p);
+    }
+  }*/
   
   selectedP = null;
 }

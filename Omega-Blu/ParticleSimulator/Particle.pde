@@ -12,8 +12,12 @@ class Particle
   
   boolean isStuck = false;
   
+  boolean isMiddleHit = false;
   boolean isCornerHit = false;
-  PVector cornerHitPoint = null;
+  PVector cornerHitPoint = null; 
+
+  int springCount = 0;
+  ArrayList S = new ArrayList();
   
   Particle(PVector _l)
   {
@@ -44,11 +48,21 @@ class Particle
     
     if (this == selectedP) 
     {
+      debugHUDMessage1 = "location: [" + l.x + ", " + l.y + "]";
+      debugHUDMessage2 = "velocity: [" + v.x + ", " + v.y + "]";
+      
       fill(0, 255, 0);
       if (isStuck) fill(0, 100, 0);
     }
     ellipse(l.x, l.y, r, r);
     //if (isNaN(l.x)) {println("NAN"); loop=false;}
+    
+    if (showVelocity)
+    {
+      //stroke(198, 28, 234);
+      stroke(0);
+      strokeWeight(0.5); line(l.x, l.y, l.x+v.x*r, l.y+v.y*r);
+    }
   }
   
   void rotateZ(double angle)

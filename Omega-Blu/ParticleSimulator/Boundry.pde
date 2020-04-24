@@ -24,10 +24,14 @@ class Boundry
     
     calculateNormal();
     
-    var cx = (a.x + b.x) / 2;
-    var cy = (a.y + b.y) / 2;
-    stroke(0, 255, 0);
-    line(cx, cy, cx+(n.x * 10), cy+(n.y *10));
+    if (SHOW_DEBUG)
+    {
+      var cx = (a.x + b.x) / 2;
+      var cy = (a.y + b.y) / 2;
+      stroke(96, 215, 140);
+      //stroke(198, 28, 234);
+      line(cx, cy, cx+(n.x * 10), cy+(n.y *10));
+    }
   }
   
   void rotateZ(double angle)

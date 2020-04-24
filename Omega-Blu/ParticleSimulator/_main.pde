@@ -17,6 +17,18 @@ int screenHeight = 300;
 double half_screenWidth = screenWidth/ 2;
 double half_screenHeight = screenHeight/ 2;
 
+boolean SHOW_DEBUG = false;
+boolean AddSpecialParicles = false;
+boolean showVelocity = false;
+boolean showInfo = true;
+boolean moveParticle = false;
+boolean overrideMove = false;
+
+string debugMessage = "";
+string debugHUDMessage1 = "";
+string debugHUDMessage2 = "";
+string debugHUDMessage3 = "";
+
 void setup()
 {
   setupSimulation();  
@@ -56,6 +68,12 @@ void setupSimulation()
   selectedP = null;
   totalRotation = 0;
   doRotation = false;
+  AddSpecialParicles = false;
+  debugMessage = "";
+  debugHUDMessage1 = "";
+  debugHUDMessage2 = "";
+  debugHUDMessage3 = "";
+  overrideMove = false;
    
   switch (simulation)
   {
@@ -67,6 +85,7 @@ void setupSimulation()
     case 6: Setup_Simulation_smw_b(); break;
     case 7: Setup_Simulation_smw_c(); break;
     case 8: Setup_Simulation_smw_d(); break;
+    case 9: Setup_Simulation_smw_e(); break;
   }
 }
 
@@ -75,27 +94,60 @@ void draw()
   updateDisplayInfo();
   initDraw();
   
+  if (mousePressed && !pmousePressed)
+  {
+    int selectedIndex = -1;
+    for (int i = 0; i < W.P.size(); i++)
+    {
+      var p = W.P.get(i);
+      var d = dist(p.l.x, p.l.y, mouseX, mouseY);
+      if (d <= p.r) { selectedIndex = i; break; }
+    }
+    
+    if (selectedIndex > -1)
+    {
+      var p = W.P.get(selectedIndex);
+      if (showInfo)
+      {
+        // Show info
+        selectedP = p;
+      }
+      else
+      {
+        // remove particle if clicked
+        var p = W.P.get(selectedIndex);
+        if (p == selectedP) selectedP = null;
+        W.P.remove(selectedIndex);
+      }
+    }
+    else
+    {
+      if (!overrideMove) selectedP = null;
+    }
+  }
+  
+  if ((overrideMove||moveParticle) && mousePressed && selectedP) {selectedP.l.set(mouseX, mouseY, 0); selectedP.v.set(0, 0, 0);}
+  
   if (loop)
   {
-    if (mousePressed && selectedP) {selectedP.l.set(mouseX, mouseY, 0); selectedP.v.set(0, 0, 0);}
+    debugHUDMessage1 = "";
+    debugHUDMessage2 = "";
+    debugHUDMessage3 = "";
     
     if (doRotation && frameCount % 1 == 0) {W.rotateZ(Rotation); totalRotation += Rotation}
     for (int i = 0; i < 1; i++) W.update();
-  }
-  else
-  {
-    // DEBUG
-    // remove particle if clicked
-    /*if (mousePressed && !pmousePressed)
+    
+    if (AddSpecialParicles)
     {
-      for (int i = 0; i < W.P.size(); i++)
+      if (W.P.size() < 300 && frameCount % 20 == 0)
       {
-        var p = W.P.get(i);
-        var d = dist(p.l.x, p.l.y, mouseX, mouseY);
-        if (d <= p.r) { W.P.remove(i); break; }
+        Pvector l = new PVector(random(2)-1, 0);
+        Particle p = new Particle(l); W.addParticle(p);
       }
-    }*/
+    }
   }
+    
+  
   
   
   W.draw();
@@ -110,6 +162,14 @@ void draw()
     image(g, 0, 0);
     popMatrix();
   }
+  
+  
+  //if (SHOW_DEBUG)
+  //{
+    fill(0, 90);
+    textAlign(CENTER, CENTER);
+    text(debugMessage, 0, -130);
+  //}
   
   if (stopAfter) loop = false;
 }

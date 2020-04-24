@@ -8,9 +8,9 @@ void Setup_Simulation_smw_c()
   ParticleMass = 10;
   
   // Note that these spring values only apply if the ConnectionProbability hits
-  SpringNaturalLength = 20;  // Ideally should be 2 x ParticleRadius. If this is 2 x ParticleRadius or greater then more viscous. If less there is more solid, but more force to fly off.
-  SpringConstant = 1;       // Low values more viscous, High values more solid
-  SpringDamping = 0.05;     // Low values more viscous, High values more solid
+  SpringNaturalLength = 30;  // Ideally should be 2 x ParticleRadius. If this is 2 x ParticleRadius or greater then more viscous. If less there is more solid, but more force to fly off.
+  SpringConstant = 0.5;       // Low values more viscous, High values more solid
+  SpringDamping = 0.5;     // Low values more viscous, High values more solid
   ConnectLength = 40;       // Ideally around 2 x ParticleRadius. But should be >= SpringNaturalLength. The greater the value the more viscous
   MaxSprings = 8;           // Less springs the more viscous. More springs the more solid, but the demo will run slower
   
@@ -22,7 +22,7 @@ void Setup_Simulation_smw_c()
   Gravity = 0.2;
   
   // 0 is lossless so full bounce, 1 is total loss so no bounce
-  EnergyLoss =  0;
+  EnergyLoss =  0.2;
   
   ////////////////////////////////////////////
   // MODEL CONFIG
@@ -40,4 +40,5 @@ void Setup_Simulation_smw_c()
   Particle p2 = new Particle(new PVector(0*s, 0*s)); W.addParticle(p2);
   
   selectedP = p1;
+  overrideMove = true;
 }

@@ -9,13 +9,11 @@ class World
   ArrayList S = new ArrayList(); // list of springs
   ArrayList B = new ArrayList(); // list of boundries
   ArrayList Z = new ArrayList(); // excluded zones
-  boolean showRedCOLLISIONLine = false;
   
   World() { }
   void addParticle(Particle p) { P.add(p); }
   void addBoundry(Boundry b) { B.add(b); }
   void addExcludedZone(var z) { Z.add(z); }
-  void showCollision() {showRedCOLLISIONLine = true;}
   
   void update()
   {    
@@ -39,29 +37,57 @@ class World
       var A = (Particle) P.get(i);
       if (A.isStuck) continue;
       
-      int springCount = 0;
+      //if (A.springCount > 0) continue;
       
       for (int j = i+1; j < P.size(); j++)
       {
         var B = (Particle) P.get(j);
         if (B.isStuck) continue;
         
+        //if (B.springCount > 0) continue;
+        
         var d = dist(A.l.x, A.l.y, B.l.x, B.l.y);
         
         if (d <= ConnectLength)
         {
-          if (random() <= ConnectionProbability)
+          if (random() <= ConnectionProbability / MaxSprings)
           {
-            Spring s = new Spring(A, B);
-            S.add(s);
-            s.k = SpringConstant;
-            s.update();
+            if (A.S.size() < MaxSprings && B.S.size() < MaxSprings && A.S.indexOf(B) < 0)
+            {
+          
+              Spring s = new Spring(A, B);
+              S.add(s);
+              s.k = SpringConstant;
+              //s.update();
+              
+              //A.springCount++;
+              //B.springCount++;
+              
+              A.S.add(B);
+              B.S.add(A);
+            }
             
-            springCount++;
-            if (springCount == MaxSprings) break;
+            //springCount++;
+            //if (springCount == MaxSprings) break;
           }
         }
       }
+    }
+    
+    for (int i = S.size()-1; i >= 0; i--)
+    {
+      s = S.get(i);
+      s.update();
+      
+      var d = dist(s.A.l.x, s.A.l.y, s.B.l.x, s.B.l.y);
+      
+      if ((d > ConnectLength) || (random() <= (1-ConnectionProbability) / MaxSprings))
+      {
+        s.A.S.remove(s.A.S.indexOf(s.B));
+        s.B.S.remove(s.B.S.indexOf(s.A));
+        S.remove(i);
+      }
+      
     }
     
     // check collisions
@@ -77,6 +103,7 @@ class World
     for (int i = 0; i < P.size(); i++) 
     {
       var p = P.get(i);
+      isMiddleHit = false;
       p.isCornerHit = false;
     }
     
@@ -129,6 +156,8 @@ class World
           // 2): either side of center of ball
           if ( ((ba.x <= pl.x && bb.x >= pl.x) || (ba.x >= pl.x && bb.x <= pl.x)))
           {
+            p.isMiddleHit = true;
+            
             // move it back
             pl.y = -p.r;
             Utils.rotateZ(pl, -angle);
@@ -142,6 +171,12 @@ class World
             doTouch(t, p);
 
             // apply force
+            
+            // DEBUG
+            if (SHOW_DEBUG)
+            {
+              stroke(0, 255, 255); strokeWeight(1); fill(0, 255, 255, 200); ellipse(p.l.x, p.l.y, 6, 6);
+            }
             
             var t = reaction.get();
             t.normalize();
@@ -190,10 +225,13 @@ class World
     {
       var p = P.get(i);
       
-      if (p.isCornerHit)
+      if (p.isCornerHit)// && !p.isMiddleHit)
       {
         // DEBUG
-        //fill(255, 0, 0); ellipse(p.l.x, p.l.y, 5, 5);
+        if (SHOW_DEBUG)
+        {
+          stroke(255, 0, 0); strokeWeight(1); fill(255, 0, 0, 200); ellipse(p.l.x, p.l.y, 4, 4);
+        }
             
         PVector pl = p.cornerHitPoint.get();
         pl.sub(p.l);
@@ -203,6 +241,7 @@ class World
         
         // before moving it back to the corner, calculate the reaction force
         var reaction = new PVector(pl.x - p.l.x, pl.y - p.l.y);
+        
         p.l.x = pl.x;
         p.l.y = pl.y;
         
@@ -211,6 +250,9 @@ class World
         var t = reaction.get();
         t.normalize();
         var d = t.dot(p.v);
+        
+        // don't apply the force (even though we moved the particle) if there was middle force.
+        if (p.isMiddleHit) return;
         
         // ONLY APPLY FORCE IF IT NEEDS TO BE OPPOSITE THE CURRENT PARTICLE DIRECTION
         // (as above)
@@ -309,6 +351,13 @@ class World
   
   void checkParticleParticleCollision(double EnergyLoss)
   {
+    //checkParticleParticleCollision_Orig(EnergyLoss);
+    //checkParticleParticleCollision_SMW1(EnergyLoss);
+    checkParticleParticleCollision_SMW2(EnergyLoss);
+  }
+  
+  void checkParticleParticleCollision_SMW2(double EnergyLoss)
+  {
     for (int i = 0; i < P.size()-1; i++) 
     {
       var p1 = P.get(i);
@@ -317,6 +366,237 @@ class World
       {
         var p2 = P.get(j);
         
+        if (p1.isStuck && p2.isStuck) continue;
+        
+        
+
+        if (random() <= ConnectionProbability) if (p1.S.indexOf(p2) < 0) continue;
+        
+        var dd = dist(p1.l.x, p1.l.y, p2.l.x, p2.l.y);
+        
+        var overlap = (p1.r+p2.r)-dd;
+        
+        // rare case
+        if (dd == 0)
+        {
+          // nothing we can do if there is no velocity...since we can't figure out the directions
+          if (p1.v.mag() == 0 && p2.v.mag() == 0) continue;
+          
+          // can't have two particels ontop of each other
+          var t;
+          if (!p1.isStuck) { t = p1.v.get(); t.normalize(); t.mult(-p2); p1.l.add(t); p1.v.mult(-1); p1.v.mult(1-EnergyLoss); }
+          if (!p2.isStuck) { t = p2.v.get(); t.normalize(); t.mult(-p1); p2.l.add(t); p2.v.mult(-1); p2.v.mult(1-EnergyLoss); }
+          continue;
+        }
+        
+        // normal case
+        if (dd <= (p1.r + p2.r))
+        {
+          PVector p1p2 = p2.l.get(); p1p2.sub(p1.l);
+          
+          //mid point
+          var midPoint = p1p2.get(); midPoint.div(2); midPoint.add(p1.l);
+          
+          var p1Direction = p1p2.get(); p1Direction.normalize();
+          var p2Direction = p1p2.get(); p2Direction.mult(-1); p2Direction.normalize();
+          
+          // move back to hit point
+          var t;
+          if (!p1.isStuck) { t = p1Direction.get(); t.mult(-p1.r); t.add(midPoint); p1.l = t.get(); }
+          if (!p2.isStuck) { t = p2Direction.get(); t.mult(-p2.r); t.add(midPoint); p2.l = t.get(); }
+          
+          // get the direction velocity components
+          var p1DirectionV = new PVector();
+          var p2DirectionV = new PVector();
+          var d;
+          
+          if (!p1.isStuck && !p2.isStuck)
+          {
+            d = p1Direction.dot(p1.v); 
+            p1DirectionV = p1Direction.get(); p1DirectionV.mult(d);
+            d = p2Direction.dot(p2.v);
+            p2DirectionV = p2Direction.get(); p2DirectionV.mult(d);
+          }
+          else
+          {
+            d = p1Direction.dot(p1.v); 
+            if (d > 0) {p1DirectionV = p1Direction.get(); p1DirectionV.mult(d);}
+            d = p2Direction.dot(p2.v);
+            if (d > 0) {p2DirectionV = p2Direction.get(); p2DirectionV.mult(d);}
+          }
+          
+          // energy loss
+          p1DirectionV.mult(1-EnergyLoss);
+          p2DirectionV.mult(1-EnergyLoss);
+          
+          // apply forces
+          //1) my energy gets given to the other particle so subtracts from me 
+          //2) the other particle's energy is given to me
+          
+          
+          if (p2.isStuck && p1 == selectedP) debugHUDMessage3 = "STUCK P1: " + p1.v;
+          if (p1.isStuck && p2 == selectedP) debugHUDMessage3 = "STUCK P2: " + p2.v;
+          
+          
+          if (!p1.isStuck && !p2.isStuck)
+          {
+            p1.v.sub(p1DirectionV);
+            p1.v.add(p2DirectionV);
+            
+            p2.v.sub(p2DirectionV);
+            p2.v.add(p1DirectionV);
+          }
+          else if (p2.isStuck)
+          {
+            p1DirectionV.mult(2);p1.v.sub(p1DirectionV);
+          }
+          else if (p1.isStuck)
+          {
+            p2DirectionV.mult(2);p2.v.sub(p2DirectionV);
+          }
+          
+          
+          
+          
+          
+          double q1 = 1-EnergyLoss;///(1 + 1000000000000000 * p1.v.mag()); //println(q1); loop = false;
+          double q2 = 1-EnergyLoss;///(1 + 1000000000000000 * p2.v.mag());
+          var overlapV1 = p1Direction.get();
+          overlapV1.mult(-1);
+          overlapV1.mult(q1 * overlap/2);
+          //if (!p1.isStuck) 
+          p1.v.add(overlapV1);
+          
+          
+          var overlapV2 = p2Direction.get();
+          overlapV2.mult(-1);
+          overlapV2.mult(q2 * overlap/2);
+          //if (!p2.isStuck)  
+          p2.v.add(overlapV2); //println(overlapV2); //loop = false;*/
+        }
+      }
+    }
+  }
+  
+  
+  
+  void checkParticleParticleCollision_SMW1(double EnergyLoss)
+  {
+    for (int i = 0; i < P.size()-1; i++) 
+    {
+      var p1 = P.get(i);
+   
+      for (int j = i + 1; j < P.size(); j++) 
+      {
+        var p2 = P.get(j);
+        
+        var dd = dist(p1.l.x, p1.l.y, p2.l.x, p2.l.y); 
+        
+        var zz = (p1.r+p2.r)-dd;
+        
+        if (dd <= (p1.r+p2.r))
+        {
+          //println("collision"); //loop = false;
+          
+          PVector p1p2 = p2.l.get();
+          p1p2.sub(p1.l);
+          
+          //mid point
+          var midPoint = p1p2.get();
+          midPoint.div(2);
+          midPoint.add(p1.l);
+          
+          p1p2.normalize();
+          
+          
+          //println("p1: " + p1.l);
+          //println("p2: " + p2.l);
+          
+          
+          var tt = p1p2.get();  //println("tt: " + tt); println("midPoint: " + midPoint);
+          tt.mult(-p1.r);
+          tt.add(midPoint);  //println("-tt: " + tt);
+          //var reaction1 = new PVector(tt.x - p1.l.x, tt.y - p1.l.y);
+          var reaction1 = new PVector(p1.l.x - p2.l.x, p1.l.y - p2.l.y);
+          p1.l = tt.get();
+          
+          tt = p1p2.get();
+          tt.mult(p2.r);
+          tt.add(midPoint);
+          //var reaction2 = new PVector(tt.x - p2.l.x, tt.y - p2.l.y); //println(tt.x - p2.l.x);
+          var reaction2 = new PVector(p2.l.x - p1.l.x, p2.l.y - p1.l.y);
+          p2.l = tt.get();
+          
+          // apply force
+          var t = reaction1.get();
+          t.normalize();
+          var d = t.dot(p1.v);   //loop = false;
+          
+          // ONLY APPLY FORCE IF IT NEEDS TO BE OPPOSITE THE CURRENT PARTICLE DIRECTION
+          if (d < 0)
+          {
+            reaction1.normalize();
+            reaction1.mult(-(0+(1-EnergyLoss))*d);
+            //reaction1.div(1.5);
+            p1.v.add(reaction1); 
+            
+            
+            double ddd = EnergyLoss;///(1+10 * (p1.v.mag()+p2.v.mag()));
+            
+            //t.mult(-(0+(1-EnergyLoss))*zz);
+            t.mult(ddd * zz/2);
+            //t.mult(-(0+(1-EnergyLoss))*d);
+                       
+            //p1.v.add(t);
+          }
+          else
+          {
+            //reaction1.mult((1-EnergyLoss));
+            //p1.v.add(reaction1);
+          }
+          
+          t = reaction2.get();
+          t.normalize();
+          var d = t.dot(p2.v);
+          // ONLY APPLY FORCE IF IT NEEDS TO BE OPPOSITE THE CURRENT PARTICLE DIRECTION
+          if (d < 0)
+          {
+            reaction2.normalize();
+            reaction2.mult(-(0+(1-EnergyLoss))*d);
+            //reaction2.div(1.5);
+            p2.v.add(reaction2); 
+            
+            
+            double ddd = EnergyLoss;///(1+10 * p1.v.mag()+p2.v.mag());
+            
+            //t.mult(-(0+(1-EnergyLoss))*zz);
+            t.mult(ddd * zz/2);
+            //t.mult((0+(1-EnergyLoss))*d);
+            //p2.v.add(t);
+          }
+          else
+          {
+            //reaction2.mult((1-EnergyLoss));
+            //p2.v.add(reaction2);
+          }
+        }
+      }
+    }
+  }
+  
+  
+  
+  
+  void checkParticleParticleCollision_Orig(double EnergyLoss)
+  {
+    for (int i = 0; i < P.size()-1; i++) 
+    {
+      var p1 = P.get(i);
+   
+      for (int j = i + 1; j < P.size(); j++) 
+      {
+        var p2 = P.get(j);
+
         float dx = p2.l.x - p1.l.x;
         float dy = p2.l.y - p1.l.y;
         float dist = sqrt(dx * dx + dy * dy);
@@ -385,11 +665,12 @@ class World
     var last_ltr = l.get();
     last_ltr.add(tr);
     
-    if (showRedCOLLISIONLine)
+    // DEBUG
+    if (SHOW_DEBUG)
     {
-      stroke(255, 0, 0); strokeWeight(2); line(l.x, l.y, last_ltc.x, last_ltc.y);
-      stroke(255, 0, 0); strokeWeight(2); line(l.x, l.y, last_ltl.x, last_ltl.y);
-      stroke(255, 0, 0); strokeWeight(2); line(l.x, l.y, last_ltr.x, last_ltr.y);
+      stroke(255, 0, 0); strokeWeight(1); line(l.x, l.y, last_ltc.x, last_ltc.y);
+      stroke(255, 0, 0); strokeWeight(1); line(l.x, l.y, last_ltl.x, last_ltl.y);
+      stroke(255, 0, 0); strokeWeight(1); line(l.x, l.y, last_ltr.x, last_ltr.y);
     }
     
     for (int j = 0; j < B.size(); j++)
@@ -446,7 +727,7 @@ class World
       var s = S.get(i);
       s.draw();
     }
-    S.clear();
+    //S.clear();
     
     // particles
     for (int i = 0; i < P.size(); i++)

@@ -8,11 +8,11 @@ void Setup_Simulation_smw_a()
   ParticleMass = 5;
   
   // Note that these spring values only apply if the ConnectionProbability hits
-  SpringNaturalLength = 6;  // Ideally should be 2 x ParticleRadius. If this is 2 x ParticleRadius or greater then more viscous. If less there is more solid, but more force to fly off.
-  SpringConstant = 1;       // Low values more viscous, High values more solid
+  SpringNaturalLength = 6;  // Ideally should be 2 x ParticleRadius. If this is 2 x ParticleRadius or greater then more viscous.
+  SpringConstant = 1;       // High values more viscous (towards solid)
   SpringDamping = 0.05;     // Low values more viscous, High values more solid
   ConnectLength = 10;       // Ideally around 2 x ParticleRadius. But should be >= SpringNaturalLength. The greater the value the more viscous
-  MaxSprings = 8;           // Less springs the more viscous. More springs the more solid, but the demo will run slower
+  MaxSprings = 8;           // More springs the more viscous.
   
   if (simChange) { Rotation = 0; StickProbability = 0; ConnectionProbability = 0; }
   // StickProbability is the probability of sticking to a wall
@@ -37,4 +37,5 @@ void Setup_Simulation_smw_a()
   Particle p2 = new Particle(new PVector(0*s, 0*s)); W.addParticle(p2);
   
   selectedP = p1;
+  overrideMove = true;
 }

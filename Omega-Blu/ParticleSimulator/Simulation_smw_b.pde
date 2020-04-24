@@ -19,7 +19,7 @@ void Setup_Simulation_smw_b()
   // ConnectionProbability is the probability of becoming a blob
   
   // Note that this is accelration (i.e. gravity is accelration and not a Force)
-  Gravity = 0.0;
+  Gravity = 0;//.05;
   
   // 0 is lossless so full bounce, 1 is total loss so no bounce
   EnergyLoss =  0;
@@ -38,7 +38,12 @@ void Setup_Simulation_smw_b()
   // Particles
   Particle p1 = new Particle(new PVector(-30*s, 0*s)); W.addParticle(p1);
   Particle p2 = new Particle(new PVector(30*s, 0*s)); W.addParticle(p2);
-  p1.v = new PVector(3,0);
+  //Particle p1 = new Particle(new PVector(30*s, 0*s)); W.addParticle(p1);
+  //Particle p2 = new Particle(new PVector(30*s, 20*s)); W.addParticle(p2);
+  
+  p1.v = new PVector(2,0);
+  //p2.v = new PVector(-2,0);
   
   selectedP = p1;
+  overrideMove = true;
 }
