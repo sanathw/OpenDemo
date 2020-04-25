@@ -50,6 +50,7 @@ class Particle
     {
       debugHUDMessage1 = "location: [" + l.x + ", " + l.y + "]";
       debugHUDMessage2 = "velocity: [" + v.x + ", " + v.y + "]";
+      debugHUDMessage3 = "springs: " + S.size();
       
       fill(0, 255, 0);
       if (isStuck) fill(0, 100, 0);
@@ -65,8 +66,8 @@ class Particle
     }
   }
   
-  void rotateZ(double angle)
+  void rotateZwithOffset(double angle)
   {
-    if (isStuck) Utils.rotateZ(l, angle);
+    if (isStuck) Utils.rotateZwithOffset(l, angle);
   }
 }

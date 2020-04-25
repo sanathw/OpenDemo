@@ -29,6 +29,9 @@ void Setup_Simulation1()
   
   var numberOfParticles = 300;
   var s = 1; // scale 
+  modelOffset = new PVector(0, 0); // if '+' button in debug pressed then can use mouse to move
+  gearRatio = 0; // model roation as a ration of Rotation above (-2 is a good value)
+  
   
   // BOX
   var box_top_left    = new PVector(-60, -100);                 var box_top_right   = new PVector(60, -100);

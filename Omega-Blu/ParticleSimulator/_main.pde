@@ -6,6 +6,11 @@ int simulation = 1;
 var selectedP = null;
 double Rotation = 0;
 double totalRotation = 0;
+double modelRotation = 0;
+double totalModelRotation = 0;
+PVector modelOffset = new PVector();
+PVector userModelOffset = new PVector();
+double gearRatio = 0;
 boolean doRotation = false;
 boolean showTouch = false;
 boolean simChange = true;
@@ -21,6 +26,7 @@ boolean SHOW_DEBUG = false;
 boolean AddSpecialParicles = false;
 boolean showVelocity = false;
 boolean showInfo = true;
+boolean showModelOffset = false;
 boolean moveParticle = false;
 boolean overrideMove = false;
 
@@ -67,6 +73,7 @@ void setupSimulation()
 
   selectedP = null;
   totalRotation = 0;
+  totalModelRotation = 0;
   doRotation = false;
   AddSpecialParicles = false;
   debugMessage = "";
@@ -74,6 +81,8 @@ void setupSimulation()
   debugHUDMessage2 = "";
   debugHUDMessage3 = "";
   overrideMove = false;
+  
+  modelOffset = new PVector();
    
   switch (simulation)
   {
@@ -87,12 +96,37 @@ void setupSimulation()
     case 8: Setup_Simulation_smw_d(); break;
     case 9: Setup_Simulation_smw_e(); break;
   }
+  
+  if (!simChange) modelOffset = userModelOffset.get();
+  else userModelOffset = modelOffset.get();
+  
+  W.moveByOffset(modelOffset.x, modelOffset.y);
+  // particles
+  for (int i = 0; i < W.P.size(); i++)
+  {
+    var p = W.P.get(i);
+    p.l.x += modelOffset.x;
+    p.l.y += modelOffset.y;
+  }
 }
 
 void draw()
 {
   updateDisplayInfo();
   initDraw();
+  
+  if (showModelOffset && mousePressed) 
+  {
+    if (pmousePressed)
+    {
+      var dx = (mouseX-pmouseX);
+      var dy = (mouseY-pmouseY);
+      
+      modelOffset.x += dx; modelOffset.y += dy;
+      userModelOffset = modelOffset.get();
+      W.moveByOffset(dx, dy);
+    }
+  }
   
   if (mousePressed && !pmousePressed)
   {
@@ -134,7 +168,15 @@ void draw()
     debugHUDMessage2 = "";
     debugHUDMessage3 = "";
     
-    if (doRotation && frameCount % 1 == 0) {W.rotateZ(Rotation); totalRotation += Rotation}
+    if (doRotation && frameCount % 1 == 0) 
+    {
+      modelRotation = Rotation * gearRatio;
+      
+      W.rotateZ(Rotation); 
+      totalRotation += Rotation; 
+      totalModelRotation += modelRotation;
+    }
+      
     for (int i = 0; i < 1; i++) W.update();
     
     if (AddSpecialParicles)
@@ -157,19 +199,48 @@ void draw()
   else
   {
     pushMatrix();
+    translate(modelOffset.x, modelOffset.y);
+    //rotate(totalRotation);// - 
+    //rotate(modelRotation);
     rotate(totalRotation);
+    //translate(modelOffset.x, modelOffset.y);
+    
+    rotate(totalModelRotation);
     imageMode(CENTER);
     image(g, 0, 0);
     popMatrix();
   }
   
   
-  //if (SHOW_DEBUG)
-  //{
-    fill(0, 90);
-    textAlign(CENTER, CENTER);
-    text(debugMessage, 0, -130);
-  //}
+  
+  
+  if (showModelOffset)
+  {
+    stroke(0, 155, 0, 90); strokeWeight(0.5); 
+    noFill(); ellipse(0, 0, 150, 150);
+    fill(255, 90); ellipse(0, 0, 8, 8);
+    fill(0, 90); ellipse(0, 0, 4, 4);
+    line (0, -10, 0, -20); line (0, 10, 0, 20);
+    line (-10, 0, -20, 0); line (10, 0, 20, 0);
+    
+    
+    var d = modelOffset.mag();
+    stroke(0, 0, 155, 90); strokeWeight(0.5); 
+    noFill(); ellipse(modelOffset.x, modelOffset.y, d, d);
+    fill(255, 90); ellipse(modelOffset.x, modelOffset.y, 6, 6);
+    fill(0, 90); ellipse(modelOffset.x, modelOffset.y, 4, 4);
+    line (modelOffset.x, modelOffset.y-10, modelOffset.x, modelOffset.y-15); line (modelOffset.x, modelOffset.y+10, modelOffset.x, modelOffset.y+15);
+    line (modelOffset.x-10, modelOffset.y, modelOffset.x-15, modelOffset.y); line (modelOffset.x+10, modelOffset.y, modelOffset.x+15, modelOffset.y);
+  
+    stroke(0, 90); strokeWeight(0.5);
+    line(0, 0, modelOffset.x, modelOffset.y);
+  }
+  
+
+  fill(0, 90);
+  textAlign(CENTER, CENTER);
+  text(debugMessage, 0, -130);
+
   
   if (stopAfter) loop = false;
 }

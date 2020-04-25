@@ -17,6 +17,7 @@ Button bStep; LabelBox lStep;
 Button bVelocity;
 Button bInfo;
 Button bMoveParticle;
+Button bModelOffset;
 
 boolean showA = true;
 
@@ -56,7 +57,7 @@ void setupUI()
     c0B = addContainer(0.345, 0.01, .45, 0.96); c0B.hasBorder = true;
     setContainer(c0B);
     var i = 0.03;
-    var w = 0.14;
+    var w = 0.12;
     war s = 0.02;
     bDebug = addButton(i, 0.25, w, .5, "Debug"); i += (w+s);
     
@@ -69,6 +70,7 @@ void setupUI()
     bVelocity = addButton(i, 0.25, w, .5, "vel"); i += (w+s);
     bInfo = addButton(i, 0.25, w, .5, "DEL"); i += (w+s);
     bMoveParticle = addButton(i, 0.25, w, .5, "move"); i += (w+s);
+    bModelOffset = addButton(i, 0.25, w, .5, "+"); i += (w+s);
   }
   
   resetData();
@@ -115,6 +117,8 @@ void updateDisplayInfo()
   
   bMoveParticle.isDisabled = !showInfo;
   bMoveParticle.isOn = moveParticle;
+  
+  bModelOffset.isOn = showModelOffset;
 }
 
 void processUI()
@@ -193,6 +197,11 @@ void processUI()
   if (bMoveParticle != null && bMoveParticle.doProcess == true) 
   {
     moveParticle = !moveParticle;
+  }
+  
+  if (bModelOffset != null && bModelOffset.doProcess == true) 
+  {
+    showModelOffset = !showModelOffset;
   }
 }
 

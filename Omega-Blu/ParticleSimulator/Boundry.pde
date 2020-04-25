@@ -39,4 +39,11 @@ class Boundry
     Utils.rotateZ(a, angle);
     Utils.rotateZ(b, angle);
   }
+  
+  void rotateZwithOffset(double angle)
+  {
+    Utils.rotateZwithOffset(a, angle);
+    Utils.rotateZwithOffset(b, angle);
+  }
+  
 }

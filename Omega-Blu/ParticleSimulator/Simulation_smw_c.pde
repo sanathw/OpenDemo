@@ -27,7 +27,9 @@ void Setup_Simulation_smw_c()
   ////////////////////////////////////////////
   // MODEL CONFIG
   
-  var s = 1; // scale  
+  var s = 1; // scale
+  modelOffset = new PVector(0, 0); // if '+' button in debug pressed then can use mouse to move
+  gearRatio = 0; // model roation as a ration of Rotation above (-2 is a good value)  
   
   // Boundries
   Boundry bLeft = new Boundry(new PVector(-100*s, -100*s), new PVector(-100*s, 100*s)); W.addBoundry(bLeft);

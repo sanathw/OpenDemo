@@ -341,8 +341,18 @@ class World
   {
     if (showTouch)
     {
+      /*
       var t = new PVector(l.x, l.y);
+      //Utils.rotateZ(t, -totalRotation);
+      Utils.rotateZwithOffset(t, -totalRotation);
+      g.ellipse(t.x, t.y, 1, 1);
+      */
+      
+      var t = l.get();
+      
+      t.sub(modelOffset);
       Utils.rotateZ(t, -totalRotation);
+      Utils.rotateZ(t, -totalModelRotation);
       g.ellipse(t.x, t.y, 1, 1);
     }
     
@@ -737,6 +747,34 @@ class World
     }
   }
   
+  void moveByOffset(var dx, var dy)
+  {
+    // excluded zones
+    for (int i = 0; i < Z.size(); i++)
+    {
+      var z = Z.get(i);
+      for (int j = 0; j < z.length; j ++)
+      {
+        z[j].x += dx;
+        z[j].y += dy;
+      }
+    }
+    
+    // boundries
+    for (int i = 0; i < B.size(); i++)
+    {
+      var b = B.get(i);
+      b.a.x += dx;
+      b.a.y += dy;
+      
+      b.b.x += dx;
+      b.b.y += dy;
+      
+      b.n.x += dx;
+      b.n.y += dy;
+    }
+  }
+  
   void rotateZ(double angle)
   {
     // excluded zones
@@ -745,7 +783,7 @@ class World
       var z = Z.get(i);
       for (int j = 0; j < z.length; j ++)
       {
-        Utils.rotateZ(z[j], angle);
+        Utils.rotateZwithOffset(z[j], angle);
       }
     }
     
@@ -753,15 +791,19 @@ class World
     for (int i = 0; i < B.size(); i++)
     {
       var b = B.get(i);
-      b.rotateZ(angle);
+      b.rotateZwithOffset(angle);
     }
     
     // particles
     for (int i = 0; i < P.size(); i++)
     {
       var p = P.get(i);
-      p.rotateZ(angle);
+      p.rotateZwithOffset(angle);
     }
+    
+    
+    // model offset
+    Utils.rotateZ(modelOffset, angle);
   }
 }
 
@@ -825,7 +867,31 @@ static class Utils
       // PVector.rotate (v.rotate(angle);) doesn't work
       // so:
       PMatrix2D t = new PMatrix2D();
-      t.rotate(angle);
-      PVector t1 = new PVector(); t.mult(v,v);
+      t = new PMatrix2D();
+      t.rotate(angle); 
+      t.mult(v,v);
+    }
+    
+    static void rotateZwithOffset(Pvector v, double angle)
+    {
+      // PVector.rotate (v.rotate(angle);) doesn't work
+      // so:
+      PMatrix2D t = new PMatrix2D();
+      
+      // rotate the model first
+      
+      //println("v before: " + v);
+      var t1 = modelOffset.get();
+      //println(t1);
+      v.sub(t1);
+      //println("v: " + v);
+      //println("rot: " + modelRotation);
+      t.rotate(modelRotation); t.mult(v,v);
+      v.add(t1);
+      //println("v after: " + v);
+      //noloop;
+
+      // then do main rotation
+      rotateZ(v, angle);
     }
   }

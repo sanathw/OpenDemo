@@ -29,6 +29,8 @@ void Setup_Simulation_smw_d()
   
   var numberOfParticles = 0;
   var s = 1; // scale
+  modelOffset = new PVector(0, 0); // if '+' button in debug pressed then can use mouse to move
+  gearRatio = 0; // model roation as a ration of Rotation above (-2 is a good value)
   
   // BOX
   var box_top_left    = new PVector(-100, -100);                 var box_top_right   = new PVector(100, -100);
@@ -58,7 +60,7 @@ void Setup_Simulation_smw_d()
   // add one particle
   
   Pvector l = new PVector(random(6)-3, -20); 
-  l.x = 0.45326171245805114; l.mult(s); 
+  //l.x = 0.45326171245805114; l.mult(s); 
   Particle p = new Particle(l); W.addParticle(p);
   debugMessage = "" + l.get();
   
