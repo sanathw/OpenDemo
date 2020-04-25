@@ -216,21 +216,43 @@ void draw()
   
   if (showModelOffset)
   {
-    stroke(0, 155, 0, 90); strokeWeight(0.5); 
-    noFill(); ellipse(0, 0, 150, 150);
-    fill(255, 90); ellipse(0, 0, 8, 8);
-    fill(0, 90); ellipse(0, 0, 4, 4);
+    var d = modelOffset.mag();
+    //stroke(0, 155, 0, 120);
+    //stroke(0, 0, 155, 90); 
+    stroke(0, 120); 
+    strokeWeight(0.5); 
+    noFill(); ellipse(0, 0, d, d);
+    fill(255, 120); ellipse(0, 0, 8, 8);
+    //fill(0, 155, 0, 120); 
+    fill(0, 120); 
+    //fill(55, 200, 100, 90); 
+    ellipse(0, 0, 4, 4);
+    
+    pushMatrix();
+    rotate(totalRotation);
     line (0, -10, 0, -20); line (0, 10, 0, 20);
     line (-10, 0, -20, 0); line (10, 0, 20, 0);
+    popMatrix();
     
     
-    var d = modelOffset.mag();
-    stroke(0, 0, 155, 90); strokeWeight(0.5); 
-    noFill(); ellipse(modelOffset.x, modelOffset.y, d, d);
-    fill(255, 90); ellipse(modelOffset.x, modelOffset.y, 6, 6);
-    fill(0, 90); ellipse(modelOffset.x, modelOffset.y, 4, 4);
-    line (modelOffset.x, modelOffset.y-10, modelOffset.x, modelOffset.y-15); line (modelOffset.x, modelOffset.y+10, modelOffset.x, modelOffset.y+15);
-    line (modelOffset.x-10, modelOffset.y, modelOffset.x-15, modelOffset.y); line (modelOffset.x+10, modelOffset.y, modelOffset.x+15, modelOffset.y);
+    stroke(0, 120, 0, 120); 
+    //stroke(0, 0, 155, 90); 
+    strokeWeight(0.5); 
+    //noFill(); ellipse(modelOffset.x, modelOffset.y, d, d);
+    fill(255, 120); ellipse(modelOffset.x, modelOffset.y, 6, 6);
+    fill(0, 200, 0, 120);
+    //fill(0, 90); 
+    
+    stroke(0, 190, 0, 120); 
+    ellipse(modelOffset.x, modelOffset.y, 4, 4);
+    
+    stroke(0, 90, 0, 120); 
+    pushMatrix();
+    translate(modelOffset.x, modelOffset.y);
+    rotate(totalRotation + totalModelRotation);
+    line (0, -8, 0, -15); line (0, 8, 0, 15);
+    line (-8, 0, -15, 0); line (8, 0, 15, 0);
+    popMatrix();
   
     stroke(0, 90); strokeWeight(0.5);
     line(0, 0, modelOffset.x, modelOffset.y);
