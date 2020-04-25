@@ -10,7 +10,7 @@ void Setup_Simulation3()
   // Note that these spring values only apply if the ConnectionProbability hits
   SpringNaturalLength = 6;  // Ideally should be 2 x ParticleRadius. If this is 2 x ParticleRadius or greater then more viscous.
   SpringConstant = 1;       // High values more viscous (towards solid)
-  SpringDamping = 0.05;     // Low values more viscous, High values more solid
+  SpringDamping = 0.05;     // High values more viscous (towards solid), low values more water like.
   ConnectLength = 10;       // Ideally around 2 x ParticleRadius. But should be >= SpringNaturalLength. The greater the value the more viscous
   MaxSprings = 8;           // More springs the more viscous.
   
