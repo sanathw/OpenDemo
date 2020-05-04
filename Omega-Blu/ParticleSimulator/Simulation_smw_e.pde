@@ -32,6 +32,11 @@ void Setup_Simulation_smw_e()
   modelOffset = new PVector(0, 0); // if '+' button in debug pressed then can use mouse to move
   gearRatio = 0; // model roation as a ration of Rotation above (-2 is a good value)
   
+  half_box_width = 100;
+  half_box_height = 100;
+  loadImageId = 10;
+  loadBackImage(loadImageId);
+  
   // BOX
   var box_top_left    = new PVector(-100, -100);                 var box_top_right   = new PVector(100, -100);
   var box_bottom_left = new PVector(-100, 100);                  var box_bottom_right = new PVector(100, 100);

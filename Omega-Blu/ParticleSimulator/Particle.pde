@@ -43,7 +43,14 @@ class Particle
   void draw()
   {
     ellipseMode(RADIUS);
-    stroke(80, 80, 255, 120); strokeWeight(0.5); fill(100, 100, 255, 90);
+    stroke(80, 80, 255, 120); strokeWeight(0.5); 
+    
+    fill(200, 200, 255);
+    if (SHOW_DEBUG) fill(100, 100, 255, 90);
+    else fill(200, 200, 255);
+    
+    if (overrideParicleColor != null) fill(overrideParicleColor);
+    
     if (isStuck) fill(255, 20, 220, 90); //fill(40, 40, 200);
     
     if (this == selectedP) 

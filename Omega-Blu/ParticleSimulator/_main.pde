@@ -35,6 +35,14 @@ string debugHUDMessage1 = "";
 string debugHUDMessage2 = "";
 string debugHUDMessage3 = "";
 
+double half_box_width = 0;
+double half_box_height = 0;
+PImage img = null;
+boolean showImage = false;
+var simImages = [];
+int loadImageId = 0;
+var overrideParicleColor = null;
+
 void setup()
 {
   setupSimulation();  
@@ -83,6 +91,11 @@ void setupSimulation()
   overrideMove = false;
   
   modelOffset = new PVector();
+  
+  half_box_width = 0;
+  half_box_height = 0;
+  img = null;
+  overrideParicleColor = null;
    
   switch (simulation)
   {
@@ -90,11 +103,12 @@ void setupSimulation()
     case 2: Setup_Simulation2(); break;
     case 3: Setup_Simulation3(); break;
     case 4: Setup_Simulation4(); break;
-    case 5: Setup_Simulation_smw_a(); break;
-    case 6: Setup_Simulation_smw_b(); break;
-    case 7: Setup_Simulation_smw_c(); break;
-    case 8: Setup_Simulation_smw_d(); break;
-    case 9: Setup_Simulation_smw_e(); break;
+    case 5: Setup_Simulation5(); break;
+    case 6: Setup_Simulation_smw_a(); break;
+    case 7: Setup_Simulation_smw_b(); break;
+    case 8: Setup_Simulation_smw_c(); break;
+    case 9: Setup_Simulation_smw_d(); break;
+    case 10: Setup_Simulation_smw_e(); break;
   }
   
   if (!simChange) modelOffset = userModelOffset.get();
@@ -190,9 +204,19 @@ void draw()
   }
     
   
+  if (showImage && img != null && img.width > 0 && half_box_width > 0) 
+  {
+    pushMatrix();
+    translate(modelOffset.x, modelOffset.y);
+    rotate(totalRotation+totalModelRotation);
+    imageMode(CENTER);
+    image(img, 0, 0, 2*half_box_width, 2*half_box_height);
+    popMatrix();
+  }
   
   
   W.draw();
+  
   
   // display touches
   if (g == null) {createG();}
@@ -262,7 +286,25 @@ void draw()
   fill(0, 90);
   textAlign(CENTER, CENTER);
   text(debugMessage, 0, -130);
-
+  
   
   if (stopAfter) loop = false;
+}
+
+void loadBackImage()
+{
+  overrideParicleColor = null;
+  if (!showImage) return;
+  
+  /*if (loadImageId == 4) overrideParicleColor = color(200, 200, 255);
+  if (loadImageId == 9) overrideParicleColor = color(200, 200, 255);
+  if (loadImageId == 10) overrideParicleColor = color(200, 200, 255);*/
+  
+  if (simImages[loadImageId] != null) {img = simImages[loadImageId]; return;}
+  
+  if (loadImageId == 4) simImages[loadImageId] = loadImage("./_resources/Sim4.png");
+  if (loadImageId == 9) simImages[loadImageId] = loadImage("./_resources/Sim9.png");
+  if (loadImageId == 10) simImages[loadImageId] = loadImage("./_resources/Sim10.png");
+  
+  img = simImages[loadImageId];
 }

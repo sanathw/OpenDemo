@@ -28,56 +28,158 @@ void Setup_Simulation4()
   // MODEL CONFIG
   
   var numberOfParticles = 300;
-  var s = 1; // scale
+  var s = 0.32; // scale  
   modelOffset = new PVector(0, 0); // if '+' button in debug pressed then can use mouse to move
   gearRatio = 0; // model roation as a ration of Rotation above (-2 is a good value)
   
+  
+  
   // BOX
-  var box_top_left    = new PVector(-72, -101.925);                 var box_top_right   = new PVector(72, -101.925);
-  var box_bottom_left = new PVector(-72, 101.925);                  var box_bottom_right = new PVector(72, 101.925);
-  
-  // TOP INSET
-  var inset_top_top_left    = new PVector(-62.55, -101.925);        var inset_top_top_right    = new PVector(62.55, -101.925);
-  var inset_top_bottom_left = new PVector(-62.55, -92.475);         var inset_top_bottom_right = new PVector(62.55, -92.475);
-  
-  // BOTTOM INSET
-  var inset_bottom_top_left    = new PVector(-62.55, 92.475);       var inset_bottom_top_right    = new PVector(62.55, 92.475);
-  var inset_bottom_bottom_left = new PVector(-62.55, 101.925);      var inset_bottom_bottom_right = new PVector(62.55, 101.925);
+  half_box_width = 300/2;
+  half_box_height = 830/2;
+  loadImageId = 4;
+  loadBackImage(loadImageId); 
   
   
-  //_________________________________________________________________________________
-  //apply scale
-  box_top_left.mult(s);  box_top_right.mult(s);
-  box_bottom_left.mult(s);  box_bottom_right.mult(s);
-  inset_top_top_left.mult(s);  inset_top_top_right.mult(s);
-  inset_top_bottom_left.mult(s);  inset_top_bottom_right.mult(s);
-  inset_bottom_top_left.mult(s);  inset_bottom_top_right.mult(s);
-  inset_bottom_bottom_left.mult(s);  inset_bottom_bottom_right.mult(s);
+  var box_top_left    = new PVector(-half_box_width, -half_box_height);                 var box_top_right   = new PVector(half_box_width, -half_box_height);
+  var box_bottom_left = new PVector(-half_box_width, half_box_height);                  var box_bottom_right = new PVector(half_box_width, half_box_height);
   
-  // Boundries
+  
+  // Indents
+  var ss = 1.15;
+  
+  var h1 = 14 * ss;
+  var h2 = 20 * ss;
+  var h3 = 10 * ss;
+  var w1 = 10 * ss;
+  var w2 = 38 * ss;
+  var indentStart = new PVector(w1, 0);
+  var indentDiplayStart = null;
+  var indentEnd = new PVector((box_bottom_left.x*s), (half_box_height*s));
+  
+  var I1 = [new PVector(w1, 0), new PVector(0, 0), new PVector(0, h1), new PVector(w1, h1)];
+  var I2 = [new PVector(w1, 0), new PVector(w2, 0), new PVector(w2, h2), new PVector(w1, h2)];
+  var I3 = [new PVector(w1, 0), new PVector(0, 0)];
+  
+  var o1 = 42 * ss;
+  var o2 = 10 * ss;
+  var o3 = 46 * ss;
+  var Intends = [
+                  {o1, I1}, 
+                  {o1, I1}, 
+                  {o1, I1}, 
+                  {o1, I1},
+                      {o2, I2},
+                  {o2, I1}, 
+                  {o1, I1}, 
+                  {o1, I1},
+                      {o2, I2},
+                  {o2, I1}, 
+                  {o1, I1}, 
+                  {o1, I1},
+                      {o2, I2},
+                  {o2, I1}, 
+                  {o1, I1},
+                  {o3, I3}
+                ];
+  
+  
   Boundry b;
+  var z = [];
   
-  //Top
-  b = new Boundry(inset_top_top_left, box_top_left, ); W.addBoundry(b);
-  b = new Boundry(inset_top_bottom_left, inset_top_top_left, ); W.addBoundry(b);
-  b = new Boundry(inset_top_bottom_right, inset_top_bottom_left, ); W.addBoundry(b);
-  b = new Boundry(inset_top_top_right, inset_top_bottom_right, ); W.addBoundry(b);
-  b = new Boundry(box_top_right, inset_top_top_right, ); W.addBoundry(b);
+  var offset = 0;
+  var indent;
+  var lastPoint = indentStart.get();
   
-  //Bottom
-  b = new Boundry(box_bottom_left, inset_bottom_bottom_left); W.addBoundry(b);
-  b = new Boundry(inset_bottom_bottom_left, inset_bottom_top_left); W.addBoundry(b);
-  b = new Boundry(inset_bottom_top_left, inset_bottom_top_right); W.addBoundry(b);
-  b = new Boundry(inset_bottom_top_right, inset_bottom_bottom_right); W.addBoundry(b);
-  b = new Boundry(inset_bottom_bottom_right, box_bottom_right); W.addBoundry(b);
+  for (int j = 0; j < Intends.length; j++)
+  {
+    offset = Intends[j][0];
+    indent = Intends[j][1];
+    
+    var OffsetPoint = lastPoint.get();
+    
+    z = [];
+    var KeepPoint1 = null;
+    var KeepPoint2 = null;
+    
+    for (int i = 0; i< indent.length; i++)
+    {
+      var currentPoint = indent[i].get();
+      currentPoint.y += (OffsetPoint.y + offset); 
+      
+      var DisplaylastPoint = lastPoint.get();
+      DisplaylastPoint.add(box_top_left); DisplaylastPoint.mult(s);
+      
+      var DisplayCurrentPoint = currentPoint.get();
+      DisplayCurrentPoint.add(box_top_left); DisplayCurrentPoint.mult(s);
+      
+      if (i == 0 && j == 0) indentDiplayStart = DisplaylastPoint.get();
+      
+      b = new Boundry(DisplaylastPoint, DisplayCurrentPoint); 
+      W.addBoundry(b);
+      lastPoint = currentPoint.get();
+      
+      // Add right boundry
+      b = new Boundry(new PVector(-DisplayCurrentPoint.x, DisplayCurrentPoint.y), new PVector(-DisplaylastPoint.x, DisplaylastPoint.y)); 
+      W.addBoundry(b);
+      
+      if (i == 0)
+      {
+        z = [];
+        z[0] = DisplaylastPoint.get();
+        z[1] = DisplayCurrentPoint.get();
+        z[2] = new PVector((-half_box_width)*s, DisplayCurrentPoint.y);
+        z[3] = new PVector((-half_box_width)*s, DisplaylastPoint.y);
+        W.addExcludedZone(z);
+        
+        // Add right zone
+        z = [];
+        z[0] = new PVector(-DisplaylastPoint.x, DisplaylastPoint.y);
+        z[1] = new PVector(-DisplayCurrentPoint.x, DisplayCurrentPoint.y);
+        z[2] = new PVector((half_box_width)*s, DisplayCurrentPoint.y);
+        z[3] = new PVector((half_box_width)*s, DisplaylastPoint.y);
+        W.addExcludedZone(z);
+      }
+      
+      if (i == 1) KeepPoint1 = DisplayCurrentPoint.get();
+      if (i == 2) KeepPoint2 = DisplayCurrentPoint.get();
+    }
+    
+    if (KeepPoint1 != null && KeepPoint2 != null && KeepPoint1.x != ((-half_box_width)*s) && KeepPoint2.x != ((-half_box_width)*s))
+    {
+      z = [];
+      z[0] = KeepPoint1.get();
+      z[1] = KeepPoint2.get();
+      z[2] = new PVector((-half_box_width)*s, KeepPoint2.y);
+      z[3] = new PVector((-half_box_width)*s, KeepPoint1.y);
+      W.addExcludedZone(z);
+      
+      // Add last right zone
+      z = [];
+      z[0] = new PVector(-KeepPoint1.x, KeepPoint1.y);
+      z[1] = new PVector(-KeepPoint2.x, KeepPoint2.y);
+      z[2] = new PVector((half_box_width)*s, KeepPoint2.y);
+      z[3] = new PVector((half_box_width)*s, KeepPoint1.y);
+      W.addExcludedZone(z);
+    }
+  }
   
-  // Left
-  Boundry bTop = new Boundry(box_top_left, box_bottom_left); W.addBoundry(bTop);
+  var DisplaylastPoint = lastPoint.get();
+  DisplaylastPoint.add(box_top_left); DisplaylastPoint.mult(s);
+  b = new Boundry(DisplaylastPoint, indentEnd);
+  W.addBoundry(b);
   
-  //Right
-  Boundry bBottom = new Boundry(box_bottom_right, box_top_right); W.addBoundry(bBottom);
+  // add last right boundry
+  b = new Boundry(new PVector(-indentEnd.x, indentEnd.y), new PVector(-DisplaylastPoint.x, DisplaylastPoint.y));
+  W.addBoundry(b);
   
-  // Excluded Zones
+  
+  //apply scale
+  box_top_left.mult(s); box_top_right.mult(s);
+  box_bottom_left.mult(s);   box_bottom_right.mult(s);
+  
+
+  // BOX Excluded Zones
   // outside left
   var z = [];
   z[0] = new PVector(-half_screenWidth, half_screenHeight);
@@ -110,28 +212,24 @@ void Setup_Simulation4()
   z[3] = new PVector(half_screenWidth, half_screenHeight);
   W.addExcludedZone(z);
   
-  //top inset
-  z = [];
-  z[0] = inset_top_top_left.get();
-  z[1] = inset_top_top_right.get();
-  z[2] = inset_top_bottom_right.get();
-  z[3] = inset_top_bottom_left.get();
-  W.addExcludedZone(z);
+  // Top
+  Boundry bTop = new Boundry(new PVector(-indentDiplayStart.x, indentDiplayStart.y), new PVector(indentDiplayStart.x, indentDiplayStart.y)); W.addBoundry(bTop);
   
-  //right inset
-  z = [];
-  z[0] = inset_bottom_top_right.get();
-  z[1] = inset_bottom_top_left.get();
-  z[2] = inset_bottom_bottom_left.get();
-  z[3] = inset_bottom_bottom_right.get();
-  W.addExcludedZone(z);
+  //Bottom
+  Boundry bBottom = new Boundry(new PVector(indentEnd.x, indentEnd.y), new PVector(-indentEnd.x, indentEnd.y)); W.addBoundry(bBottom);
+ 
+ 
+  half_box_width *= s;
+  half_box_height *= s;
+  
+  
   
   // Particles
   for (int i = 0; i < numberOfParticles; i++)
   {
     PVector l = new PVector(random(40)-20, 40+random(40)-20);
     l.mult(s);
-    Particle p = new Particle(l); W.addParticle(p);
+    Particle p = new Particle(l);W.addParticle(p);
   }
   
   selectedP = null;

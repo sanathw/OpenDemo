@@ -18,6 +18,7 @@ Button bVelocity;
 Button bInfo;
 Button bMoveParticle;
 Button bModelOffset;
+Button bShowImage;
 
 boolean showA = true;
 
@@ -56,8 +57,8 @@ void setupUI()
     
     c0B = addContainer(0.345, 0.01, .45, 0.96); c0B.hasBorder = true;
     setContainer(c0B);
-    var i = 0.03;
-    var w = 0.12;
+    var i = 0.02;
+    var w = 0.11;
     war s = 0.02;
     bDebug = addButton(i, 0.25, w, .5, "Debug"); i += (w+s);
     
@@ -71,6 +72,8 @@ void setupUI()
     bInfo = addButton(i, 0.25, w, .5, "DEL"); i += (w+s);
     bMoveParticle = addButton(i, 0.25, w, .5, "move"); i += (w+s);
     bModelOffset = addButton(i, 0.25, w, .5, "+"); i += (w+s);
+    bShowImage = addButton(i, 0.25, 0.05, .5, "img"); bShowImage.isOn = false;
+    
   }
   
   resetData();
@@ -119,6 +122,7 @@ void updateDisplayInfo()
   bMoveParticle.isOn = moveParticle;
   
   bModelOffset.isOn = showModelOffset;
+  bShowImage.isOn = showImage;
 }
 
 void processUI()
@@ -132,7 +136,7 @@ void processUI()
   {
     simChange = true;
     simulation++;
-    if (simulation > 9) simulation = 1;
+    if (simulation > 10) simulation = 1;
     setupSimulation();
   }
   
@@ -202,6 +206,12 @@ void processUI()
   if (bModelOffset != null && bModelOffset.doProcess == true) 
   {
     showModelOffset = !showModelOffset;
+  }
+  
+  if (bShowImage != null && bShowImage.doProcess == true) 
+  {
+    showImage = !showImage;
+    loadBackImage(loadImageId);
   }
 }
 
