@@ -567,6 +567,11 @@ void setContainer(Container i_currentContainer)
   currentContainer = i_currentContainer;
 }
 
+void ResetUpdate()
+{
+  cm.ResetUpdate();
+}
+
 Container addContainer(float i_px1, float i_py1, float i_pw, float i_ph)
 {
   Container c = new Container(i_px1, i_py1, i_pw, i_ph);
@@ -917,6 +922,20 @@ class ControlManager
     if (showPercent < 0) {showPercent = 0; showChange =0; isOpened = false;}
   }
   
+  void ResetUpdate()
+  {   
+    mousePressed = false;
+    /*for (int i = 0; i < controls.size(); i++) 
+    { 
+      Control c = (Control) controls.get(i); 
+      c.update(); 
+      
+      //isControlItemDown = isControlItemDown || c.isDown;
+      //if (focusControl == null && c.isDown == true) {focusControl = c; }// println("SET");}
+      isControlDown = isControlDown || c.isDown;  //SANATH
+    }*/
+  }
+  
   int pointerMode = 0;
   
   void draw()
@@ -1251,7 +1270,7 @@ class Button extends Control
       {
         if (isMobile == false) isOver = true;
         if (mousePressed == true) 
-        { 
+        {
           isDown = true; 
           
           
