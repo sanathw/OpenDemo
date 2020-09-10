@@ -1,20 +1,6 @@
 class ContractButton extends Button
 {
   ContractButton(_x, _y, _w, _h, _value, _callback, _id) {super(_x, _y, _w, _h, _value, _callback, _id);}
-  
-  void draw()
-  {
-    super.drawBegin();
-    
-    stroke(0); strokeWeight(1); fill(190);
-    
-    if((isOver && mousePressed) || selected) fill(255, 0, 0);
-    
-    rect(0, 0, w, h);
-    fill(0); text(""+value, 0, 0);
-    
-    super.drawEnd();
-  }
 }
 
 
@@ -26,12 +12,23 @@ class SuiteButton extends Button
   {
     super.drawBegin();
     
-    stroke(0); strokeWeight(1); fill(190);
+    var img = null;
+    switch(value)
+    {
+      case "C": img = imgClubs; break;
+      case "H": img = imgHearts; break;
+      case "D": img = imgDiamonds; break;
+      case "S": img = imgSpades; break;
+      default: img = null;
+    }
     
-    if((isOver && mousePressed) || selected) fill(0, 255, 0);
-    
-    rect(0, 0, w, h);
-    fill(0); text(""+value, 0, 0);
+    if (img != null) 
+    {
+      pushMatrix();
+      image(img, 0, 0, w-4, h-4);
+      popMatrix();
+      showValue = false;
+    }
     
     super.drawEnd();
   }
@@ -41,39 +38,31 @@ class SuiteButton extends Button
 class DoubleButton extends Button
 {
   DoubleButton(_x, _y, _w, _h, _value, _callback, _id) {super(_x, _y, _w, _h, _value, _callback, _id);}
-  
-  void draw()
-  {
-    super.drawBegin();
-    
-    stroke(0); strokeWeight(1); fill(190);
-    
-    if((isOver && mousePressed) || selected) fill(0, 0, 255);
-    
-    rect(0, 0, w, h);
-    fill(0); text(""+value, 0, 0);
-    
-    super.drawEnd();
-  }
 }
 
 
 class VulnerableButton extends Button
 {
-  VulnerableButton(_x, _y, _w, _h, _value, _callback, _id) {super(_x, _y, _w, _h, _value, _callback, _id);}
+  VulnerableButton(_x, _y, _w, _h, _value, _callback, _id) {super(_x, _y, _w, _h, _value, _callback, _id); showValue = false;}
   
   void draw()
   {
     super.drawBegin();
     
-    stroke(0); strokeWeight(1); fill(190);
+    var s = 0.5;
+    if((isOver && mousePressed) || selected) s = 1;
     
-    if((isOver && mousePressed) || selected) fill(255, 255, 0);
-    
-    rect(0, 0, w, h);
+    var c = null;
+    switch(value)
+    {
+      case "Vul": c = color(255, 0, 0); break;
+      case "Non-Vul": c = color(0, 255, 0); break;
+      default: img = color(0, 0);
+    }
     pushMatrix();
-    scale(0.5);
-    fill(0); text(""+value, 0, 0);
+    scale(s);
+    fill(c);
+    rect(0, 0, w, h);
     popMatrix();
     
     super.drawEnd();
@@ -84,20 +73,6 @@ class VulnerableButton extends Button
 class MakingButton extends Button
 {
   MakingButton(_x, _y, _w, _h, _value, _callback, _id) {super(_x, _y, _w, _h, _value, _callback, _id);}
-  
-  void draw()
-  {
-    super.drawBegin();
-    
-    stroke(0); strokeWeight(1); fill(190);
-    
-    if((isOver && mousePressed) || selected) fill(255, 0, 0);
-    
-    rect(0, 0, w, h);
-    fill(0); text(""+value, 0, 0);
-    
-    super.drawEnd();
-  }
 }
 
 
@@ -112,6 +87,7 @@ class Button
   var isOver = false;
   var value;
   var selected = false;
+  var showValue = true;
   
   Button(_x, _y, _w, _h, _value, _callback, _id)
   {
@@ -135,16 +111,48 @@ class Button
     return false;
   }
   
+  void doHighlight1()
+  {
+    stroke(0); strokeWeight(1); fill(255);
+    rect(0, 0, w, h);
+  }
+  
+  void doHighlight2()
+  {
+    stroke(0); strokeWeight(1); noFill();
+    rect(0, 0, w, h);
+  }
+  
+  void noHighlight()
+  {
+    stroke(0, 0); strokeWeight(0.001); fill(255, 40);
+    rect(0, 0, w, h);
+  }
+  
   void drawBegin()
   {
     checkPressed();
     rectMode(CENTER); textAlign(CENTER, CENTER);
     pushMatrix();
     translate(x, y);
+    
+    if((isOver && mousePressed) || selected) doHighlight1();
+    else noHighlight();
   }
   
   void drawEnd()
   {
+    if((isOver && mousePressed) || selected) doHighlight2();
+    
+    if (showValue)
+    {
+      fill(0); 
+      pushMatrix();
+      scale(1.2);
+      text(""+value, 0, 0);
+      popMatrix();
+    }
+    
     popMatrix();
   }
   
@@ -152,11 +160,6 @@ class Button
   {
     drawBegin();
     
-    stroke(0); strokeWeight(1); fill(190);
-    
-    if(isOver) fill(255, 255, 0);
-    
-    rect(x, y, w, h);
     drawEnd();
   }
 }

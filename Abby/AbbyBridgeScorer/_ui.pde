@@ -1,5 +1,5 @@
 //Container c1;
-//Button b1;
+Button b1;
 //ScrollBar s1;
 //TextBox t1;
 //LabelBox l1;
@@ -26,7 +26,7 @@ void setupUI()
     // add buttons to tab
     
     //setContainer(c1);
-    //b1 = addButton(.012, .1, .12, .31, "Triangle");
+    b1 = addButton(.012, .1, .2, .5, "back");
     //s1 = addScrollBar(0.012, 0.4, .7, .31, 0, 100, 50);
     //t1 = addTextBox(.012, .48, .76, .2, "");
     //l1 = addLabelBox(.8, .8, .1, .15, "24");
@@ -72,7 +72,11 @@ void setupUI()
 
 void processUI()
 {
-  //if (b1 != null && b1.doProcess == true) {}
+  if (b1 != null && b1.doProcess == true) 
+  {
+    imgBackId++;
+    if (imgBackId > 8) imgBackId = 0;
+  }
   
   
   
