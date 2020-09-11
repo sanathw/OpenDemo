@@ -26,7 +26,7 @@ void setupUI()
     // add buttons to tab
     
     //setContainer(c1);
-    b1 = addButton(.012, .1, .2, .5, "back");
+    b1 = addButton(.3, .1, .4, .8, "Background");
     //s1 = addScrollBar(0.012, 0.4, .7, .31, 0, 100, 50);
     //t1 = addTextBox(.012, .48, .76, .2, "");
     //l1 = addLabelBox(.8, .8, .1, .15, "24");
