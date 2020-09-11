@@ -201,7 +201,7 @@ class Controller
         score.value = A1 + A2 + A3;
         
         // message
-        info.message.push("     [for" + m3 + "]");
+        info.message.push("     [for " + m3 + "]");
         info.message.push(m1);
         if (A2 > 0) 
         {
