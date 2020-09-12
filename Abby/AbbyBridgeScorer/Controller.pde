@@ -7,6 +7,8 @@ class Controller
   Making m;
   Score score;
   Information info;
+  boolean showFullInfo = false;
+  var anim = 0;
   
   Controller(x, y)
   {
@@ -28,92 +30,133 @@ class Controller
   }
   
   
+  void animateInfo()
+  {
+    pushMatrix();
+    var x = map(anim, 0, 1, 0, -166.5);
+    var y = map(anim, 0, 1, 0, -170);
+    var s = map(anim, 0, 1, 1, 2.15);
+    info.op = map(anim, 0, 1, 90, 220);
+    info.b = map(anim, 0, 1, 140, 220);
+    translate(x, y);
+    scale(s);
+    info.draw();
+    popMatrix();
+  }
+  
   var offset = 0;
   var requiredOffset = 0;
   color clr1;
   color clr2;
   void draw()
   {
-    c.draw();
-    s.draw();
-    d.draw();
-    v.draw();
-    m.draw();
-    score.draw();
-    info.draw();
     
     
-    switch(imgBackId)
+    if (showFullInfo)
     {
-      case 0: clr1 = color(0); clr2 = color(255); break;
-      case 1: clr1 = color(255); clr2 = color(0); break;
-      case 2: clr1 = color(0, 40, 0); clr2 = color(0); break;
-      case 3: clr1 = color(255); clr2 = color(0); break;
-      case 4: clr1 = color(255); clr2 = color(0); break;
-      case 5: clr1 = color(255); clr2 = color(0); break;
-      case 6: clr1 = color(255); clr2 = color(255); break;
-      case 7: clr1 = color(255); clr2 = color(0); break;
-      case 8: clr1 = color(160, 140, 0); clr2 = color(255); break;
-      default: clr1 = color(255); clr2 = color(0);
-    }
-    
-    var spc = 25;
-    var x = 0;
-    var total_x = 0;
-    
-    pushMatrix();
-    x = -168-(spc*6); total_x += x;
-    translate(x, 8);
-    //fill(255, 40); stroke(0, 0); strokeWeight(0.001);
-    //rect(-7, -5, 338, 6);
-    
-    requiredOffset = c.value-1;
-    offset += (requiredOffset-offset)/8;
-    x = spc * offset; total_x += x;
-    translate(x, 0);
-    for (int i = -13; i < 7; i++)
-    {
-      if (total_x > -185 && total_x < 165)
+      animateInfo();
+      anim += 0.03;
+      if (anim > 1) 
       {
-        pushMatrix();
-        scale(0.8);
-        fill(clr2, 120);
-        //fill(0);
-        if (i==0) 
-        {
-          stroke(clr2, 120); strokeWeight(2); line(3, -4, 3, -9); line(-8, -9, 16, -9);
-          text("=", 0, 0);
-        }
-        else if (i > 0) text("+"+i, 0, 0);
-        else text(""+i, 0, 0);
-        popMatrix();
+        anim = 1;
+        if (mousePressed && !pmousePressed) showFullInfo = false;
+      }
+    }
+    else
+    {
+      if (anim > 0)
+      {
+        animateInfo();
+        anim -= 0.03;
+        if (anim < 0) anim = 0;
+        return;
       }
       
-      x = spc; total_x += x;
+      if (mousePressed && !pmousePressed) 
+      {
+        if (mouseX >= info.x && mouseX <= (info.x+info.w) && mouseY >= info.y && mouseY <= (info.y+info.h)) showFullInfo = true;
+      }
+    
+      c.draw();
+      s.draw();
+      d.draw();
+      v.draw();
+      m.draw();
+      score.draw();
+      info.draw();
+      
+      switch(imgBackId)
+      {
+        case 0: clr1 = color(0); clr2 = color(255); break;
+        case 1: clr1 = color(255); clr2 = color(0); break;
+        case 2: clr1 = color(0, 40, 0); clr2 = color(0); break;
+        case 3: clr1 = color(255); clr2 = color(0); break;
+        case 4: clr1 = color(255); clr2 = color(0); break;
+        case 5: clr1 = color(255); clr2 = color(0); break;
+        case 6: clr1 = color(255); clr2 = color(255); break;
+        case 7: clr1 = color(255); clr2 = color(0); break;
+        case 8: clr1 = color(160, 140, 0); clr2 = color(255); break;
+        default: clr1 = color(255); clr2 = color(0);
+      }
+      
+      var spc = 25;
+      var x = 0;
+      var total_x = 0;
+      
+      pushMatrix();
+      x = -168-(spc*6); total_x += x;
+      translate(x, 8);
+      //fill(255, 40); stroke(0, 0); strokeWeight(0.001);
+      //rect(-7, -5, 338, 6);
+      
+      requiredOffset = c.value-1;
+      offset += (requiredOffset-offset)/8;
+      x = spc * offset; total_x += x;
       translate(x, 0);
+      for (int i = -13; i < 7; i++)
+      {
+        if (total_x > -185 && total_x < 165)
+        {
+          pushMatrix();
+          scale(0.8);
+          fill(clr2, 120);
+          //fill(0);
+          if (i==0) 
+          {
+            stroke(clr2, 120); strokeWeight(2); line(3, -4, 3, -9); line(-8, -9, 16, -9);
+            text("=", 0, 0);
+          }
+          else if (i > 0) text("+"+i, 0, 0);
+          else text(""+i, 0, 0);
+          popMatrix();
+        }
+        
+        x = spc; total_x += x;
+        translate(x, 0);
+      }
+      popMatrix();
+      
+      
+      
+      fill(clr1); textAlign(CENTER, CENTER);textFont(font1);
+      pushMatrix();
+      translate(0, -130); scale(1);
+      text("Contract", 0, 0);
+      popMatrix();
+      pushMatrix();
+      translate(0, -35); scale(1);
+      text("Making", 0, 0);
+      popMatrix();
+      pushMatrix();
+      translate(-112, 125); scale(1);
+      text("Score", 0, 0);
+      popMatrix();
+      textFont(fontNormal);
+      
+      stroke(255, 220, 190, 160); strokeWeight(0.5); noFill();
+      rectMode(CENTER);
+      rect(0, -85, 360, 70);
     }
-    popMatrix();
-    
-    
-    
-    fill(clr1); textAlign(CENTER, CENTER);textFont(font1);
-    pushMatrix();
-    translate(0, -130); scale(1);
-    text("Contract", 0, 0);
-    popMatrix();
-    pushMatrix();
-    translate(0, -35); scale(1);
-    text("Making", 0, 0);
-    popMatrix();
-    pushMatrix();
-    translate(-112, 125); scale(1);
-    text("Score", 0, 0);
-    popMatrix();
-    textFont(fontNormal);
-    
-    stroke(255, 220, 190, 160); strokeWeight(0.5); noFill();
-    rectMode(CENTER);
-    rect(0, -85, 360, 70);
   }
   
   void Calculate()
@@ -127,9 +170,10 @@ class Controller
     
     score.value = 0;
     
-    var loss = (c.value + 6) - m.value;
+    var underTricks = (c.value + 6) - m.value;
+    var overTricks = m.value - (c.value + 6);
 
-    if (loss > 0)
+    if (underTricks > 0)
     {      
       if (d.value == null)  
       { 
@@ -140,97 +184,122 @@ class Controller
         if (v.value == "Non-Vul") { A0= -50; vulnerable = "non-vulnerable"; }
         else { A0 = -100; vulnerable = "vulnerable"; }
         
-        // message
-        m = "" + A0 + " (for " + vulnerable + ")";
-        info.message.push(m);
-        
-        score.value = A0 * loss;
+        score.value = A0 * underTricks;
         
         // message
-        var tricks = loss > 1 ? "tricks" : "trick";
-        m = "x " + loss + " (under " + tricks + ")";
-        info.message.push(m);
+        var tricks = underTricks > 1 ? "tricks" : "trick";
+        info.message.push("" + A0 + " (for " + vulnerable + ")");
+        info.message.push("      " + "x " + underTricks + " (under " + tricks + ")");
         
-        m = "= " + score.value;
-        info.message.push(m);
+        info.message.push("--------");
+        info.message.push("= " + score.value);
       }
-      
-      /*if (d.value == "X")   
-      { 
-        if (v.value == "Non-Vul")
-        {
-          var A0 = 0;
-          if (loss == 1) A0 = -100;
-          if (loss == 2) A0 = -300;
-          if (loss == 3) A0 = -500;
-          if (loss > 3) A0 = -500 +  -300 * (c.value + 3 - m.value);
-          score.value = A0;
-        }
-        else
-        {
-          var A0 = -200 - 300*(loss-1);
-          score.value = A0;
-        }        
-      }*/
     }
     else
     {
+      var m1 = "";
+      var m2 = "";
+      var m3 = "";
+      var m4 = "";
+      var vulnerable = "";
+      
+      var m5 = "";
+      var over7 = m.value - 7; m5 = "making above 7 for Major/minor"
+      if (s.value == "NT" && (d.value == "X" || d.value == "XX")) over7 = c.value - 1; m5 = "contracts above 1 for NT";
+      
+      var A1 = 0;
+      var A2 = 0;
+      var Amid = 0;
+      if (s.value == "NT")                  { A1 = 40; A2 = 30 * over7; Amid = 2; m1 = "(for trick 7)";  m2 = "30 (for trick 8-13)"; m3 = "NT"; }
+      if (s.value == "H" || s.value == "S") { A1 = 30; A2 = 30 * over7; Amid = 3; m1 = "(for trick 7)";  m2 = "30 (for trick 8-13)"; m3 = "Majors"; }
+      if (s.value == "C" || s.value == "D") { A1 = 20; A2 = 20 * over7; Amid = 4; m1 = "(for trick 7)";  m2 = "20 (for trick 8-13)"; m3 = "minors"; }
+      
+      var A3 = 0;
+      if (c.value >= 1 && c.value <= Amid) { m4 = "Part Score Bonus"; if (v.value == "Non-Vul") { A3 = 50; vulnerable = "non-vulnerable " + m3 + " 1-" + Amid; } else { A3 = 50; vulnerable = "vulnerable " + m3 + " 1-" + Amid; }}
+      if (c.value > Amid && c.value <= 5) { m4 = "Game Bonus 3NT, 4H/S, 5C/D"; if (v.value == "Non-Vul") { A3 = 300; vulnerable = "non-vulnerable " + m3 + " " + (Amid+1) +"-5"; } else { A3 = 500; vulnerable = "vulnerable " + m3 + " " + (Amid+1) +"-5"; }}
+      if (c.value == 6) { m4 = "Small Slam 12 tricks bid 6 level"; if (v.value == "Non-Vul") { A3 = 800; vulnerable = "non-vulnerable 6"; } else { A3 = 1250; vulnerable = "vulnerable 6"; }}
+      if (c.value == 7) { m4 = "Grand Slam 13 tricks bid 7 level";  if (v.value == "Non-Vul") { A3 = 1300; vulnerable = "non-vulnerable 7"; } else { A3 = 2000; vulnerable = "vulnerable 7"; }}
+      
       if (d.value == null)  
-      { 
-        var m1 = "";
-        var m2 = "";
-        var m3 = "";
-        var m4 = "";
-        var vulnerable = "";
-        
-        var make = m.value - 7;
-        
-        var A1 = 0;
-        var A2 = 0;
-        var Amid = 0;
-        if (s.value == "NT")                  { A1 = 40; A2 = 30 * make; Amid = 3; m1 = "40 (for trick 7)";  m2 = "30 (for trick 8-13)"; m3 = "NT"; }
-        if (s.value == "H" || s.value == "S") { A1 = 30; A2 = 30 * make; Amid = 4; m1 = "30 (for trick 7)";  m2 = "30 (for trick 8-13)"; m3 = "Majors"; }
-        if (s.value == "C" || s.value == "D") { A1 = 20; A2 = 20 * make; Amid = 5; m1 = "20 (for trick 7)";  m2 = "20 (for trick 8-13)"; m3 = "minors"; }
-        
-        var A3 = 0;
-        if (c.value >= 1 && c.value < Amid) { m4 = "Part Score Bonus"; if (v.value == "Non-Vul") { A3 = 50; vulnerable = "non-vulnerable " + m3 + " 1-" + Amid; } else { A3 = 50; vulnerable = "vulnerable " + m3 + " 1-"+Amid; }}
-        if (c.value >= Amid && c.value < 6) { m4 = "Game Bonus 3NT, 4H/S, 5C/D"; if (v.value == "Non-Vul") { A3 = 300; vulnerable = "non-vulnerable " + m3 + " " + Amid +"-5"; } else { A3 = 500; vulnerable = "vulnerable " + m3 + " " + Amid +"-5"; }}
-        if (c.value == 6) { m4 = "Small Slam 12 tricks bid 6 level"; if (v.value == "Non-Vul") { A3 = 800; vulnerable = "non-vulnerable 6"; } else { A3 = 1250; vulnerable = "vulnerable 6"; }}
-        if (c.value == 7) { m4 = "Grand Slam 13 tricks bid 7 level";  if (v.value == "Non-Vul") { A3 = 1300; vulnerable = "non-vulnerable 7"; } else { A3 = 2000; vulnerable = "vulnerable 7"; }}
-        
+      {
         score.value = A1 + A2 + A3;
         
         // message
-        info.message.push("     [for " + m3 + "]");
-        info.message.push(m1);
+        info.message.push("[" + m3 + "]");
+        info.message.push("" + A1 + " " + m1);
         if (A2 > 0) 
         {
           info.message.push("+");
-          info.message.push("   " + m2);
-          var tricks = loss > 1 ? "tricks" : "trick";
-          info.message.push("   x " + make + " (over " + tricks + ")");
+          info.message.push("      " + m2);
+          info.message.push("      " + "x " + over7 + " " + m5);
           info.message.push("" + A2 + "   = ");
         }
         info.message.push("+");
-        info.message.push("   (for " + vulnerable + ")");
-        info.message.push("   (" + m4 + ")");
+        info.message.push("      " + "(for " + vulnerable + ")");
+        info.message.push("      " + "(" + m4 + ")");
         info.message.push("" + A3);
+        info.message.push("--------");
         info.message.push("= " + score.value);
       }
       
-      /*if (d.value == "X")   
+      if (d.value == "X" || d.value == "XX")  
       {
-        var Amid = 1;
-        if (s.value == "NT")                  { Amid = 1; }
-        if (s.value == "H" || s.value == "S") { Amid = 1; }
-        if (s.value == "C" || s.value == "D") { Amid = 2; }
+        var oldA2 = A2;
+        var dblMult = d.value == "X" ? 1 : 2;
+        var dblType = d.value == "X" ? "double" : "re-double";
         
-        var A3 = 0;
-        if (c.value >= 1 && c.value < Amid) A3 = (v.value == "Non-Vul") ? 50 : 50;
-        if (c.value >= Amid && c.value < 6) A3 = (v.value == "Non-Vul") ? 300 : 500;
-        if (c.value == 6) A3 = (v.value == "Non-Vul") ? 800 : 1250;
-        if (c.value == 7) A3 = (v.value == "Non-Vul") ? 1300 : 2000;
-      }*/
+        var instult = 50*dblMult;
+        
+        info.message.push("[" + m3 + "]");
+        info.message.push("        " + A1 + " " + m1);
+        if (s.value == "NT" && oldA2 > 0) 
+        {
+          info.message.push("        " + "+");
+          info.message.push("        " + m2);
+          info.message.push("        " + "x " + over7 + " " + m5);
+        }
+        else
+        {
+          info.message.push("        " + "x " + c.value + " (contract)");
+        }
+        
+        
+        
+        if (s.value == "NT") A1 = (A1 + oldA2);
+        else A1 = (A1 * c.value);
+        
+        info.message.push("        " + A1 + " =");
+        
+        A1 = A1 * (2 * dblMult);
+        info.message.push("        " + "x " + (2 * dblMult) + " for " + dblType);
+        info.message.push("" + A1 + "   =");
+        
+        
+        
+        if (v.value == "Non-Vul") { A2 = (100 * dblMult)  * overTricks; m2 = "" + (100 * dblMult);  vulnerable = "non-vulnerable"; } else { A2 = (200 * dblMult) * overTricks; m2 = ""+(200 * dblMult);  vulnerable = "vulnerable"; }
+        
+        if (A1 > 100 && A3 == 50) if (v.value == "Non-Vul") {A3 = 300; m4 = "50 -> 300 Game Bonus for non-vulnerable double and above 100"} else {A3 = 500; m4 = "50 -> 500 Game Bonus for vulnerable double and above 100"}
+        
+        score.value = A1 + A2 + A3 + instult;
+        
+        
+        // message
+        if (A2 > 0) 
+        {
+          info.message.push("+");
+          info.message.push("      " + m2 + " (for " + dblType + " " + vulnerable + ")");
+          var tricks = overTricks > 1 ? "tricks" : "trick";
+          info.message.push("      " + "x " + overTricks + " (over " + tricks + " for " + vulnerable + ")");
+          info.message.push("" + A2 + "   = ");
+        }
+        info.message.push("+");
+        info.message.push("" + A3 + "  (" + m4 + ")");
+        info.message.push("+");
+        info.message.push("" + instult + "  (insult for " + dblType + ")");
+
+        info.message.push("--------");
+        info.message.push("= " + score.value);
+      }
     }
   
     score.clear();
@@ -262,7 +331,7 @@ class Double extends ButtonOptionList
   
   void buttonDown(id)
   {
-    if (bL[id].selected == true) bL[id].selected = false;
+    if (bL[id].selected == true) {bL[id].selected = false;  updateValue(); Calculate();}
     else super.buttonDown(id);
   }
 }
@@ -349,6 +418,8 @@ class Information
   var x; var y; var w; var h;
   var message = [];
   var t = 0;
+  var op = 90;
+  var b = 140;
   
   Information(_x, _y, _w, _h)
   {
@@ -359,7 +430,7 @@ class Information
   
   void draw()
   {
-    stroke(0, 40); strokeWeight(0.5); fill(255, 255, 100, 90);
+    stroke(0, 40); strokeWeight(0.5); fill(255, 255, b, op);
     rectMode(CORNERS);
     pushMatrix();
     translate(x, y);
@@ -371,9 +442,9 @@ class Information
     fill(0, o);
     textAlign(LEFT, CENTER);
     translate(5, 0);
-    translate(0, 10);
+    translate(0, 6);
     pushMatrix();
-    scale(0.7);
+    scale(0.45);
     for (int i = 0; i < message.length; i++)
     {
       text(message[i], 0, 0);
@@ -437,6 +508,6 @@ class ButtonOptionList
     for (int i = 0; i < bL.length; i++) bL[i].selected = false;
     bL[id].selected = true;
     updateValue();
-    Calculate();
+    Calculate(); 
   }
 }
