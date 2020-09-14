@@ -88,6 +88,7 @@ class Button
   var value;
   var selected = false;
   var showValue = true;
+  bar margin = 2.5;
   
   Button(_x, _y, _w, _h, _value, _callback, _id)
   {
@@ -102,7 +103,7 @@ class Button
   boolean checkPressed()
   {
     isOver = false;
-    if( mouseX >= l && mouseX <= r && mouseY >= t && mouseY <= b)
+    if( mouseX >= l-margin && mouseX <= r+margin && mouseY >= t-margin && mouseY <= b+margin)
     {
       isOver = true;
       if (mousePressed && !pmousePressed && callback != null) callback(id);
@@ -136,13 +137,15 @@ class Button
     pushMatrix();
     translate(x, y);
     
-    if((isOver && mousePressed) || selected) doHighlight1();
+    //if((isOver && mousePressed) || selected) doHighlight1();
+    if(selected) doHighlight1();
     else noHighlight();
   }
   
   void drawEnd()
   {
-    if((isOver && mousePressed) || selected) doHighlight2();
+    //if((isOver && mousePressed) || selected) doHighlight2();
+    if(selected) doHighlight2();
     
     if (showValue)
     {

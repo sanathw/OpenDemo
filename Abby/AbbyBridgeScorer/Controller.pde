@@ -8,7 +8,8 @@ class Controller
   Score score;
   Information info;
   boolean showFullInfo = false;
-  var anim = 0;
+  var anim1 = 0;
+  var anim2 = 0; // if you want the size change to be different
   
   Controller(x, y)
   {
@@ -33,13 +34,14 @@ class Controller
   void animateInfo()
   {
     pushMatrix();
-    var x = map(anim, 0, 1, 0, -166.5);
-    var y = map(anim, 0, 1, 0, -170);
-    var s = map(anim, 0, 1, 1, 2.15);
-    info.op = map(anim, 0, 1, 90, 220);
-    info.b = map(anim, 0, 1, 140, 220);
+    var x = map(anim1, 0, 1, 0, -166.5);
+    var y = map(anim2, 0, 1, 0, -170);
+    var s1 = map(anim1, 0, 1, 1, 2.15);
+    var s2 = map(anim1, 0, 1, 1, 2.15);
+    info.op = map(min(anim1, anim2), 0, 1, 90, 220);
+    info.b = map(min(anim1, anim2), 0, 1, 140, 220);
     translate(x, y);
-    scale(s);
+    scale(s1, s2);
     info.draw();
     popMatrix();
   }
@@ -55,20 +57,24 @@ class Controller
     if (showFullInfo)
     {
       animateInfo();
-      anim += 0.03;
-      if (anim > 1) 
+      anim1 += 0.05;
+      anim2 += 0.05;
+      if (anim1 > 1) anim1 = 1;
+      if (anim2 > 1) anim2 = 1;
+      if (anim1 == 1 && anim2 == 1) 
       {
-        anim = 1;
         if (mousePressed && !pmousePressed) showFullInfo = false;
       }
     }
     else
     {
-      if (anim > 0)
+      if (anim1 > 0 || anim2 > 0)
       {
         animateInfo();
-        anim -= 0.03;
-        if (anim < 0) anim = 0;
+        anim2 -= 0.05;
+        anim1 -= 0.05;
+        if (anim1 < 0) anim1 = 0;
+        if (anim2 < 0) anim2 = 0;
         return;
       }
       
@@ -189,7 +195,84 @@ class Controller
         // message
         var tricks = underTricks > 1 ? "tricks" : "trick";
         info.message.push("" + A0 + " (for " + vulnerable + ")");
-        info.message.push("      " + "x " + underTricks + " (under " + tricks + ")");
+        info.message.push("        " + "x " + underTricks + " (under " + tricks + ")");
+        
+        info.message.push("--------");
+        info.message.push("= " + score.value);
+      }
+      
+      if (d.value == "X" || d.value == "XX")  
+      {
+        var dblMult = d.value == "X" ? 1 : 2;
+        var dblType = d.value == "X" ? "double" : "re-double";
+        
+        var underTrick_1;
+        var underTrick_2;
+        var underTrick_3;
+        var underTrick_3_Extra;
+        
+        var vulnerable;
+        var m1 = "";
+        var m2 = "";
+        var m3 = "";
+        var m4 = "";
+        
+        if (v.value == "Non-Vul")
+        {
+          vulnerable = "non-vulnerable";
+          underTrick_1 = -100;
+          underTrick_2 = -300;
+          underTrick_3 = -500;
+          underTrick_3_Extra = -300;
+        }
+        else
+        {
+          vulnerable = "vulnerable";
+          underTrick_1 = -200;
+          underTrick_2 = -500;
+          underTrick_3 = -800;
+          underTrick_3_Extra = -300;
+        }
+        
+        m1 = "" + underTrick_1;
+        m2 = "" + underTrick_2;
+        m3 = "" + underTrick_3;
+        m4 = "" + underTrick_3_Extra;
+        
+        underTrick_1 *= dblMult;
+        underTrick_2 *= dblMult;
+        underTrick_3 *= dblMult;
+        underTrick_3_Extra *= dblMult;
+        
+        //m1 = "" + underTrick_1 + " (" + m1 + " for 1 undertrick " + vulnerable + ")";
+        //m2 = "" + underTrick_2 + " for 2 undertricks (" + vulnerable + ")";
+        //m3 = "" + underTrick_3 + " for 3 undertricks (" + vulnerable + ")";
+        //m4 = "" + underTrick_3_Extra + " for extra undertrick over undertrick 3 (" + vulnerable + ")";
+        
+        //info.message.push("[" + m3 + "]");
+        
+        
+        var A0 = 0;
+        if (underTricks == 1) { A0 = underTrick_1; info.message.push("        " + m1 + " (for 1 undertrick " + vulnerable + ")"); info.message.push("        x " + dblMult + " (" + dblType + ")"); }
+        else if (underTricks == 2) { A0 = underTrick_2; info.message.push("        " + m2 + " (for 2 undertricks " + vulnerable + ")"); info.message.push("        x " + dblMult + " (" + dblType + ")"); }
+        else if (underTricks == 3) { A0 = underTrick_3; info.message.push("        " + m3 + " (for 3 undertricks " + vulnerable + ")"); info.message.push("        x " + dblMult + " (" + dblType + ")"); }
+        else 
+        {
+          var v1 = (3 - m.value + c.value);
+          var v2 = (underTrick_3_Extra * v1);
+          A0 = underTrick_3 + v2;
+          
+           info.message.push("        " + m3 + " (for 3 undertricks " + vulnerable + ")");
+           info.message.push("        x " + dblMult + " (" + dblType + ")"); 
+           info.message.push("" + underTrick_3 + " = "); 
+           info.message.push("+"); 
+           info.message.push("        " + m4 + " (for extra undertrick over undertricks 3 " + vulnerable + ")"); 
+           info.message.push("        x " + dblMult + " (" + dblType + ")"); 
+           info.message.push("        x " + v1 + " (for 3 - making + contract)");
+           info.message.push("" + v2 + "   = ");
+        }
+        
+        score.value = A0;
         
         info.message.push("--------");
         info.message.push("= " + score.value);
@@ -230,13 +313,13 @@ class Controller
         if (A2 > 0) 
         {
           info.message.push("+");
-          info.message.push("      " + m2);
-          info.message.push("      " + "x " + over7 + " " + m5);
+          info.message.push("        " + m2);
+          info.message.push("        " + "x " + over7 + " " + m5);
           info.message.push("" + A2 + "   = ");
         }
         info.message.push("+");
-        info.message.push("      " + "(for " + vulnerable + ")");
-        info.message.push("      " + "(" + m4 + ")");
+        info.message.push("        " + "(for " + vulnerable + ")");
+        info.message.push("        " + "(" + m4 + ")");
         info.message.push("" + A3);
         info.message.push("--------");
         info.message.push("= " + score.value);
@@ -251,16 +334,16 @@ class Controller
         var instult = 50*dblMult;
         
         info.message.push("[" + m3 + "]");
-        info.message.push("        " + A1 + " " + m1);
+        info.message.push("          " + A1 + " " + m1);
         if (s.value == "NT" && oldA2 > 0) 
         {
-          info.message.push("        " + "+");
-          info.message.push("        " + m2);
-          info.message.push("        " + "x " + over7 + " " + m5);
+          info.message.push("          " + "+");
+          info.message.push("          " + m2);
+          info.message.push("          " + "x " + over7 + " " + m5);
         }
         else
         {
-          info.message.push("        " + "x " + c.value + " (contract)");
+          info.message.push("          " + "x " + c.value + " (contract)");
         }
         
         
@@ -268,10 +351,10 @@ class Controller
         if (s.value == "NT") A1 = (A1 + oldA2);
         else A1 = (A1 * c.value);
         
-        info.message.push("        " + A1 + " =");
+        info.message.push("          " + A1 + " =");
         
         A1 = A1 * (2 * dblMult);
-        info.message.push("        " + "x " + (2 * dblMult) + " for " + dblType);
+        info.message.push("          " + "x " + (2 * dblMult) + " for " + dblType);
         info.message.push("" + A1 + "   =");
         
         
@@ -287,9 +370,9 @@ class Controller
         if (A2 > 0) 
         {
           info.message.push("+");
-          info.message.push("      " + m2 + " (for " + dblType + " " + vulnerable + ")");
+          info.message.push("        " + m2 + " (for " + dblType + " " + vulnerable + ")");
           var tricks = overTricks > 1 ? "tricks" : "trick";
-          info.message.push("      " + "x " + overTricks + " (over " + tricks + " for " + vulnerable + ")");
+          info.message.push("        " + "x " + overTricks + " (over " + tricks + " for " + vulnerable + ")");
           info.message.push("" + A2 + "   = ");
         }
         info.message.push("+");

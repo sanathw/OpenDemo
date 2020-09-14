@@ -30,7 +30,7 @@ void setup()
   
   //imgBlur = loadImage("./_resources/Blur.png");
   
-  //doZoom = false; doTranslate = false; doRotate = false;
+  doZoom = false; doTranslate = false; doRotate = false;
   setSize(400, 300, P2D, FIT_INSIDE, this); // this has to be the last line in this function
 }
 
