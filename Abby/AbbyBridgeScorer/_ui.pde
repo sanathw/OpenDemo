@@ -75,7 +75,7 @@ void processUI()
   if (b1 != null && b1.doProcess == true) 
   {
     imgBackId++;
-    if (imgBackId > 8) imgBackId = 0;
+    if (imgBackId > 9) imgBackId = 0;
   }
   
   

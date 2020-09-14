@@ -94,14 +94,15 @@ class Controller
       switch(imgBackId)
       {
         case 0: clr1 = color(0); clr2 = color(255); break;
-        case 1: clr1 = color(255); clr2 = color(0); break;
-        case 2: clr1 = color(0, 40, 0); clr2 = color(0); break;
-        case 3: clr1 = color(255); clr2 = color(0); break;
+        case 1: clr1 = color(0); clr2 = color(255); break;
+        case 2: clr1 = color(255); clr2 = color(0); break;
+        case 3: clr1 = color(0, 40, 0); clr2 = color(0); break;
         case 4: clr1 = color(255); clr2 = color(0); break;
         case 5: clr1 = color(255); clr2 = color(0); break;
-        case 6: clr1 = color(255); clr2 = color(255); break;
-        case 7: clr1 = color(255); clr2 = color(0); break;
-        case 8: clr1 = color(160, 140, 0); clr2 = color(255); break;
+        case 6: clr1 = color(255); clr2 = color(0); break;
+        case 7: clr1 = color(255); clr2 = color(255); break;
+        case 8: clr1 = color(255); clr2 = color(0); break;
+        case 9: clr1 = color(160, 140, 0); clr2 = color(255); break;
         default: clr1 = color(255); clr2 = color(0);
       }
       

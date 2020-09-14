@@ -13,15 +13,16 @@ void setup()
   fontNormal = createFont("Lucida Sans", 12); textAlign(CENTER, CENTER);
   font1 = createFont("Arial Bold", 14); textAlign(CENTER, CENTER);
   
-  imgBack[0] = loadImage("./_resources/back_small.png");
-  imgBack[1] = loadImage("./_resources/back2_small.png");
-  imgBack[2] = loadImage("./_resources/back2a_small.png");
-  imgBack[3] = loadImage("./_resources/back3_small.png");
-  imgBack[4] = loadImage("./_resources/back4_small.png");
-  imgBack[5] = loadImage("./_resources/back4a_small.png");
-  imgBack[6] = loadImage("./_resources/back5_small.jpg");
-  imgBack[7] = loadImage("./_resources/back6_small.png");
-  imgBack[8] = loadImage("./_resources/Untitled_small.png");
+  imgBack[0] = loadImage("./_resources/back_small_navy.png");
+  imgBack[1] = loadImage("./_resources/back_small.png");
+  imgBack[2] = loadImage("./_resources/back2_small.png");
+  imgBack[3] = loadImage("./_resources/back2a_small.png");
+  imgBack[4] = loadImage("./_resources/back3_small.png");
+  imgBack[5] = loadImage("./_resources/back4_small.png");
+  imgBack[6] = loadImage("./_resources/back4a_small.png");
+  imgBack[7] = loadImage("./_resources/back5_small.jpg");
+  imgBack[8] = loadImage("./_resources/back6_small.png");
+  imgBack[9] = loadImage("./_resources/Untitled_small.png");
   
   imgClubs = loadImage("./_resources/Clubs_small.png");
   imgHearts = loadImage("./_resources/Hearts_small.png");
