@@ -1,5 +1,6 @@
 //Container c1;
 Button b1;
+Buttton bFullScreen;
 //ScrollBar s1;
 //TextBox t1;
 //LabelBox l1;
@@ -26,7 +27,8 @@ void setupUI()
     // add buttons to tab
     
     //setContainer(c1);
-    b1 = addButton(.3, .1, .4, .8, "Background");
+    b1 = addButton(.1, .1, .2, .8, "Background");
+    bFullScreen = addButton(.4, .1, .2, .8, "Full screen");
     //s1 = addScrollBar(0.012, 0.4, .7, .31, 0, 100, 50);
     //t1 = addTextBox(.012, .48, .76, .2, "");
     //l1 = addLabelBox(.8, .8, .1, .15, "24");
@@ -78,7 +80,18 @@ void processUI()
     if (imgBackId > 9) imgBackId = 0;
   }
   
-  
+  if (bFullScreen != null && bFullScreen.doProcess == true) 
+  {
+    // from this apps _main.html 
+    //toggleFullScreen(null);
+    //or
+    requestFullScreen(document.documentElement);
+    pjsCM.HideControlBar();
+    
+    
+    //pjsCM.noLoop();
+    //setTimeout(pjsCM.loop(), 15000); // 1.5 seconds
+  }
   
   UpdateUI();
 }
