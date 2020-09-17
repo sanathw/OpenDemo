@@ -69,7 +69,6 @@ class Controller
     for (int i = 0; i < v.bL.length; i++) v.bL[i].selected = false;
     for (int i = 0; i < d.bL.length; i++) d.bL[i].selected = false;
     for (int i = 0; i < m.bL.length; i++) m.bL[i].selected = false;
-    for (int i = 0; i < a.bL.length; i++) a.bL[i].selected = false;
     
     var r;
     r = (int) random(c.bL.length);
@@ -92,7 +91,6 @@ class Controller
     v.updateValue();
     d.updateValue();
     m.updateValue();
-    a.updateValue();
     
     Calculate();
   }
@@ -378,6 +376,9 @@ class Controller
   
   void Calculate()
   {
+    for (int i = 0; i < a.bL.length; i++) a.bL[i].selected = false;
+    a.updateValue();
+  
     info.message = [];
     /*info.message.push("C " + c.value);
     info.message.push("S " + s.value);
