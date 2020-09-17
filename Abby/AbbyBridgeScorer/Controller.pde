@@ -1,5 +1,7 @@
 class Controller
 {
+  var left; var top;
+  
   Contract c;
   Suite s;
   Double d;
@@ -11,23 +13,208 @@ class Controller
   var anim1 = 0;
   var anim2 = 0; // if you want the size change to be different
   
+  Answers a;
+  var coins = [];
+  // sound effects from: https://www.storyblocks.com/audio/search/game+win+sound+effect
+  var Win;
+  
   Controller(x, y)
   {
-    c = new Contract(x, y, 20, 20, 5, [1,2,3,4,5,6,7]); //y+= 30;
-    s = new Suite(x+225, y, 20, 20, 5, ["C", "H", "D", "S", "NT"]); y+= 30;
-    d = new Double(x+225, y, 20, 20, 5, ["X", "XX"]);
-    v = new Vulnerable(x+300, y, 20, 20, 5, ["Non-Vul", "Vul"]); y+= 40;
-    m = new Making(x, y+20, 20, 20, 5, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]); y+= 60;
-    score = new Score(x, y+30, 120, 60);
-    info = new Information(x+160, y, 185, 120);
+    left = x;
+    top = y;
     
+    c = new Contract(x, y, 20, 20, 5, [1,2,3,4,5,6,7]);
+    s = new Suite(x, y+30, 20, 20, 5, ["C", "H", "D", "S", "NT"]);
+    d = new Double(x+300, y+30, 20, 20, 5, ["X", "XX"]);
+    v = new Vulnerable(x+300, y, 20, 20, 5, ["Non-Vul", "Vul"]);
+    m = new Making(x, y+80, 20, 20, 5, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]);
+    score = new Score(x, y+160, 120, 60);
+    info = new Information(x+160, y+140, 185, 120);
     
     c.bL[0].selected = true; c.updateValue();
     s.bL[0].selected = true; s.updateValue();
     v.bL[0].selected = true; v.updateValue();
     m.bL[0].selected = true; m.updateValue();
     
+    a = new Answers(x-20, y+190, 40, 30, 5, ["a", "b", "c", "d"]);
+    a.bL[0].callback = answerClicked;
+    a.bL[1].callback = answerClicked;
+    a.bL[2].callback = answerClicked;
+    a.bL[3].callback = answerClicked;
+    
+    for (int i = 0; i < 12; i++)
+    {
+      coins.push([0, 0, 0, 0]);
+    }
+    Win = InitAudio("./_resources/win7.mp3"); // 3  6
+    
     Calculate();
+  }
+  
+  ////
+  var audio = null;
+  var InitAudio(var src)
+  {
+    var audio = document.createElement("audio");
+    audio.setAttribute("src", src);
+    audio.load();
+    return audio;
+  }
+  ////
+  
+  void newGame()
+  {
+    for (int i = 0; i < c.bL.length; i++) c.bL[i].selected = false;
+    for (int i = 0; i < s.bL.length; i++) s.bL[i].selected = false;
+    for (int i = 0; i < v.bL.length; i++) v.bL[i].selected = false;
+    for (int i = 0; i < d.bL.length; i++) d.bL[i].selected = false;
+    for (int i = 0; i < m.bL.length; i++) m.bL[i].selected = false;
+    for (int i = 0; i < a.bL.length; i++) a.bL[i].selected = false;
+    
+    var r;
+    r = (int) random(c.bL.length);
+    c.bL[r].selected = true;
+    
+    r = (int) random(s.bL.length);
+    s.bL[r].selected = true;
+    
+    r = (int) random(v.bL.length);
+    v.bL[r].selected = true;
+    
+    r = (int) random(3);
+    if (r <= 1) d.bL[r].selected = true;
+    
+    r = (int) random(m.bL.length);
+    m.bL[r].selected = true;
+    
+    c.updateValue();
+    s.updateValue();
+    v.updateValue();
+    d.updateValue();
+    m.updateValue();
+    a.updateValue();
+    
+    Calculate();
+  }
+  
+  int animW = 0;
+  int newGameDelay = 0;
+  void animateWin()
+  {
+    var angle = map(newGameDelay, 120, 0, 0, PI);
+    var displacementX = sin(angle);
+    var displacementY = map(newGameDelay, 120, 0, 1, -1);
+    var op = map(newGameDelay, 120, 0, 255, 0);
+    var dd = 10;
+    
+    var w = 87; var h = 15;
+    var p1 = [-w - displacementX * dd, -h * displacementY];
+    var p2 = [-p1[0], p1[1]];
+    var p3 = [w - displacementX * dd , -p2[1]];
+    var p4 = [-p3[0], p3[1]];
+    
+    pushMatrix();
+    translate(-108, 88);
+    
+    stroke(0); strokeWeight(1); fill(255, 120);
+    beginShape();
+    vertex(p1[0], p1[1]); 
+    vertex(p2[0], p2[1]);
+    vertex(p3[0], p3[1]);
+    vertex(p4[0], p4[1]);
+    vertex(p1[0], p1[1]);
+    endShape();
+    
+    pushMatrix();
+    fill(0, op); scale(3);
+    text(score.value, 0, 0);
+    popMatrix();
+    
+    popMatrix();
+    
+    
+    
+    
+    if (doCoins)
+    {
+      for (int i = 0; i < coins.length; i++)
+      {
+        pushMatrix();
+        translate(coins[i][0], coins[i][1]);
+        coins[i][0] += coins[i][2];
+        coins[i][1] += coins[i][3];
+        coins[i][3] += 0.2;
+        pushMatrix();
+        scale(0.2);
+        image(imgCoin, 0, 0);
+        popMatrix();
+        popMatrix();
+      }
+    }
+    
+    if (animW > 0) animW--;
+    if (animW < 0) animW = 0;
+    
+    if (newGameDelay > 0) newGameDelay--;
+    if (newGameDelay < 0) newGameDelay = 0;
+    
+    if (animW == 0 && newGameDelay == 0) newGame();
+  }
+  
+  void answerClicked(var id)
+  {
+    for (int i = 0; i < a.bL.length; i++) a.bL[i].selected = false;
+    a.bL[id].selected = true;
+    a.updateValue();
+    
+    if (""+a.bL[id].value == ""+score.value) 
+    {
+      animW = 60;
+      newGameDelay = 120;
+      
+      for (int i = 0; i < coins.length; i++)
+      {
+        coins[i][0] = 0;
+        coins[i][1] = 0;
+        coins[i][2] = random(10) - 5;
+        coins[i][3] = -random(5);
+      }
+      
+      if (doSound)
+      {
+        Win.pause(); Win.currentTime = 0; Win.play();
+      }
+    }
+  }
+  
+  void createAnswers()
+  {
+    a.bL[0].value = "";
+    a.bL[1].value = "";
+    a.bL[2].value = "";
+    a.bL[3].value = "";
+    
+    var offsets = [-200, -100, -50, 50, 100, 200];
+    
+    // random shuffle by going backwards
+    for (int i = offsets.length - 1; i > 0; i--)
+    {
+      // pick a random index upto the current one
+      const j = Math.floor(Math.random() * i);
+      
+      // swap it with the current one
+      const temp = offsets[i];
+      offsets[i] = offsets[j];
+      offsets[j] = temp;
+    }
+    
+    int keep = (int) random(a.bL.length);
+    int j = 0;
+    for (int i = 0; i < a.bL.length; i++)
+    {
+      if (i == keep) a.bL[i].value = score.value;
+      else { if (score.value + offsets[j] == 0) j++; a.bL[i].value = score.value + offsets[j]; j++; }
+    }
   }
   
   
@@ -88,20 +275,41 @@ class Controller
       d.draw();
       v.draw();
       m.draw();
-      score.draw();
+      if (testMode) 
+      {
+        var msg = "What score is it?";
+        if (animW == 0 && newGameDelay == 0) 
+        {
+          if (a.value != null) msg = "Wrong, try again";
+          a.draw();
+        }
+        else 
+        {
+          msg = "Correct :-)";
+          animateWin();
+        }
+        
+        pushMatrix();
+        fill(clr1); textAlign(CENTER, CENTER);textFont(font1);
+        translate(-105, 50);
+        text(msg, 0, 0);
+        textFont(fontNormal);
+        popMatrix();
+      }
+      else score.draw();
       info.draw();
       
       switch(imgBackId)
       {
-        case 0: clr1 = color(0); clr2 = color(255); break;
+        case 0: clr1 = color(255, 120); clr2 = color(255); break;
         case 1: clr1 = color(0); clr2 = color(255); break;
-        case 2: clr1 = color(255); clr2 = color(0); break;
-        case 3: clr1 = color(0, 40, 0); clr2 = color(0); break;
+        case 2: clr1 = color(0, 40, 0); clr2 = color(0); break;
+        case 3: clr1 = color(255); clr2 = color(0); break;
         case 4: clr1 = color(255); clr2 = color(0); break;
-        case 5: clr1 = color(255); clr2 = color(0); break;
-        case 6: clr1 = color(255); clr2 = color(0); break;
+        case 5: clr1 = color(0, 180); clr2 = color(0); break;
+        case 6: clr1 = color(0, 180); clr2 = color(0); break;
         case 7: clr1 = color(255); clr2 = color(255); break;
-        case 8: clr1 = color(255); clr2 = color(0); break;
+        case 8: clr1 = color(212, 206, 146); clr2 = color(0); break;
         case 9: clr1 = color(160, 140, 0); clr2 = color(255); break;
         default: clr1 = color(255); clr2 = color(0);
       }
@@ -111,7 +319,7 @@ class Controller
       var total_x = 0;
       
       pushMatrix();
-      x = -168-(spc*6); total_x += x;
+      x = left+6-(spc*6); total_x += x;
       translate(x, 8);
       //fill(255, 40); stroke(0, 0); strokeWeight(0.001);
       //rect(-7, -5, 338, 6);
@@ -119,7 +327,7 @@ class Controller
       requiredOffset = c.value-1;
       offset += (requiredOffset-offset)/8;
       x = spc * offset; total_x += x;
-      translate(x, 0);
+      translate(x, top+100);
       for (int i = -13; i < 7; i++)
       {
         if (total_x > -185 && total_x < 165)
@@ -130,8 +338,8 @@ class Controller
           //fill(0);
           if (i==0) 
           {
-            stroke(clr2, 120); strokeWeight(2); line(3, -4, 3, -9); line(-8, -9, 16, -9);
-            text("=", 0, 0);
+            stroke(clr2, 120); strokeWeight(2); line(5, -4, 5, -9); line(-7, -9, 16, -9);
+            text("=", 2, 0);
           }
           else if (i > 0) text("+"+i, 0, 0);
           else text(""+i, 0, 0);
@@ -144,25 +352,27 @@ class Controller
       popMatrix();
       
       
-      
+      pushMatrix();
+      translate(left+175, top+110);
       fill(clr1); textAlign(CENTER, CENTER);textFont(font1);
       pushMatrix();
-      translate(0, -130); scale(1);
+      translate(0, -124); scale(1);
       text("Contract", 0, 0);
       popMatrix();
       pushMatrix();
-      translate(0, -35); scale(1);
+      translate(0, -40); scale(1);
       text("Making", 0, 0);
       popMatrix();
       pushMatrix();
-      translate(-112, 125); scale(1);
+      translate(-110, 125); scale(1);
       text("Score", 0, 0);
       popMatrix();
       textFont(fontNormal);
       
       stroke(255, 220, 190, 160); strokeWeight(0.5); noFill();
       rectMode(CENTER);
-      rect(0, -85, 360, 70);
+      rect(0, -85, 360, 60);
+      popMatrix();
     }
   }
   
@@ -388,10 +598,20 @@ class Controller
   
     score.clear();
     info.clear();
+    
+    if (testMode) createAnswers();
   }
+  
+  
 }
 
 
+
+class Answers extends ButtonOptionList
+{
+  Answers(_x, _y, _w, _h, _s, _values) { super(_x, _y, _w, _h, _s, _values); }
+  Button createButton(x, y, w, h, value, callback, id) { return new AnswerButton(x, y, w, h, value, callback, id); }
+}
 
 
 class Contract extends ButtonOptionList

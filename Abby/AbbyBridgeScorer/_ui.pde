@@ -1,6 +1,9 @@
 //Container c1;
+Button bSound;
+Button bCoins;
 Button b1;
-Buttton bFullScreen;
+Button bFullScreen;
+Button bTestMode;
 //ScrollBar s1;
 //TextBox t1;
 //LabelBox l1;
@@ -27,8 +30,12 @@ void setupUI()
     // add buttons to tab
     
     //setContainer(c1);
-    b1 = addButton(.1, .1, .2, .8, "Background");
-    bFullScreen = addButton(.4, .1, .2, .8, "Full screen");
+    bSound = addButton(0.02, .1, .05, .8, "snd");
+    bCoins = addButton(0.09, .1, .05, .8, "coins");
+    b1 = addButton(.2, .1, .15, .8, "Background");
+    bFullScreen = addButton(.45, .1, .15, .8, "Full screen");
+    bTestMode = addButton(.7, .1, .15, .8, "Test Mode");
+    
     //s1 = addScrollBar(0.012, 0.4, .7, .31, 0, 100, 50);
     //t1 = addTextBox(.012, .48, .76, .2, "");
     //l1 = addLabelBox(.8, .8, .1, .15, "24");
@@ -74,6 +81,18 @@ void setupUI()
 
 void processUI()
 {
+  if (bSound != null && bSound.doProcess == true) 
+  {
+    doSound = !doSound;
+    pjsCM.HideControlBar();
+  }
+  
+  if (bCoins != null && bCoins.doProcess == true) 
+  {
+    doCoins = !doCoins;
+    pjsCM.HideControlBar();
+  }
+  
   if (b1 != null && b1.doProcess == true) 
   {
     imgBackId++;
@@ -93,11 +112,21 @@ void processUI()
     //setTimeout(pjsCM.loop(), 15000); // 1.5 seconds
   }
   
+  if (bTestMode != null && bTestMode.doProcess == true) 
+  {
+    testMode = !testMode;
+    if (testMode) c.newGame();
+    pjsCM.HideControlBar();
+  }
+  
   UpdateUI();
 }
 
 void UpdateUI()
 {
+  bSound.isOn = doSound;
+  bCoins.isOn = doCoins;
+  bTestMode.isOn = testMode;
 }
 
 

@@ -1,3 +1,8 @@
+class AnswerButton extends Button
+{
+  AnswerButton(_x, _y, _w, _h, _value, _callback, _id) {super(_x, _y, _w, _h, _value, _callback, _id);}
+}
+
 class ContractButton extends Button
 {
   ContractButton(_x, _y, _w, _h, _value, _callback, _id) {super(_x, _y, _w, _h, _value, _callback, _id);}

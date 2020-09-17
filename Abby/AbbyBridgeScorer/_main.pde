@@ -6,7 +6,11 @@ imgBackId = 0;
 PImage imgClubs; pImage imgHearts; PImage imgDiamonds; PImage imgSpades;
 //PImage imgBlur;
 
-Controller c = new Controller(-175, -110);
+Controller c = new Controller(-175, -118);
+var testMode = false;
+PImage imgCoin;
+var doSound = true;
+var doCoins = true;
 
 void setup()
 {
@@ -30,6 +34,7 @@ void setup()
   imgSpades = loadImage("./_resources/Spades_small.png");
   
   //imgBlur = loadImage("./_resources/Blur.png");
+  imgCoin = loadImage("./_resources/Coin.png");
   
   doZoom = false; doTranslate = false; doRotate = false;
   setSize(400, 300, P2D, FIT_INSIDE, this); // this has to be the last line in this function
