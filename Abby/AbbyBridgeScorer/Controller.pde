@@ -10,6 +10,7 @@ class Controller
   Score score;
   Information info;
   boolean showFullInfo = false;
+  boolean showInfo = true;
   var anim1 = 0;
   var anim2 = 0; // if you want the size change to be different
   
@@ -80,8 +81,10 @@ class Controller
     r = (int) random(v.bL.length);
     v.bL[r].selected = true;
     
-    r = (int) random(3);
-    if (r <= 1) d.bL[r].selected = true;
+    r = random();
+    if (r < 0.1) d.bL[1].selected = true; // 10% redouble
+    else if (r < 0.3) d.bL[0].selected = true;  // 20% double
+                                                // 70% not doubled
     
     r = (int) random(m.bL.length);
     m.bL[r].selected = true;
@@ -167,6 +170,7 @@ class Controller
     
     if (""+a.bL[id].value == ""+score.value) 
     {
+      //showInfo = true;
       animW = 60;
       newGameDelay = 120;
       
@@ -187,6 +191,7 @@ class Controller
   
   void createAnswers()
   {
+    showInfo = false;
     a.bL[0].value = "";
     a.bL[1].value = "";
     a.bL[2].value = "";
@@ -227,7 +232,7 @@ class Controller
     info.b = map(min(anim1, anim2), 0, 1, 140, 220);
     translate(x, y);
     scale(s1, s2);
-    info.draw();
+    info.draw(showInfo);
     popMatrix();
   }
   
@@ -265,7 +270,7 @@ class Controller
       
       if (mousePressed && !pmousePressed) 
       {
-        if (mouseX >= info.x && mouseX <= (info.x+info.w) && mouseY >= info.y && mouseY <= (info.y+info.h)) showFullInfo = true;
+        if (mouseX >= info.x && mouseX <= (info.x+info.w) && mouseY >= info.y && mouseY <= (info.y+info.h)) {showFullInfo = true; showInfo = true; info.t = 100;}
       }
     
       c.draw();
@@ -295,7 +300,7 @@ class Controller
         popMatrix();
       }
       else score.draw();
-      info.draw();
+      info.draw(showInfo);
       
       switch(imgBackId)
       {
@@ -600,6 +605,7 @@ class Controller
     score.clear();
     info.clear();
     
+    showInfo = true;
     if (testMode) createAnswers();
   }
   
@@ -733,7 +739,7 @@ class Information
   
   void clear() { t = 0; }
   
-  void draw()
+  void draw(var showInfo)
   {
     stroke(0, 40); strokeWeight(0.5); fill(255, 255, b, op);
     rectMode(CORNERS);
@@ -742,24 +748,42 @@ class Information
     rect(0, 0, w, h);
     
     var o = 0;
-    if (t >= 40) o = map(t, 40, 100, 0, 255);
     
-    fill(0, o);
-    textAlign(LEFT, CENTER);
-    translate(5, 0);
-    translate(0, 6);
-    pushMatrix();
-    scale(0.45);
-    for (int i = 0; i < message.length; i++)
+    if (showInfo)
     {
-      text(message[i], 0, 0);
-      translate(0, 14);
+      
+      if (t >= 40) o = map(t, 40, 100, 0, 255);
+      
+      fill(0, o);
+      textAlign(LEFT, CENTER);
+      translate(5, 0);
+      translate(0, 6);
+      pushMatrix();
+      scale(0.45);
+      for (int i = 0; i < message.length; i++)
+      {
+        text(message[i], 0, 0);
+        translate(0, 14);
+      }
+      
+      t++;
+      if (t > 100) t = 100;
+      popMatrix();
     }
-    popMatrix();
-    popMatrix();
     
-    t++;
-    if (t > 100) t = 100;
+    if (testMode)
+    {
+      textAlign(CENTER, CENTER);
+      pushMatrix();
+      translate(w/2, h/2);
+      scale(1);
+      fill(255, min(255 - o, 140));
+      text("help?", 0, 0);
+      popMatrix();
+    }
+    
+    
+    popMatrix();
   }
 }
 

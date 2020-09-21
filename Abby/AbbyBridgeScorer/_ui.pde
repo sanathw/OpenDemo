@@ -84,13 +84,13 @@ void processUI()
   if (bSound != null && bSound.doProcess == true) 
   {
     doSound = !doSound;
-    pjsCM.HideControlBar();
+    //pjsCM.HideControlBar();
   }
   
   if (bCoins != null && bCoins.doProcess == true) 
   {
     doCoins = !doCoins;
-    pjsCM.HideControlBar();
+    //pjsCM.HideControlBar();
   }
   
   if (b1 != null && b1.doProcess == true) 
