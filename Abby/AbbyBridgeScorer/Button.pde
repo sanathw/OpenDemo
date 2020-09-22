@@ -54,14 +54,15 @@ class VulnerableButton extends Button
   {
     super.drawBegin();
     
-    var s = 0.5;
-    if((isOver && mousePressed) || selected) s = 1;
+    var op = 90;
+    var s = 0.4;
+    if((isOver && mousePressed) || selected) {s = 0.5; op = 255;}
     
     var c = null;
     switch(value)
     {
-      case "Vul": c = color(255, 0, 0); break;
-      case "Non-Vul": c = color(0, 255, 0); break;
+      case "Vul": c = color(255, 0, 0, op); break;
+      case "Non-Vul": c = color(0, 255, 0, op); break;
       default: img = color(0, 0);
     }
     pushMatrix();

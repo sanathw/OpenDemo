@@ -74,25 +74,58 @@ class Controller
     var r;
     r = (int) random(c.bL.length);
     c.bL[r].selected = true;
+    c.updateValue();
     
     r = (int) random(s.bL.length);
     s.bL[r].selected = true;
+    s.updateValue();
     
     r = (int) random(v.bL.length);
     v.bL[r].selected = true;
+    v.updateValue();
     
+    // double
     r = random();
     if (r < 0.1) d.bL[1].selected = true; // 10% redouble
     else if (r < 0.3) d.bL[0].selected = true;  // 20% double
                                                 // 70% not doubled
-    
-    r = (int) random(m.bL.length);
-    m.bL[r].selected = true;
-    
-    c.updateValue();
-    s.updateValue();
-    v.updateValue();
     d.updateValue();
+    
+    
+    // making
+    var l = 6 + c.value;
+    var h = 13;
+    var r1;
+    var bias = map(c.value, 1, 7, .8, .1);
+    r = random();
+    if (r < bias) // making - 80% if many making options, 10% if 1 making option
+    {
+      // making
+      var diff = (h - l)+1;
+      r1 = (int) random(diff);
+      r1 += l;
+    }
+    else // making - 20% if less making options, 90% if 1 making option
+    {
+      // loosing
+      var half_l = (int) (l /2);
+      r = random();
+      if (r < .8)  // 80% of the time it's the upper half of losing
+      {
+        r1 = (int) random(half_l+1);
+        r1 += half_l;
+      }
+      else // 20% of the time it's the lower half of losing
+      {
+        r1 = (int) random(half_l);
+      }
+    }
+    m.bL[r1].selected = true;
+    
+    
+    
+    
+    
     m.updateValue();
     
     Calculate();
