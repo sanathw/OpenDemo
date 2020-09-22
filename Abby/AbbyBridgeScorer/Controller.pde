@@ -164,12 +164,21 @@ class Controller
   
   void answerClicked(var id)
   {
+    info.tries++;
+    
     for (int i = 0; i < a.bL.length; i++) a.bL[i].selected = false;
     a.bL[id].selected = true;
     a.updateValue();
     
     if (""+a.bL[id].value == ""+score.value) 
     {
+      if (doSound)
+      {
+        Win.pause(); Win.currentTime = 0; Win.play();
+      }
+      
+      info.wins++;
+      
       //showInfo = true;
       animW = 60;
       newGameDelay = 120;
@@ -180,11 +189,6 @@ class Controller
         coins[i][1] = 0;
         coins[i][2] = random(10) - 5;
         coins[i][3] = -random(5);
-      }
-      
-      if (doSound)
-      {
-        Win.pause(); Win.currentTime = 0; Win.play();
       }
     }
   }
@@ -253,7 +257,7 @@ class Controller
       if (anim2 > 1) anim2 = 1;
       if (anim1 == 1 && anim2 == 1) 
       {
-        if (mousePressed && !pmousePressed) showFullInfo = false;
+        if (mousePressed && !pmousePressed) {showFullInfo = false; info.showGameScore = true;}
       }
     }
     else
@@ -270,9 +274,11 @@ class Controller
       
       if (mousePressed && !pmousePressed) 
       {
-        if (mouseX >= info.x && mouseX <= (info.x+info.w) && mouseY >= info.y && mouseY <= (info.y+info.h)) {showFullInfo = true; showInfo = true; info.t = 100;}
+        if (mouseX >= info.x && mouseX <= (info.x+info.w) && mouseY >= info.y && mouseY <= (info.y+info.h)) {showFullInfo = true; showInfo = true; info.t = 100; info.showGameScore = false; info.wins--; if (info.wins< 0)info.wins = 0;}
       }
-    
+      
+      info.draw(showInfo);
+      
       c.draw();
       s.draw();
       d.draw();
@@ -300,7 +306,7 @@ class Controller
         popMatrix();
       }
       else score.draw();
-      info.draw(showInfo);
+      
       
       switch(imgBackId)
       {
@@ -732,6 +738,10 @@ class Information
   var op = 90;
   var b = 140;
   
+  var tries = 0;
+  var wins = 0;
+  var showGameScore = true;
+  
   Information(_x, _y, _w, _h)
   {
     x = _x; y = _y; w = _w; h = _h;
@@ -749,8 +759,10 @@ class Information
     
     var o = 0;
     
-    if (showInfo)
+    //if (showInfo)
+    if (!testMode || !showGameScore)
     {
+      pushMatrix();
       
       if (t >= 40) o = map(t, 40, 100, 0, 255);
       
@@ -769,16 +781,73 @@ class Information
       t++;
       if (t > 100) t = 100;
       popMatrix();
+      popMatrix();
     }
     
-    if (testMode)
+    if (testMode && showGameScore)
     {
       textAlign(CENTER, CENTER);
       pushMatrix();
-      translate(w/2, h/2);
+      translate((w/2)-30, h/2);
       scale(1);
       fill(255, min(255 - o, 140));
       text("help?", 0, 0);
+      fill (0, 190);
+      scale(0.6);
+      translate(0, 20);
+      text("(Clicking here will)", 0, 0);
+      translate(0, 15);
+      text("make you lose 1 point)", 0, 0);
+      popMatrix();
+      
+      
+      
+      pushMatrix();
+      translate(-10, -30);
+      pushMatrix();
+      translate (150, 90);
+      pushMatrix();
+      scale(0.5);
+      //tint(255, 180);
+      image(imgCoin, 0, 0);
+      //tint(255, 255);
+      stroke(0, 0); strokeWeight(0.001); fill(255, 100);
+      ellipseMode(RADIUS);
+      ellipse(0, 0, 48, 48);
+      popMatrix();
+      
+      textAlign(CENTER, CENTER);
+      pushMatrix();
+      translate(2, -34);
+      fill(255);
+      scale(.8);
+      text("" + wins + " / " + tries, 0, 0);
+      translate(0, -10);
+      scale(0.5);
+      text("wins    tries", -4, 0);
+      popMatrix();
+      
+      pushMatrix();
+      translate(2, 30);
+      fill(255);
+      scale(0.8);
+      text("your game score", 0, 0);
+      popMatrix();
+      
+      var percent = 0;
+      if (tries > 0) percent = (wins / tries) * 100;
+      var s = percent.toFixed(2);
+      var s1 = parseFloat(s);
+      var s2 = s1.toString();
+      
+      pushMatrix();
+      translate(2, 0);
+      fill(255, 0, 255);
+      scale(1.5);
+      text(s2 + "%", 0, 0);
+      popMatrix();
+      popMatrix();
+      
       popMatrix();
     }
     

@@ -34,7 +34,7 @@ void setupUI()
     bCoins = addButton(0.09, .1, .05, .8, "coins");
     b1 = addButton(.2, .1, .15, .8, "Background");
     bFullScreen = addButton(.45, .1, .15, .8, "Full screen");
-    bTestMode = addButton(.7, .1, .15, .8, "Test Mode");
+    bTestMode = addButton(.7, .1, .15, .8, "Game Mode");
     
     //s1 = addScrollBar(0.012, 0.4, .7, .31, 0, 100, 50);
     //t1 = addTextBox(.012, .48, .76, .2, "");
@@ -114,6 +114,8 @@ void processUI()
   
   if (bTestMode != null && bTestMode.doProcess == true) 
   {
+    c.info.wins = 0;
+    c.info.tries = 0;
     testMode = !testMode;
     if (testMode) c.newGame();
     pjsCM.HideControlBar();

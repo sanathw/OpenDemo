@@ -1,6 +1,6 @@
 class AnswerButton extends Button
 {
-  AnswerButton(_x, _y, _w, _h, _value, _callback, _id) {super(_x, _y, _w, _h, _value, _callback, _id);}
+  AnswerButton(_x, _y, _w, _h, _value, _callback, _id) {super(_x, _y, _w, _h, _value, _callback, _id); adjustTextOffset = 2;}
 }
 
 class ContractButton extends Button
@@ -11,7 +11,7 @@ class ContractButton extends Button
 
 class SuiteButton extends Button
 {
-  SuiteButton(_x, _y, _w, _h, _value, _callback, _id) {super(_x, _y, _w, _h, _value, _callback, _id);}
+  SuiteButton(_x, _y, _w, _h, _value, _callback, _id) {super(_x, _y, _w, _h, _value, _callback, _id); adjustTextOffset = 0;}
   
   void draw()
   {
@@ -42,7 +42,7 @@ class SuiteButton extends Button
 
 class DoubleButton extends Button
 {
-  DoubleButton(_x, _y, _w, _h, _value, _callback, _id) {super(_x, _y, _w, _h, _value, _callback, _id);}
+  DoubleButton(_x, _y, _w, _h, _value, _callback, _id) {super(_x, _y, _w, _h, _value, _callback, _id); adjustTextOffset = -0.5;}
 }
 
 
@@ -93,7 +93,8 @@ class Button
   var value;
   var selected = false;
   var showValue = true;
-  bar margin = 2.5;
+  var margin = 2.5;
+  var adjustTextOffset = 0;
   
   Button(_x, _y, _w, _h, _value, _callback, _id)
   {
@@ -157,7 +158,7 @@ class Button
       fill(0); 
       pushMatrix();
       scale(1.2);
-      text(""+value, 0, 0);
+      text(""+value, adjustTextOffset, 0);
       popMatrix();
     }
     
