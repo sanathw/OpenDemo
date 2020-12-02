@@ -292,7 +292,19 @@ function runCode()
 
 function focusOnDisplay()
 {
+  
   document.getElementById("ControlManager").focus();
+  
+  // see //get rid of the orange focus box around 
+  // in smw4.css
+  //document.getElementById("mySketch").addEventListener("focus", function () 
+  //{
+  //  //this.style.backgroundColor = "red";  
+  //  //this.style.border: 1px solid #FF0000;
+  //  //this.style.borderColor = "black";
+  //  //alert("A");
+  //  this.style.outline = "thick solid #0000FF";
+  //});
 }
 
 

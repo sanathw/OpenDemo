@@ -986,10 +986,14 @@ class ControlManager
     /////////
     }
     
-    for (int i = 0; i < controls.size(); i++) 
-    { 
-      Control c = (Control) controls.get(i); 
-      c.draw(x1, y1, x2, y2); 
+    
+    if (showPercent > 0)
+    {
+        for (int i = 0; i < controls.size(); i++) 
+        { 
+            Control c = (Control) controls.get(i); 
+            c.draw(x1, y1, x2, y2); 
+        }
     }
 
     
