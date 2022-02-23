@@ -555,15 +555,17 @@ void setCMGradient(color c1, color c2)
 
 void HideControlBar()
 {
-  cm.isControlDown = true;
-  cm.showPercent = 0; 
+  //cm.isControlDown = true;
+  cm.showPercent = 0;
+  cm.showChange = 0;  
   cm.isOpened = false
 }
 
 void ShowControlBar()
 {
-  cm.isControlDown = false;
+  //cm.isControlDown = false;
   cm.showPercent = 1; 
+  cm.showChange = 0;
   cm.isOpened = true
 }
 
@@ -912,15 +914,17 @@ class ControlManager
       }
       
       
-      
-      for (int i = 0; i < controls.size(); i++) 
-      { 
-        Control c = (Control) controls.get(i); 
-        c.update(); 
-        
-        //isControlItemDown = isControlItemDown || c.isDown;
-        //if (focusControl == null && c.isDown == true) {focusControl = c; }// println("SET");}
-        isControlDown = isControlDown || c.isDown;  //SANATH
+      if (isOpened)
+      {
+        for (int i = 0; i < controls.size(); i++) 
+        { 
+          Control c = (Control) controls.get(i); 
+          c.update(); 
+          
+          //isControlItemDown = isControlItemDown || c.isDown;
+          //if (focusControl == null && c.isDown == true) {focusControl = c; }// println("SET");}
+          isControlDown = isControlDown || c.isDown;  //SANATH
+        }
       }
     }
     

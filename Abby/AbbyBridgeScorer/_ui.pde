@@ -9,6 +9,7 @@ Button bTestMode;
 //LabelBox l1;
 //KeyboardContainer kbContainer;
 //KeyboardCtrl kbctrl1;
+var controlBarHide = 1; // -1 hide, 1 open
 
 void setupUI()
 {
@@ -81,6 +82,9 @@ void setupUI()
 
 void processUI()
 {
+  if (controlBarHide == 1) {pjsCM.ShowControlBar(); controlBarHide = 0;}
+  if (controlBarHide == -1) {pjsCM.HideControlBar(); controlBarHide = 0;}
+  
   if (bSound != null && bSound.doProcess == true) 
   {
     doSound = !doSound;
@@ -105,11 +109,12 @@ void processUI()
     //toggleFullScreen(null);
     //or
     requestFullScreen(document.documentElement);
-    pjsCM.HideControlBar();
+    //pjsCM.HideControlBar();
+    controlBarHide = -1;
     
     
     //pjsCM.noLoop();
-    //setTimeout(pjsCM.loop(), 15000); // 1.5 seconds
+    //setTimeout(pjsCM.loop(), 1500); // 1.5 seconds
   }
   
   if (bTestMode != null && bTestMode.doProcess == true) 
@@ -118,7 +123,10 @@ void processUI()
     c.info.tries = 0;
     testMode = !testMode;
     if (testMode) c.newGame();
-    pjsCM.HideControlBar();
+    //pjsCM.HideControlBar();
+    //setTimeout(pjsCM.HideControlBar(), 3000); // 0.5 seconds
+    //println("Hello");
+    controlBarHide = -1;
   }
   
   UpdateUI();
