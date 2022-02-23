@@ -30,6 +30,16 @@ void setup()
   removeLoadingImage();
 }
 
+var getWWW()
+{
+  return width;
+}
+
+var getHHH()
+{
+  return height;
+}
+
 void sizeChanged() 
 {
   cvs = document.getElementById("mySketch");
@@ -545,12 +555,14 @@ void setCMGradient(color c1, color c2)
 
 void HideControlBar()
 {
+  cm.isControlDown = true;
   cm.showPercent = 0; 
   cm.isOpened = false
 }
 
 void ShowControlBar()
 {
+  cm.isControlDown = false;
   cm.showPercent = 1; 
   cm.isOpened = true
 }
