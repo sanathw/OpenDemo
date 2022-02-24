@@ -14,6 +14,8 @@ class Controller
   var anim1 = 0;
   var anim2 = 0; // if you want the size change to be different
   
+  var showWrongMessageCounter = 0;
+  
   Answers a;
   var coins = [];
   // sound effects from: https://www.storyblocks.com/audio/search/game+win+sound+effect
@@ -223,6 +225,12 @@ class Controller
         coins[i][2] = random(10) - 5;
         coins[i][3] = -random(5);
       }
+      
+      showWrongMessageCounter = 0;
+    }
+    else
+    {
+      showWrongMessageCounter = 255;
     }
   }
   
@@ -279,7 +287,8 @@ class Controller
   color clr2;
   void draw()
   {
-    
+    showWrongMessageCounter -= 8;
+    if (showWrongMessageCounter < 0) showWrongMessageCounter = 0;
     
     if (showFullInfo)
     {
@@ -332,9 +341,33 @@ class Controller
         }
         
         pushMatrix();
-        fill(clr1); textAlign(CENTER, CENTER);textFont(font1);
+        
         translate(-105, 50);
+        textAlign(CENTER, CENTER);textFont(font1);
+        
+        if (showWrongMessageCounter > 0)
+        {
+          fill(255, 0, 0, showWrongMessageCounter); stroke(255, 200, 0, showWrongMessageCounter); strokeWeight(12); rectMode(CENTER);
+          rect(0, 0, 160, 30);
+          
+          if (showWrongMessageCounter > 100) 
+          {
+            translate(-5+random()*20, 0);
+          }
+        }
+        
+        
+        fill(clr1);
         text(msg, 0, 0);
+        
+         
+        if (showWrongMessageCounter > 100) 
+        {
+          fill(0, showWrongMessageCounter);
+          text(msg, 0, 0);
+        }
+
+        
         textFont(fontNormal);
         popMatrix();
       }
