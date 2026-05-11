@@ -79,6 +79,7 @@ void draw()
   
   ellipseMode(RADIUS);
   
+  
   if (g == null) {createG();}
   if (g != null)
   { 
@@ -96,7 +97,7 @@ void draw()
     {
       if (doAnimate) 
       {
-        angleChange += 0.004;
+        angleChange += 0.008;
         if (angleChange > 360) angleChange = 0;
       }
       
