@@ -1,11 +1,299 @@
-<!DOCTYPE html>
 <html>
-<head>
-</head>
-<body>
-  <h1>Omega-Blu</h1>
-  <p>
-    <a href='./ParticleSimulator/'><img src="./ParticleSimulator/_icon.png" height="42" width="42"> Roto moulding - Particle Simulator</a>
-  </p>
-</body>
+  <head>
+    <script src="_apps.js"></script>
+    <script>
+      function getIndexForId(id)
+      {
+        for (var i = 0; i < apps.length; i++)
+        {
+          if (apps[i].id == id) { return i; }
+        }
+        
+        return -1;
+      }
+      
+      var currentApp = "";
+      function fullScreen()
+      {
+        if (currentApp != "") window.location.href = currentApp;
+      }
+      
+      function getSeeAlso(i, r)
+      {
+        var s = "See also: ";
+        var t = "loadApp";
+        if (r == true) t = "runApp"
+        for (var j = 0; j < apps[i].alts.length; j++)
+        {
+          if (j > 0) s = s + ", ";
+          var ii = getIndexForId(apps[i].alts[j]);
+          if (ii > -1)
+          {
+            s = s + "<span style=\"color:blue; cursor:pointer;\" onclick=\"" + t + "('" + apps[ii].id + "');\">" + apps[ii].name + "</span>";
+          }
+          else
+          {
+            s = s + "{" + apps[i].alts[j] + "}";
+          }
+        }
+        return s;
+      }
+      
+      function resetSelection()
+      {
+        currentApp = "";
+        document.getElementById("appDisplay").src = "";
+        document.getElementById("links").innerHTML = "";
+        for (var i = 0; i < apps.length; i++)
+        {
+           if (apps[i].id != "") document.getElementById(apps[i].id).style.background = "";
+        }
+      }
+      
+      function loadApp(id)
+      {
+        // remove previous selection
+        resetSelection();
+        
+        // find id of the app
+        var i = getIndexForId(id);
+
+        if (i > -1)
+        {
+          currentApp = apps[i].path + "/_main.html";
+          document.getElementById("appDisplay").src = currentApp;
+          document.getElementById(apps[i].id).style.background = "white";
+          
+          /*var s = "See also: ";
+          for (var j = 0; j < apps[i].alts.length; j++)
+          {
+            if (j > 0) s = s + ", ";
+            var ii = getIndexForId(apps[i].alts[j]);
+            if (ii > -1)
+            {
+              s = s + "<span style=\"color:blue; cursor:pointer;\" onclick=\"loadApp('" + apps[ii].id + "');\">" + apps[ii].name + "</span>";
+            }
+            else
+            {
+              s = s + "{" + apps[i].alts[j] + "}";
+            }
+          }*/
+          document.getElementById("links").innerHTML = getSeeAlso(i, false);//s;
+          return;
+        }
+      }
+      
+      var prevSel = null;
+      function runApp(id, e)
+      {
+        if (prevSel != null) prevSel.style.background = "";
+        e.style.background = "lightgray";
+        prevSel = e;
+        
+        // find id of the app
+        var i = getIndexForId(id);
+
+        if (i > -1)
+        {
+          currentApp = apps[i].path + "/_main.html";
+          fullScreen();
+          return;
+        }
+      }
+      
+    </script>
+  </head>
+  
+  <body>
+   <!-- Mobile -->
+  <div id="mobileView" style="display:none;  overflow:hidden; overflow-y:auto; width:100%; height:100%;">
+  
+  
+  <table style="position: absolute; top:80; width:100%; border-collapse: collapse;">
+  
+  <script>
+        for (var i = 0; i < apps.length; i++)
+        {
+          if (apps[i].id == "")
+          {
+            document.write("<tr style=\"background:rgb(153, 153, 255); height:5;\">");
+            document.write("<td align=\"center\" colspan=2>");
+            document.write(apps[i].name);
+            document.write("</td>");
+            document.write("</tr>");
+          }
+          else
+          {
+            document.write("<tr style=\"background:white; border: 1px solid silver; cursor:pointer;\"  onclick=\"runApp('" + apps[i].id + "', this);\">");
+            document.write("<td style=\"padding:5 15 5 5;\">");
+            document.write("<img src=\"" + apps[i].path + "/_icon.png\" width=\"120\" height=\"120\"></img>");
+            document.write("</td>");
+            document.write("<td style=\"padding:5 2 5 0;\" align=\"left\" >");
+            document.write("<h2> " + apps[i].name  + "</h2>");
+            //document.write("<br>");
+            //document.write("</td>");
+            //document.write("<td style=\"padding:5 5 5 0;\" align=\"right\" >");
+            //document.write("<h2> " + getSeeAlso(i, true) + "</h2>");
+            document.write(getSeeAlso(i, true));
+            document.write("</td>");
+            document.write("</tr>");
+          }
+        }
+    
+      /*<tr onclick="loadApp('../0_Sandbox/TestTemplate/_main.html', this);">
+        <td style="padding:5 0 5 0;">
+          <img src="../0_Sandbox/TestTemplate/_icon.png" width="40" height="40" ></img>
+        </td>
+        <td style="padding:5 0 5 0;">
+          Serpenski Triangle
+        </td>
+      </tr>*/
+      
+      </script>
+  
+  
+  </table>
+  
+  <div style="position:fixed; left:0; top:0; width:100%; height:80; background:rgba(150,150,150,0.75);">
+    <h2 style="text-align:center;">Apps by Sanath Wanigaratne</h2>
+  </div>
+  </div>
+  
+  
+  <!--
+  <!-- Mobile ->
+  <div id="mobileView" style="display:none; background:lightgray; overflow:hidden; overflow-y:auto; width:100%; height:100%;">
+    <table style="border-collapse: collapse; width:100%;">
+      
+      
+      <script>
+        for (var i = 0; i < apps.length; i++)
+        {
+          document.write("<tr style=\" border: 1px solid black; cursor:pointer;\" id='" + apps[i].id + "' onclick=\"runApp('" + apps[i].id + "');\">");
+          document.write("<td style=\"padding:5 2 5 5; width:80px;\">");
+          document.write("<img src=\"" + apps[i].path + "/_icon.png\" width=\"120\" height=\"120\"></img>");
+          document.write("</td>");
+          document.write("<td style=\"padding:5 5 5 0;\" align=\"left\" >");
+          document.write(apps[i].name);
+          document.write("</td>");
+          document.write("<td style=\"padding:5 5 5 0;\" align=\"right\" >");
+          document.write(getSeeAlso(i, true));
+          document.write("</td>");
+          document.write("</tr>");
+        }
+    
+      /*<tr onclick="loadApp('../0_Sandbox/TestTemplate/_main.html', this);">
+        <td style="padding:5 0 5 0;">
+          <img src="../0_Sandbox/TestTemplate/_icon.png" width="40" height="40" ></img>
+        </td>
+        <td style="padding:5 0 5 0;">
+          Serpenski Triangle
+        </td>
+      </tr>*/
+      
+      </script>
+      
+      
+    </table>
+  </div>
+  -->
+  
+  
+  <!-- Desktop -->
+    <table id="desktopView" style="display:none; border: 1px solid black; height:100%; width:100%; border-collapse: collapse;">
+    <!--table id="desktopView" style="display:inline-table; border: 1px solid black; height:100%; width:100%;"-->
+      <tr style="width;100%; height:100%;">
+        <td style="border: 1px solid black; background:lightgray; padding:0; width:180px; height:100%">
+          <div style="overflow:hidden; overflow-y:auto; width:100%; height:100%;">
+            <table style="border-collapse: collapse; width:100%;">
+              
+              
+              <script>
+                for (var i = 0; i < apps.length; i++)
+                {
+                  if (apps[i].id == "")
+                  {
+                    document.write("<tr style=\"background:rgba(150,150,150,0.75); height:5;\">");
+                    document.write("<td align=\"center\" colspan=2>");
+                    document.write(apps[i].name);
+                    document.write("</td>");
+                    document.write("</tr>");
+                  }
+                  else
+                  {
+                    document.write("<tr style=\"border: 1px solid silver; cursor:pointer;\" id='" + apps[i].id + "' onclick=\"loadApp('" + apps[i].id + "');\">");
+                    document.write("<td style=\"padding:5 12 5 5; \">");
+                    document.write("<img src=\"" + apps[i].path + "/_icon.png\" width=\"40\" height=\"40\"></img>");
+                    document.write("</td>");
+                    document.write("<td style=\"padding:5 5 5 0;\" align=\"left\" >");
+                    document.write(apps[i].name);
+                    document.write("</td>");
+                    document.write("</tr>");
+                  }
+                }
+            
+              /*<tr onclick="loadApp('../0_Sandbox/TestTemplate/_main.html', this);">
+                <td style="padding:5 0 5 0;">
+                  <img src="../0_Sandbox/TestTemplate/_icon.png" width="40" height="40" ></img>
+                </td>
+                <td style="padding:5 0 5 0;">
+                  Serpenski Triangle
+                </td>
+              </tr>*/
+              
+              </script>
+              
+              
+            </table>
+          </div>
+        </td>
+        
+        <td style="padding:0; width:''; height:100%;">
+          <table style="width:100%; height:100%; border-collapse: collapse;">
+            <tr>
+              <td style="padding:0; width:100%; height:100%;">
+                <iframe id="appDisplay" src="" style="width:100%; height:100%;" frameborder="0"></iframe>
+              </td>
+            </tr>
+            <tr>
+              <td style="background:lightgray; width:100%; height:40px; padding:10;">
+              <table style="width:100%; height:100%; border-collapse: collapse;">
+              <tr>
+              
+              <td id="links">
+                See also:
+              </td>
+              
+              <td align="right">
+                <button onclick="fullScreen();">full screeen</button>
+              </td>
+              
+              </tr>
+              </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+
+    
+    
+    <script>
+      if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) == true ) 
+      {
+        //document.body.style.fontSize = "300%";
+        //document.body.style.zoom = '400%';
+        document.getElementById("mobileView").style.display = 'inline';
+        document.body.style.zoom = '150%';
+        if (prevSel != null) prevSel.style.background = "";
+      } 
+      else
+      {
+        document.getElementById("desktopView").style.display = 'inline-table';
+        resetSelection();
+      }
+    </script>
+    
+  </body>
 </html>
